@@ -20,20 +20,25 @@ export default function RegisterPage() {
     setLoading(true);
     setError('');
 
-    const res = await fetch('/api/users', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password }),
-    });
+    try {
+      const res = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+      });
 
-    if (!res.ok) {
-      const data = await res.json();
-      setError(data.error || 'Something went wrong');
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || 'Something went wrong');
+        setLoading(false);
+        return;
+      }
+
+      router.push('/login');
+    } catch {
+      setError('Connection failed. Make sure your database is running (npm run db:push).');
       setLoading(false);
-      return;
     }
-
-    router.push('/login');
   };
 
   return (

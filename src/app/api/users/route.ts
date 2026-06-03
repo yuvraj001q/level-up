@@ -28,8 +28,11 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ id: user.id, email: user.email }, { status: 201 });
-  } catch {
-    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
+  } catch (err) {
+    const message = err instanceof Error && err.message.includes('connect')
+      ? 'Database connection failed. Make sure PostgreSQL is running and DATABASE_URL is set in .env'
+      : 'Something went wrong';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 

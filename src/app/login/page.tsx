@@ -20,17 +20,25 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
 
-    const result = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
-    });
+    try {
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
 
-    if (result?.error) {
-      setError('Invalid email or password');
+      if (!result) {
+        setError('Authentication service unavailable');
+        setLoading(false);
+      } else if (result.error) {
+        setError('Invalid email or password');
+        setLoading(false);
+      } else {
+        router.push('/dashboard');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Connection failed. Check your network and try again.');
       setLoading(false);
-    } else {
-      router.push('/dashboard');
     }
   };
 
