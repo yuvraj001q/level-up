@@ -18,6 +18,7 @@ build/
 *.pem
 
 # environment
+.env
 .env.local
 .env.development.local
 .env.test.local
