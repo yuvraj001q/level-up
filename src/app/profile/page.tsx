@@ -39,7 +39,7 @@ export default function ProfilePage() {
     if (status === 'unauthenticated') router.push('/login');
     if (status !== 'authenticated' || !session?.user?.id) return;
 
-    fetch(`/api/users?userId=${session.user.id}`)
+    fetch(`/api/users/${session.user.id}`)
       .then((r) => r.json())
       .then((data) => {
         if (data.id) {

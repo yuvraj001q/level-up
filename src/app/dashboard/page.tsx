@@ -26,7 +26,7 @@ export default function DashboardPage() {
     const userId = session.user.id;
     setLoading(true);
 
-    fetch(`/api/users?userId=${userId}`)
+    fetch(`/api/users/${userId}`)
       .then((r) => r.json())
       .then((data) => {
         if (data.id) {

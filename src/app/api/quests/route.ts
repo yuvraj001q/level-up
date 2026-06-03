@@ -42,7 +42,8 @@ export async function POST(req: Request) {
         return NextResponse.json(existing);
       }
 
-      const dailyTasks = generateDailyQuests(user.goals as any[], user.level, user.dailyStreak);
+      const goals = (user.goals.length > 0 ? user.goals : ['PRODUCTIVITY']) as any[];
+      const dailyTasks = generateDailyQuests(goals, user.level, user.dailyStreak);
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
 
@@ -85,7 +86,8 @@ export async function POST(req: Request) {
         return NextResponse.json(existing);
       }
 
-      const weeklyTasks = generateWeeklyQuests(user.goals as any[], user.level);
+      const wGoals = (user.goals.length > 0 ? user.goals : ['PRODUCTIVITY']) as any[];
+      const weeklyTasks = generateWeeklyQuests(wGoals, user.level);
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekEnd.getDate() + 7);
 

@@ -9,7 +9,6 @@ import { LevelUpAnimation } from '@/components/ui/LevelUpAnimation';
 import { AchievementUnlock } from '@/components/ui/AchievementUnlock';
 import { FloatingElements } from '@/components/ui/FloatingElements';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import { Analytics } from '@vercel/analytics/next';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -41,7 +40,6 @@ export default function RootLayout({
             {children}
           </main>
           <SpeedInsights />
-          <Analytics />
         </Providers>
       </body>
     </html>

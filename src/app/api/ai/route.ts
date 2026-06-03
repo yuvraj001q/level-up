@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     const completedTitles = completedTasks.map((t: { title: string }) => t.title);
 
     const generated = generateAITasks({
-      goals: goals || [],
+      goals: (goals || []).length > 0 ? goals : ['PRODUCTIVITY'],
       level: level || 1,
       interests: interests || [],
       streak: streak || 0,
