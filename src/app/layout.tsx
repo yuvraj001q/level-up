@@ -8,6 +8,7 @@ import { XPAnimation } from '@/components/ui/XPAnimation';
 import { LevelUpAnimation } from '@/components/ui/LevelUpAnimation';
 import { AchievementUnlock } from '@/components/ui/AchievementUnlock';
 import { FloatingElements } from '@/components/ui/FloatingElements';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -38,6 +39,7 @@ export default function RootLayout({
           <main className="md:pl-64 pb-20 md:pb-0 min-h-screen relative z-10">
             {children}
           </main>
+          <SpeedInsights />
         </Providers>
       </body>
     </html>
