@@ -27,21 +27,19 @@ jobs:
           java-version: 17
 
       - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
 
       - name: Sync Capacitor
         run: npx cap copy
 
       - name: Build APK
         run: |
-          ls -la android/gradlew
-          java -version
+          chmod +x android/gradlew
           cd android
-          ./gradlew assembleDebug 2>&1; echo "GRADLE_EXIT=$?"
-        shell: bash
+          ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: level-up-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: ignore
