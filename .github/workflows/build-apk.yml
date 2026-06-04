@@ -33,11 +33,21 @@ jobs:
       - name: Sync Capacitor
         run: npx cap copy
 
-      - name: Build APK
-        run: cd android && ./gradlew assembleDebug
+      - name: Debug build
+        run: |
+          set -x
+          pwd
+          ls -la android/
+          file android/gradlew
+          chmod +x android/gradlew
+          cd android
+          ./gradlew assembleDebug 2>&1 || true
         shell: bash
-        env:
-          ANDROID_HOME: /usr/local/lib/android/sdk
+
+      - name: Check APK
+        run: |
+          ls -la android/app/build/outputs/apk/debug/ 2>/dev/null || echo "No APK output found"
+        shell: bash
 
       - name: Upload APK
         if: success()
@@ -45,11 +55,3 @@ jobs:
         with:
           name: level-up-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
-
-      - name: Create Release
-        if: success()
-        run: |
-          gh release delete latest --yes --repo ${{ github.repository }} 2>/dev/null || true
-          gh release create latest --repo ${{ github.repository }} --title "Latest Build" --notes "Auto-built from commit ${{ github.sha }}" android/app/build/outputs/apk/debug/app-debug.apk
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
