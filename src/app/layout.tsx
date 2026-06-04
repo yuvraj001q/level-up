@@ -8,6 +8,7 @@ import { XPAnimation } from '@/components/ui/XPAnimation';
 import { LevelUpAnimation } from '@/components/ui/LevelUpAnimation';
 import { AchievementUnlock } from '@/components/ui/AchievementUnlock';
 import { FloatingElements } from '@/components/ui/FloatingElements';
+import { PwaRegister } from '@/components/PwaRegister';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const inter = Inter({
@@ -19,6 +20,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'Level Up - Turn your life into a game',
   description: 'Gamified productivity with AI-powered quests, XP, and achievements. Turn your life into a game.',
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
@@ -39,6 +41,7 @@ export default function RootLayout({
           <main className="md:pl-64 pb-20 md:pb-0 min-h-screen relative z-10">
             {children}
           </main>
+          <PwaRegister />
           <SpeedInsights />
         </Providers>
       </body>
