@@ -74,15 +74,14 @@ export default function DownloadPage() {
               </ul>
               <div className="flex flex-col gap-2">
                 <a
-                  href="https://github.com/yuvraj001q/level-up/releases/download/latest/level-up.apk"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/level-up.apk"
+                  download
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-accent-purple to-accent-blue text-white font-semibold text-sm hover:opacity-90 transition-opacity"
                 >
                   <Download className="w-4 h-4" />
-                  Download APK
+                  Download APK (56 MB)
                 </a>
-                <p className="text-xs text-text-muted">Version 1.0 &bull; Android 8.0+ &bull; Built automatically via GitHub</p>
+                <p className="text-xs text-text-muted">Version 1.0 &bull; Android 8.0+ &bull; Debug build</p>
               </div>
             </div>
           </motion.div>
@@ -90,7 +89,7 @@ export default function DownloadPage() {
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="glass p-6 text-center">
           <p className="text-sm text-text-secondary">
-            The APK is built automatically on every code push. After a push, wait ~5 minutes for GitHub Actions to finish, then refresh this page to download.
+            The APK is served directly from the website for fast downloads. To build the latest version, run <code className="text-accent-cyan">npm run build &amp;&amp; npx cap copy &amp;&amp; cd android &amp;&amp; gradle assembleDebug</code> locally.
           </p>
         </motion.div>
       </div>

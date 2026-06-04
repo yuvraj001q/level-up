@@ -35,3 +35,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# android build
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+public/level-up.apk
