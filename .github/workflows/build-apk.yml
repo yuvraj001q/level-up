@@ -29,41 +29,27 @@ jobs:
 
       - uses: android-actions/setup-android@v3
 
-      - uses: gradle/actions/setup-gradle@v4
-
-      - name: Debug
-        run: |
-          set -x
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          echo "JAVA_HOME=$JAVA_HOME"
-          java -version
-          ls -la $ANDROID_HOME/ 2>&1
-          ls -la $ANDROID_HOME/platforms/ 2>&1
-          ls -la android/
-          chmod +x android/gradlew
-          file android/gradlew
-        shell: bash
-
       - name: Sync Capacitor
         run: npx cap copy
 
       - name: Build APK
         run: |
-          echo "Starting Gradle build..."
-          cd android && ./gradlew assembleDebug --no-daemon --stacktrace 2>&1
+          chmod +x android/gradlew
+          cd android && ./gradlew assembleDebug
         shell: bash
         env:
           ANDROID_HOME: /usr/local/lib/android/sdk
           ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
 
       - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: level-up-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
 
       - name: Create Release
+        if: success()
         run: |
           gh release delete latest --yes --repo ${{ github.repository }} 2>/dev/null || true
           gh release create latest --repo ${{ github.repository }} --title "Latest Build" --notes "Auto-built from commit ${{ github.sha }}" android/app/build/outputs/apk/debug/app-debug.apk
