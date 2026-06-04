@@ -1,0 +1,9 @@
+{
+  "appId": "com.levelup.app",
+  "appName": "Level Up",
+  "webDir": ".next",
+  "server": {
+    "url": "https://level-up-theta-tawny.vercel.app",
+    "cleartext": false
+  }
+}
