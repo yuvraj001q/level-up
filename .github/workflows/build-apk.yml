@@ -15,10 +15,11 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Install deps & build
-        run: |
-          npm ci
-          npm run build
+      - name: Install deps
+        run: npm ci
+
+      - name: Build Next.js
+        run: npm run build
 
       - uses: actions/setup-java@v4
         with:
@@ -34,7 +35,8 @@ jobs:
       - name: Build APK
         run: |
           chmod +x android/gradlew
-          cd android && ./gradlew assembleDebug
+          cd android
+          ./gradlew assembleDebug
         shell: bash
 
       - name: Upload APK
