@@ -32,8 +32,11 @@ jobs:
       - name: Sync Capacitor
         run: npx cap copy
 
+      - name: Test shell
+        run: echo "hello world" && pwd && ls -la
+
       - name: Build APK
-        run: npx cap build android
+        run: cd android && pwd && ls -la && ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
