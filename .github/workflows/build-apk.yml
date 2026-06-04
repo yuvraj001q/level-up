@@ -32,10 +32,10 @@ jobs:
         run: npx cap copy
 
       - name: Build APK
-        run: cd android && ./gradlew assembleDebug
+        run: |
+          chmod +x android/gradlew
+          cd android && ./gradlew assembleDebug
         shell: bash
-        env:
-          ANDROID_HOME: /usr/local/lib/android/sdk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
