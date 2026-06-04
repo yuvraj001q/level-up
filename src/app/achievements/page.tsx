@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion } from 'framer-motion';
 import { Trophy, Lock, Sparkles, Footprints, Flame, Award, BookOpen, Dumbbell, Hammer, CheckCircle, Target, Star, Crown, TrendingUp, CalendarCheck, CalendarDays, Swords } from 'lucide-react';
 import { useStore } from '@/store/useStore';
@@ -15,17 +14,15 @@ const ICON_MAP: Record<string, React.ElementType> = {
 };
 
 export default function AchievementsPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+  const { session, status } = useRequireAuth();
   const { achievements, setAchievements } = useStore();
 
   useEffect(() => {
-    if (status === 'unauthenticated') router.push('/login');
     if (status !== 'authenticated' || !session?.user?.id) return;
     fetch(`/api/achievements?userId=${session.user.id}`)
       .then((r) => r.json())
       .then(setAchievements);
-  }, [status, session, router, setAchievements]);
+  }, [status, session, setAchievements]);
 
   if (status === 'loading') return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent-blue border-t-transparent rounded-full animate-spin" /></div>;
 

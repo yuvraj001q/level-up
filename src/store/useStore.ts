@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import type { UserProfile, Task, Quest, Achievement } from '@/types';
 
 interface AppState {
@@ -25,36 +26,38 @@ interface AppState {
   updateUser: (updates: Partial<UserProfile>) => void;
 }
 
-export const useStore = create<AppState>((set) => ({
-  user: null,
-  tasks: [],
-  quests: [],
-  achievements: [],
-  isLoading: true,
-  xpAnimation: null,
-  levelUpAnimation: null,
-  achievementAnimation: null,
+export const useStore = create<AppState>()(
+  persist(
+    (set) => ({
+      user: null,
+      tasks: [],
+      quests: [],
+      achievements: [],
+      isLoading: true,
+      xpAnimation: null,
+      levelUpAnimation: null,
+      achievementAnimation: null,
 
-  setUser: (user) => set({ user }),
-  setTasks: (tasks) => set({ tasks }),
-  setQuests: (quests) => set({ quests }),
-  setAchievements: (achievements) => set({ achievements }),
-  setLoading: (isLoading) => set({ isLoading }),
+      setUser: (user) => set({ user }),
+      setTasks: (tasks) => set({ tasks }),
+      setQuests: (quests) => set({ quests }),
+      setAchievements: (achievements) => set({ achievements }),
+      setLoading: (isLoading) => set({ isLoading }),
 
-  showXpAnimation: (amount) => {
-    set({ xpAnimation: { amount, show: true } });
-    setTimeout(() => set({ xpAnimation: null }), 2000);
-  },
+      showXpAnimation: (amount) => {
+        set({ xpAnimation: { amount, show: true } });
+        setTimeout(() => set({ xpAnimation: null }), 2000);
+      },
 
-  showLevelUpAnimation: (level) => {
-    set({ levelUpAnimation: { level, show: true } });
-    setTimeout(() => set({ levelUpAnimation: null }), 3000);
-  },
+      showLevelUpAnimation: (level) => {
+        set({ levelUpAnimation: { level, show: true } });
+        setTimeout(() => set({ levelUpAnimation: null }), 3000);
+      },
 
-  showAchievementAnimation: (title) => {
-    set({ achievementAnimation: { title, show: true } });
-    setTimeout(() => set({ achievementAnimation: null }), 3000);
-  },
+      showAchievementAnimation: (title) => {
+        set({ achievementAnimation: { title, show: true } });
+        setTimeout(() => set({ achievementAnimation: null }), 3000);
+      },
 
   addTask: (task) => set((state) => ({ tasks: [...state.tasks, task] })),
 
@@ -72,4 +75,15 @@ export const useStore = create<AppState>((set) => ({
     set((state) => ({
       user: state.user ? { ...state.user, ...updates } : null,
     })),
-}));
+    }),
+    {
+      name: 'level-up-store',
+      partialize: (state) => ({
+        user: state.user,
+        tasks: state.tasks,
+        quests: state.quests,
+        achievements: state.achievements,
+      }),
+    }
+  )
+);

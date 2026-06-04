@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion } from 'framer-motion';
 import { Users, Trophy, Zap, Flame, Medal, Crown, Loader2 } from 'lucide-react';
 
@@ -17,14 +16,12 @@ interface LeaderboardUser {
 }
 
 export default function LeaderboardPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+  const { session, status } = useRequireAuth();
   const [users, setUsers] = useState<LeaderboardUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<'xp' | 'streak' | 'achievements'>('xp');
 
   useEffect(() => {
-    if (status === 'unauthenticated') router.push('/login');
     if (status !== 'authenticated') return;
 
     fetch('/api/leaderboard')
@@ -33,7 +30,7 @@ export default function LeaderboardPage() {
         setUsers(data);
         setLoading(false);
       });
-  }, [status, router]);
+  }, [status]);
 
   const sortedUsers = [...users].sort((a, b) => {
     if (sortBy === 'streak') return b.dailyStreak - a.dailyStreak;

@@ -1,22 +1,19 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion } from 'framer-motion';
 import { BarChart3, TrendingUp, Zap, CheckCircle, Loader2 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, AreaChart, Area } from 'recharts';
 import { useStore } from '@/store/useStore';
 
 export default function AnalyticsPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+  const { session, status } = useRequireAuth();
   const { user } = useStore();
   const [xpData, setXpData] = useState<{ date: string; xp: number }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (status === 'unauthenticated') router.push('/login');
     if (status !== 'authenticated' || !session?.user?.id) return;
 
     Promise.all([
@@ -34,7 +31,7 @@ export default function AnalyticsPage() {
       });
       setLoading(false);
     });
-  }, [status, session, router]);
+  }, [status, session]);
 
   if (status === 'loading' || loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-accent-blue" /></div>;
 

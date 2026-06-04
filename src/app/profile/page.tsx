@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion } from 'framer-motion';
 import { User, Save, Loader2, Zap, Award, Flame, BarChart3 } from 'lucide-react';
 import { useStore } from '@/store/useStore';
@@ -25,8 +25,8 @@ const GOALS: { value: Goal; label: string }[] = [
 ];
 
 export default function ProfilePage() {
-  const { data: session, status, update } = useSession();
-  const router = useRouter();
+  const { update } = useSession();
+  const { session, status } = useRequireAuth();
   const { user, setUser } = useStore();
   const [name, setName] = useState('');
   const [age, setAge] = useState<number | ''>('');
@@ -36,7 +36,6 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (status === 'unauthenticated') router.push('/login');
     if (status !== 'authenticated' || !session?.user?.id) return;
 
     fetch(`/api/users/${session.user.id}`)
@@ -51,7 +50,7 @@ export default function ProfilePage() {
           setInterestsStr((data.interests || []).join(', '));
         }
       });
-  }, [status, session, router, setUser]);
+  }, [status, session, setUser]);
 
   const handleSave = async () => {
     if (!session?.user?.id) return;

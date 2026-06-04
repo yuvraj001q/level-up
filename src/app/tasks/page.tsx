@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Sparkles, Loader2, ListChecks, Filter } from 'lucide-react';
 import { TaskCard } from '@/components/ui/TaskCard';
@@ -34,8 +33,7 @@ const DIFFICULTIES: { value: TaskDifficulty; label: string }[] = [
 ];
 
 export default function TasksPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+  const { session, status } = useRequireAuth();
   const { tasks, setTasks, showXpAnimation, showLevelUpAnimation, showAchievementAnimation, achievements, setAchievements, user } = useStore();
   const [showCreate, setShowCreate] = useState(false);
   const [title, setTitle] = useState('');
@@ -49,12 +47,11 @@ export default function TasksPage() {
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all');
 
   useEffect(() => {
-    if (status === 'unauthenticated') router.push('/login');
     if (status !== 'authenticated' || !session?.user?.id) return;
     fetch(`/api/tasks?userId=${session.user.id}`)
       .then((r) => r.json())
       .then(setTasks);
-  }, [status, session, router, setTasks]);
+  }, [status, session, setTasks]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();

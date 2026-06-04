@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion } from 'framer-motion';
 import { Zap, Sparkles, TrendingUp, ListChecks, Swords, Trophy } from 'lucide-react';
 import { XPBar } from '@/components/ui/XPBar';
@@ -13,14 +13,13 @@ import { getLevelInfo } from '@/lib/game';
 import type { Task, Quest, UserProfile } from '@/types';
 
 export default function DashboardPage() {
-  const { data: session, status } = useSession();
   const router = useRouter();
+  const { session, status } = useRequireAuth();
   const { setUser, setTasks, setQuests, setAchievements, setLoading, showXpAnimation, showLevelUpAnimation, showAchievementAnimation, user, tasks, quests, achievements } = useStore();
   const [xpToday, setXpToday] = useState(0);
   const [tasksCompletedToday, setTasksCompletedToday] = useState(0);
 
   useEffect(() => {
-    if (status === 'unauthenticated') router.push('/login');
     if (status !== 'authenticated' || !session?.user?.id) return;
 
     const userId = session.user.id;
@@ -75,7 +74,7 @@ export default function DashboardPage() {
           });
       })
       .finally(() => setLoading(false));
-  }, [status, session, router, setUser, setTasks, setQuests, setAchievements, setLoading]);
+  }, [status, session, setUser, setTasks, setQuests, setAchievements, setLoading]);
 
   const handleCompleteTask = async (id: string) => {
     if (!session?.user?.id) return;

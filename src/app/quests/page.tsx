@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion } from 'framer-motion';
 import { Swords, Loader2, RefreshCw } from 'lucide-react';
 import { QuestCard } from '@/components/ui/QuestCard';
@@ -11,17 +10,15 @@ import { getLevelInfo } from '@/lib/game';
 import type { Quest, QuestType } from '@/types';
 
 export default function QuestsPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+  const { session, status } = useRequireAuth();
   const { quests, setQuests, showXpAnimation, showLevelUpAnimation } = useStore();
   const [activeTab, setActiveTab] = useState<QuestType>('DAILY');
   const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
-    if (status === 'unauthenticated') router.push('/login');
     if (status !== 'authenticated' || !session?.user?.id) return;
     loadQuests();
-  }, [status, session, router]);
+  }, [status, session]);
 
   const loadQuests = async () => {
     if (!session?.user?.id) return;
