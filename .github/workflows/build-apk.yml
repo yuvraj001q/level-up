@@ -31,11 +31,14 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Accept SDK licenses
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+
       - name: Sync Capacitor
         run: npx cap copy
 
       - name: Build APK
-        run: cd android && ./gradlew assembleDebug
+        run: cd android && ./gradlew assembleDebug --stacktrace
 
       - name: Rename APK
         run: mv android/app/build/outputs/apk/debug/app-debug.apk android/app/build/outputs/apk/debug/level-up.apk
@@ -46,15 +49,9 @@ jobs:
           name: level-up-apk
           path: android/app/build/outputs/apk/debug/level-up.apk
 
-      - name: Upload APK to Release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: latest
-          name: "Latest Build"
-          commit: ${{ github.sha }}
-          replacesArtifacts: true
-          allowUpdates: true
-          omitBody: true
-          omitPrereleaseDuringPublication: true
-          artifacts: android/app/build/outputs/apk/debug/level-up.apk
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release
+        run: |
+          gh release delete latest --yes --repo ${{ github.repository }} 2>/dev/null || true
+          gh release create latest --repo ${{ github.repository }} --title "Latest Build" --notes "Auto-built from commit ${{ github.sha }}" android/app/build/outputs/apk/debug/level-up.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
