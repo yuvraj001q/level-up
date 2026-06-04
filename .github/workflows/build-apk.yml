@@ -27,18 +27,30 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - uses: android-actions/setup-android@v3
 
       - uses: gradle/actions/setup-gradle@v4
+
+      - name: Debug
+        run: |
+          set -x
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "JAVA_HOME=$JAVA_HOME"
+          java -version
+          ls -la $ANDROID_HOME/ 2>&1
+          ls -la $ANDROID_HOME/platforms/ 2>&1
+          ls -la android/
+          chmod +x android/gradlew
+          file android/gradlew
+        shell: bash
 
       - name: Sync Capacitor
         run: npx cap copy
 
       - name: Build APK
         run: |
-          chmod +x android/gradlew
-          cd android && ./gradlew assembleDebug --no-daemon --stacktrace
+          echo "Starting Gradle build..."
+          cd android && ./gradlew assembleDebug --no-daemon --stacktrace 2>&1
         shell: bash
         env:
           ANDROID_HOME: /usr/local/lib/android/sdk
