@@ -26,17 +26,15 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - uses: android-actions/setup-android@v3
       - uses: gradle/actions/setup-gradle@v4
 
       - name: Sync Capacitor
         run: npx cap copy
 
-      - name: Test shell
-        run: echo "hello world" && pwd && ls -la
-
       - name: Build APK
-        run: cd $GITHUB_WORKSPACE/android && ./gradlew assembleDebug
+        run: cd android && ./gradlew assembleDebug
+        env:
+          ANDROID_HOME: /usr/local/lib/android/sdk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
