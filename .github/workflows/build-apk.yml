@@ -33,7 +33,7 @@ jobs:
 
       - name: Download & install Gradle
         run: |
-          curl -sLo /tmp/gradle.zip https://downloads.gradle-dn.com/distributions/gradle-8.12.0-bin.zip
+          curl -sLo /tmp/gradle.zip https://github.com/gradle/gradle/releases/download/v8.12.0/gradle-8.12.0-bin.zip
           unzip -q /tmp/gradle.zip -d /opt
           echo "/opt/gradle-8.12.0/bin" >> $GITHUB_PATH
 
