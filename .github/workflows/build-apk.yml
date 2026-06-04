@@ -27,16 +27,27 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      - name: Debug environment
+        run: |
+          echo "Java: $(java -version 2>&1)"
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          ls -la /usr/local/lib/android/sdk/ 2>/dev/null || echo "No android SDK at default path"
+          ls -la $ANDROID_HOME/cmdline-tools/ 2>/dev/null || echo "No cmdline-tools"
+          which gradle 2>/dev/null || echo "No gradle in PATH"
+
       - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: wrapper
 
       - name: Sync Capacitor
         run: npx cap copy
 
       - name: Build APK
         run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          export ANDROID_HOME=/usr/local/lib/android/sdk
+          export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
+          cd android && chmod +x gradlew && ./gradlew assembleDebug --no-daemon --stacktrace
         shell: bash
 
       - name: Upload APK
