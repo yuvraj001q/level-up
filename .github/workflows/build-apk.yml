@@ -33,12 +33,7 @@ jobs:
         run: npx cap copy
 
       - name: Build APK
-        run: npx cap open android
-        continue-on-error: true
-
-      - name: Build APK
         run: npx cap build android
-        continue-on-error: true
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
