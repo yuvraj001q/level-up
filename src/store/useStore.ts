@@ -59,22 +59,22 @@ export const useStore = create<AppState>()(
         setTimeout(() => set({ achievementAnimation: null }), 3000);
       },
 
-  addTask: (task) => set((state) => ({ tasks: [...state.tasks, task] })),
+      addTask: (task) => set((state) => ({ tasks: [...state.tasks, task] })),
 
-  updateTask: (id, updates) =>
-    set((state) => ({
-      tasks: state.tasks.map((t) => (t.id === id ? { ...t, ...updates } : t)),
-    })),
+      updateTask: (id, updates) =>
+        set((state) => ({
+          tasks: state.tasks.map((t) => (t.id === id ? { ...t, ...updates } : t)),
+        })),
 
-  updateQuest: (id, updates) =>
-    set((state) => ({
-      quests: state.quests.map((q) => (q.id === id ? { ...q, ...updates } : q)),
-    })),
+      updateQuest: (id, updates) =>
+        set((state) => ({
+          quests: state.quests.map((q) => (q.id === id ? { ...q, ...updates } : q)),
+        })),
 
-  updateUser: (updates) =>
-    set((state) => ({
-      user: state.user ? { ...state.user, ...updates } : null,
-    })),
+      updateUser: (updates) =>
+        set((state) => ({
+          user: state.user ? { ...state.user, ...updates } : null,
+        })),
     }),
     {
       name: 'level-up-store',
