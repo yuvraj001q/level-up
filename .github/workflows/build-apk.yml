@@ -31,14 +31,8 @@ jobs:
       - name: Sync Capacitor
         run: npx cap copy
 
-      - name: Download & install Gradle
-        run: |
-          curl -sLo /tmp/gradle.zip https://github.com/gradle/gradle/releases/download/v8.12.0/gradle-8.12.0-bin.zip
-          unzip -q /tmp/gradle.zip -d /opt
-          echo "/opt/gradle-8.12.0/bin" >> $GITHUB_PATH
-
       - name: Build APK
-        run: cd android && gradle assembleDebug
+        run: cd android && ./gradlew assembleDebug
         env:
           ANDROID_HOME: /usr/local/lib/android/sdk
 
