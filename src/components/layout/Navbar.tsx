@@ -105,7 +105,7 @@ export function Navbar() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="fixed top-4 left-4 z-50 md:hidden bg-bg-secondary/80 backdrop-blur-xl border border-border-subtle p-2 rounded-xl text-text-muted hover:text-text-primary transition-colors"
+        className="fixed top-4 left-4 z-50 md:hidden p-1 text-text-muted/60 hover:text-text-primary transition-colors"
         aria-label="Toggle menu"
       >
         <Menu className="w-5 h-5" />

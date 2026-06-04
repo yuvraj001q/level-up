@@ -143,9 +143,28 @@ export async function PATCH(req: Request) {
         const newRank = getNewRank(newLevelInfo.level);
         leveledUp = newLevelInfo.level > oldLevel;
 
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        let newDailyStreak = user.dailyStreak;
+        let newLongestStreak = user.longestStreak;
+
+        if (!user.lastActiveAt) {
+          newDailyStreak = 1;
+        } else {
+          const lastActive = new Date(user.lastActiveAt);
+          lastActive.setHours(0, 0, 0, 0);
+          const diffDays = Math.floor((today.getTime() - lastActive.getTime()) / (1000 * 60 * 60 * 24));
+          if (diffDays === 1) {
+            newDailyStreak = user.dailyStreak + 1;
+          } else if (diffDays > 1) {
+            newDailyStreak = user.dailyStreak > 0 ? 1 : 0;
+          }
+        }
+        newLongestStreak = Math.max(newDailyStreak, user.longestStreak);
+
         await prisma.user.update({
           where: { id: userId },
-          data: { xp: newXp, level: newLevelInfo.level, rank: newRank },
+          data: { xp: newXp, level: newLevelInfo.level, rank: newRank, dailyStreak: newDailyStreak, longestStreak: newLongestStreak, lastActiveAt: today },
         });
 
         await prisma.xpLog.create({
