@@ -1,33 +1,36 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export function useRequireAuth() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [isOnline, setIsOnline] = useState(true);
   const redirectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    setIsOnline(navigator.onLine);
-    const on = () => setIsOnline(true);
-    const off = () => setIsOnline(false);
-    window.addEventListener('online', on);
-    window.addEventListener('offline', off);
-    return () => { window.removeEventListener('online', on); window.removeEventListener('offline', off); };
-  }, []);
+    if (status === 'unauthenticated') {
+      // Check if Zustand has cached user data from a previous session
+      const isFreshUnAuth = (() => {
+        try {
+          const raw = localStorage.getItem('level-up-store');
+          if (!raw) return true;
+          const parsed = JSON.parse(raw);
+          if (parsed?.state?.user) return false; // had a session before
+          return true;
+        } catch {
+          return true;
+        }
+      })();
+      if (!isFreshUnAuth) return; // show cached data, don't redirect
 
-  useEffect(() => {
-    if (status === 'unauthenticated' && isOnline) {
-      // Debounce redirect to let NextAuth session re-fetch when coming back online
       redirectTimer.current = setTimeout(() => {
         router.push('/login');
       }, 1500);
       return () => { if (redirectTimer.current) clearTimeout(redirectTimer.current); };
     }
-  }, [status, isOnline, router]);
+  }, [status, router]);
 
-  return { session, status, isOnline };
+  return { session, status };
 }

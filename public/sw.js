@@ -8,6 +8,8 @@ const PRECACHE_PUBLIC = [
   '/offline.html', '/manifest.json', '/level-up.apk',
 ];
 
+const KEEP_CACHES = [CACHE, STATIC_CACHE, PAGE_CACHE, API_CACHE];
+
 const ASSET_PATTERNS = [/\/icons\//, /\/_next\/static\//, /\/favicon\.svg$/];
 
 self.addEventListener('install', (event) => {
@@ -22,7 +24,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
+      Promise.all(keys.filter((k) => !KEEP_CACHES.includes(k)).map((k) => caches.delete(k)))
     ).then(() => clients.claim())
   );
 });
@@ -38,6 +40,10 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (url.pathname.startsWith('/api/') && request.method === 'GET') {
+    if (url.pathname === '/api/auth/session') {
+      event.respondWith(networkWithSessionCache(request));
+      return;
+    }
     event.respondWith(networkFirst(request, API_CACHE));
     return;
   }
@@ -62,6 +68,31 @@ async function cacheFirst(request) {
     return res;
   } catch {
     return caches.match('/offline.html');
+  }
+}
+
+async function networkWithSessionCache(request) {
+  try {
+    const res = await fetch(request);
+    // Only cache session responses that contain a user (authenticated)
+    const clone = res.clone();
+    const body = await clone.json();
+    if (body?.user) {
+      const cache = await caches.open(API_CACHE);
+      cache.put(request, res.clone());
+    }
+    return res;
+  } catch {
+    const cached = await caches.match(request);
+    if (cached) {
+      // Only serve cached session if it has a user
+      const body = await cached.clone().json();
+      if (body?.user) return cached;
+    }
+    return new Response('{}', {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }
 
