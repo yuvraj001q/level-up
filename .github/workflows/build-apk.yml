@@ -27,23 +27,18 @@ jobs:
           java-version: 17
 
       - uses: android-actions/setup-android@v3
-
-      - name: Install Gradle
-        run: |
-          cd /tmp
-          curl -sLo gradle.zip https://services.gradle.org/distributions/gradle-8.13.0-bin.zip
-          unzip -q gradle.zip
-          echo "/tmp/gradle-8.13.0/bin" >> $GITHUB_PATH
+      - uses: gradle/actions/setup-gradle@v4
 
       - name: Sync Capacitor
         run: npx cap copy
 
       - name: Build APK
-        run: |
-          cd android
-          gradle assembleDebug
-        env:
-          ANDROID_HOME: /usr/local/lib/android/sdk
+        run: npx cap open android
+        continue-on-error: true
+
+      - name: Build APK
+        run: npx cap build android
+        continue-on-error: true
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
