@@ -1,7 +1,7 @@
-const CACHE = 'level-up-v4';
-const STATIC_CACHE = 'level-up-static-v4';
-const PAGE_CACHE = 'level-up-pages-v4';
-const API_CACHE = 'level-up-api-v4';
+const CACHE = 'level-up-v5';
+const STATIC_CACHE = 'level-up-static-v5';
+const PAGE_CACHE = 'level-up-pages-v5';
+const API_CACHE = 'level-up-api-v5';
 
 const PRECACHE_PUBLIC = [
   '/', '/login', '/register', '/download',

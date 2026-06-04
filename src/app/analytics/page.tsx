@@ -14,30 +14,21 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (status !== 'authenticated' || !session?.user?.id) return;
+    if (status !== 'authenticated' || !session?.user?.id) {
+      setLoading(false);
+      return;
+    }
 
     Promise.all([
       fetch(`/api/xp?userId=${session.user.id}`).then((r) => r.json()),
       fetch(`/api/tasks?userId=${session.user.id}`).then((r) => r.json()),
     ]).then(([xpData, tasks]) => {
       setXpData(xpData.chartData || []);
-      // Set category stats
-      const categories: Record<string, { total: number; completed: number }> = {};
-      tasks.forEach((t: { category: string | null; status: string }) => {
-        const cat = t.category || 'OTHER';
-        if (!categories[cat]) categories[cat] = { total: 0, completed: 0 };
-        categories[cat].total++;
-        if (t.status === 'COMPLETED') categories[cat].completed++;
-      });
       setLoading(false);
     });
   }, [status, session]);
 
-  if (status === 'loading' || loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-accent-blue" /></div>;
-
-  const completedTasks = 0;
-  const totalTasks = 0;
-  const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+  if (status === 'loading' && loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-accent-blue" /></div>;
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto">

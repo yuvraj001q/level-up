@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
 import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion } from 'framer-motion';
 import { User, Save, Loader2, Zap, Award, Flame, BarChart3 } from 'lucide-react';
@@ -25,8 +24,7 @@ const GOALS: { value: Goal; label: string }[] = [
 ];
 
 export default function ProfilePage() {
-  const { update } = useSession();
-  const { session, status } = useRequireAuth();
+  const { session, status, update } = useRequireAuth();
   const { user, setUser } = useStore();
   const [name, setName] = useState('');
   const [age, setAge] = useState<number | ''>('');

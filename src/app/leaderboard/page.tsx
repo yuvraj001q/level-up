@@ -22,7 +22,10 @@ export default function LeaderboardPage() {
   const [sortBy, setSortBy] = useState<'xp' | 'streak' | 'achievements'>('xp');
 
   useEffect(() => {
-    if (status !== 'authenticated') return;
+    if (status !== 'authenticated') {
+      setLoading(false);
+      return;
+    }
 
     fetch('/api/leaderboard')
       .then((r) => r.json())
@@ -38,7 +41,7 @@ export default function LeaderboardPage() {
     return b.xp - a.xp;
   });
 
-  if (status === 'loading' || loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-accent-blue" /></div>;
+  if (status === 'loading' && loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-accent-blue" /></div>;
 
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto">

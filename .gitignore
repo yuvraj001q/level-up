@@ -41,4 +41,5 @@ android/.gradle/
 android/build/
 android/app/build/
 android/local.properties
-public/level-up.apk
+# APK is tracked intentionally for Vercel serving
+# public/level-up.apk

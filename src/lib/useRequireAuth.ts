@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export function useRequireAuth() {
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const router = useRouter();
   const redirectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -32,5 +32,5 @@ export function useRequireAuth() {
     }
   }, [status, router]);
 
-  return { session, status };
+  return { session, status, update };
 }
