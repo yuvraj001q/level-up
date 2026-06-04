@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Zap, ArrowRight, Sparkles, Swords, Trophy, BarChart3, Users } from 'lucide-react';
+import { Zap, ArrowRight, Sparkles, Swords, Trophy, BarChart3, Users, Download } from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -88,6 +88,21 @@ export default function HomePage() {
                 className="px-8 py-4 rounded-xl glass text-text-primary font-semibold text-lg hover:bg-bg-glass-hover transition-colors"
               >
                 Sign In
+              </Link>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="mt-6"
+            >
+              <Link
+                href="/download"
+                className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors"
+              >
+                <Download className="w-4 h-4" />
+                Download the mobile app
               </Link>
             </motion.div>
           </div>
