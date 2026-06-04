@@ -36,13 +36,7 @@ jobs:
         run: echo "hello world" && pwd && ls -la
 
       - name: Build APK
-        run: |
-          echo "Step started"
-          ls -la $GITHUB_WORKSPACE/android/gradlew
-          ls -la $GITHUB_WORKSPACE/android/
-          cd $GITHUB_WORKSPACE/android
-          ./gradlew assembleDebug
-        shell: bash
+        run: cd $GITHUB_WORKSPACE/android && ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
