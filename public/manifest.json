@@ -2,7 +2,7 @@
   "name": "Level Up - Turn your life into a game",
   "short_name": "Level Up",
   "description": "Gamified productivity with AI-powered quests, XP, and achievements",
-  "start_url": "/dashboard",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a1a",
   "theme_color": "#3b82f6",

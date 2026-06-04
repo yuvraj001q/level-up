@@ -21,6 +21,10 @@ export const metadata: Metadata = {
   title: 'Level Up - Turn your life into a game',
   description: 'Gamified productivity with AI-powered quests, XP, and achievements. Turn your life into a game.',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/favicon.svg',
+    apple: '/icons/icon-192.svg',
+  },
 };
 
 export default function RootLayout({

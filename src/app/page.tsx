@@ -1,10 +1,21 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Zap, ArrowRight, Sparkles, Swords, Trophy, BarChart3, Users, Download } from 'lucide-react';
 
 export default function HomePage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.replace('/dashboard');
+    }
+  }, [status, router]);
   return (
     <div className="min-h-screen bg-bg-primary">
       <div className="absolute inset-0 overflow-hidden">

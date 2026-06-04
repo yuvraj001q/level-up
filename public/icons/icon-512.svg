@@ -6,7 +6,5 @@
     </linearGradient>
   </defs>
   <rect width="512" height="512" rx="96" fill="#0a0a1a"/>
-  <g transform="translate(256,256)">
-    <polygon points="0,-160 53,-53 160,-53 80,26 107,133 0,66 -107,133 -80,26 -160,-53 -53,-53" fill="url(#g)"/>
-  </g>
+  <path d="M277 85l-128 192h96l-32 150 160-214h-107l107-128z" fill="url(#g)"/>
 </svg>
