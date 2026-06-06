@@ -10,6 +10,7 @@ import { AchievementUnlock } from '@/components/ui/AchievementUnlock';
 import { FloatingElements } from '@/components/ui/FloatingElements';
 import { PageTransition } from '@/components/ui/PageTransition';
 import { PwaRegister } from '@/components/PwaRegister';
+import { UpdatePrompt } from '@/components/UpdatePrompt';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const inter = Inter({
@@ -47,6 +48,7 @@ export default function RootLayout({
             <PageTransition>{children}</PageTransition>
           </main>
           <PwaRegister />
+          <UpdatePrompt />
           <SpeedInsights />
         </Providers>
       </body>

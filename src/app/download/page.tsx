@@ -1,10 +1,26 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Zap, Smartphone, Package, Download, ArrowLeft, ExternalLink } from 'lucide-react';
+import { Zap, Smartphone, Package, Download, ArrowLeft, ExternalLink, RefreshCw } from 'lucide-react';
 
 export default function DownloadPage() {
+  const [buildVer, setBuildVer] = useState('1.0');
+  const [buildDate, setBuildDate] = useState('');
+
+  useEffect(() => {
+    fetch('/api/app/version')
+      .then(r => r.json())
+      .then(d => {
+        if (d.version && d.version !== 'dev') {
+          setBuildVer(d.version);
+          setBuildDate(new Date(d.deployedAt).toLocaleDateString());
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="min-h-screen bg-bg-primary">
       <div className="absolute inset-0 overflow-hidden">
@@ -81,7 +97,7 @@ export default function DownloadPage() {
                   <Download className="w-4 h-4" />
                   Download APK (56 MB)
                 </a>
-                <p className="text-xs text-text-muted">Version 1.0 &bull; Android 8.0+ &bull; Debug build</p>
+                <p className="text-xs text-text-muted">Build {buildVer}{buildDate ? ` &bull; ${buildDate}` : ''} &bull; Android 8.0+</p>
               </div>
             </div>
           </motion.div>
