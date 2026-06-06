@@ -17,7 +17,7 @@ import type { Task, Quest, UserProfile } from '@/types';
 export default function DashboardPage() {
   const router = useRouter();
   const { session, status } = useRequireAuth();
-  const { setUser, setTasks, setQuests, setAchievements, setLoading, showXpAnimation, showLevelUpAnimation, showAchievementAnimation, user, tasks, quests, achievements, _hydrated } = useStore();
+  const { setUser, setTasks, setQuests, setAchievements, setLoading, showXpAnimation, showLevelUpAnimation, showAchievementAnimation, user, tasks, quests, achievements } = useStore();
   const [xpToday, setXpToday] = useState(0);
   const [tasksCompletedToday, setTasksCompletedToday] = useState(0);
 
@@ -27,19 +27,22 @@ export default function DashboardPage() {
     const userId = session.user.id;
     setLoading(true);
 
+    // Fire all fetches in parallel with individual error isolation
+    const fetchJson = (url: string) => fetch(url).then(r => r.json()).catch(() => null);
+
     Promise.all([
-      fetch(`/api/users/${userId}`).then(r => { if (!r.ok) throw new Error('User fetch failed'); return r.json(); }),
-      fetch(`/api/tasks?userId=${userId}`).then(r => { if (!r.ok) throw new Error('Tasks fetch failed'); return r.json(); }),
-      fetch(`/api/quests?userId=${userId}`).then(r => { if (!r.ok) throw new Error('Quests fetch failed'); return r.json(); }),
-      fetch(`/api/achievements?userId=${userId}`).then(r => { if (!r.ok) throw new Error('Achievements fetch failed'); return r.json(); }),
+      fetchJson(`/api/users/${userId}`),
+      fetchJson(`/api/tasks?userId=${userId}`),
+      fetchJson(`/api/quests?userId=${userId}`),
+      fetchJson(`/api/achievements?userId=${userId}`),
     ])
       .then(([userData, tasksData, questsData, achievementsData]) => {
-        if (userData.id) setUser(userData as UserProfile);
-        setTasks(tasksData);
-        setQuests(questsData);
-        setAchievements(achievementsData);
+        if (userData?.id) setUser(userData as UserProfile);
+        if (Array.isArray(tasksData)) setTasks(tasksData);
+        if (Array.isArray(questsData)) setQuests(questsData);
+        if (Array.isArray(achievementsData)) setAchievements(achievementsData);
 
-        // Fire-and-forget quest generation (don't block)
+        // Fire-and-forget quest generation
         fetch(`/api/quests?userId=${userId}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -59,15 +62,14 @@ export default function DashboardPage() {
           .then(data => { if (data?.total) setXpToday(data.total); })
           .catch(() => {});
 
-        // Tasks completed today from fetched tasks data
-        const allTasks = tasksData as Task[];
+        // Tasks completed today
+        const allTasks = (Array.isArray(tasksData) ? tasksData : []) as Task[];
         const todayCompleted = allTasks.filter(t => {
           if (!t.completedAt) return false;
           return new Date(t.completedAt) >= today;
         });
         setTasksCompletedToday(todayCompleted.length);
       })
-      .catch(err => console.error('Dashboard data load failed:', err))
       .finally(() => setLoading(false));
   }, [status, session, setUser, setTasks, setQuests, setAchievements, setLoading]);
 
@@ -124,7 +126,7 @@ export default function DashboardPage() {
     }
   };
 
-  if (status === 'loading' || !_hydrated) {
+  if (status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-accent-blue border-t-transparent rounded-full animate-spin" />
