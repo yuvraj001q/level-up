@@ -26,7 +26,8 @@ export default function QuestsPage() {
     if (!session?.user?.id) return;
     fetch(`/api/quests?userId=${session.user.id}`)
       .then((r) => r.json())
-      .then((data) => { setQuests(data); setLoaded(true); });
+      .then((data) => { setQuests(data); setLoaded(true); })
+      .catch(() => setLoaded(true));
   };
 
   const handleGenerate = async () => {

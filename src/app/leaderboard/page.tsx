@@ -35,7 +35,8 @@ export default function LeaderboardPage() {
       .then((data) => {
         setUsers(data);
         setLoading(false);
-      });
+      })
+      .catch(() => setLoading(false));
   }, [status]);
 
   const sortedUsers = [...users].sort((a, b) => {

@@ -52,7 +52,8 @@ export default function TasksPage() {
     if (status !== 'authenticated' || !session?.user?.id) return;
     fetch(`/api/tasks?userId=${session.user.id}`)
       .then((r) => r.json())
-      .then((data) => { setTasks(data); setLoaded(true); });
+      .then((data) => { setTasks(data); setLoaded(true); })
+      .catch(() => setLoaded(true));
   }, [status, session, setTasks]);
 
   const handleCreate = async (e: React.FormEvent) => {

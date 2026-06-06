@@ -22,10 +22,12 @@ export default function AnalyticsPage() {
     Promise.all([
       fetch(`/api/xp?userId=${session.user.id}`).then((r) => r.json()),
       fetch(`/api/tasks?userId=${session.user.id}`).then((r) => r.json()),
-    ]).then(([xpData, tasks]) => {
-      setXpData(xpData.chartData || []);
-      setLoading(false);
-    });
+    ])
+      .then(([xpData]) => {
+        setXpData(xpData?.chartData || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, [status, session]);
 
   if (status === 'loading' && loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-accent-blue" /></div>;

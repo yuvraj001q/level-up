@@ -23,7 +23,8 @@ export default function AchievementsPage() {
     if (status !== 'authenticated' || !session?.user?.id) return;
     fetch(`/api/achievements?userId=${session.user.id}`)
       .then((r) => r.json())
-      .then((data) => { setAchievements(data); setLoaded(true); });
+      .then((data) => { setAchievements(data); setLoaded(true); })
+      .catch(() => setLoaded(true));
   }, [status, session, setAchievements]);
 
   if (status === 'loading') return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent-blue border-t-transparent rounded-full animate-spin" /></div>;

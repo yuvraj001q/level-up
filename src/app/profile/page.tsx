@@ -47,7 +47,8 @@ export default function ProfilePage() {
           setSelectedGoals(data.goals || []);
           setInterestsStr((data.interests || []).join(', '));
         }
-      });
+      })
+      .catch(() => {});
   }, [status, session, setUser]);
 
   const handleSave = async () => {
