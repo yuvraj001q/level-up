@@ -18,9 +18,6 @@ interface TierArt {
   bgFrom: string;
   bgTo: string;
   label: string;
-  number: number;
-  path: string;
-  ornament: string;
 }
 
 const TIERS: Record<League, TierArt> = {
@@ -32,9 +29,6 @@ const TIERS: Record<League, TierArt> = {
     bgFrom: '#1a0f08',
     bgTo: '#2d1a0e',
     label: 'Bronze',
-    number: 1,
-    path: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5',
-    ornament: 'M8 8l2 2 4-4',
   },
   SILVER: {
     primary: '#c0c0c0',
@@ -44,9 +38,6 @@ const TIERS: Record<League, TierArt> = {
     bgFrom: '#0f1215',
     bgTo: '#1a1f24',
     label: 'Silver',
-    number: 2,
-    path: 'M4 4h16v16H4zM8 8h8v8H8z',
-    ornament: 'M12 8v8M8 12h8',
   },
   GOLD: {
     primary: '#ffd700',
@@ -56,9 +47,6 @@ const TIERS: Record<League, TierArt> = {
     bgFrom: '#1a1200',
     bgTo: '#2d2000',
     label: 'Gold',
-    number: 3,
-    path: 'M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z',
-    ornament: 'M12 6v12M6 12h12',
   },
   PLATINUM: {
     primary: '#e5e4e2',
@@ -68,9 +56,6 @@ const TIERS: Record<League, TierArt> = {
     bgFrom: '#0a0f14',
     bgTo: '#141c24',
     label: 'Platinum',
-    number: 4,
-    path: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5',
-    ornament: 'M6 6l12 12M18 6L6 18',
   },
   DIAMOND: {
     primary: '#00ffff',
@@ -80,9 +65,6 @@ const TIERS: Record<League, TierArt> = {
     bgFrom: '#000a0f',
     bgTo: '#001419',
     label: 'Diamond',
-    number: 5,
-    path: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5',
-    ornament: 'M12 5v14M5 12h14',
   },
   MASTER: {
     primary: '#a855f7',
@@ -92,9 +74,6 @@ const TIERS: Record<League, TierArt> = {
     bgFrom: '#0f0518',
     bgTo: '#1a0a2e',
     label: 'Master',
-    number: 6,
-    path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM12 6v6l4 2',
-    ornament: 'M9 12l2 2 4-4',
   },
   GRANDMASTER: {
     primary: '#ef4444',
@@ -104,9 +83,6 @@ const TIERS: Record<League, TierArt> = {
     bgFrom: '#1a0505',
     bgTo: '#2e0a0a',
     label: 'Grandmaster',
-    number: 7,
-    path: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z',
-    ornament: 'M8 12h8M12 8v8',
   },
 };
 
@@ -227,71 +203,69 @@ function LeagueBadgeSvg({ league, size }: { league: League; size: number }) {
       {/* Center emblem area — dark circle */}
       <circle cx={cx} cy={cy} r={innerR * 0.55} fill={t.bgTo} fillOpacity="0.6" stroke={t.primary} strokeWidth={size * 0.015} strokeOpacity="0.35" />
 
-      {/* Tier number */}
-      <text
-        x={cx}
-        y={cy - innerR * 0.15}
-        textAnchor="middle"
-        dominantBaseline="central"
-        fill={t.primary}
-        fontSize={size * 0.16}
-        fontWeight="900"
-        fontFamily="system-ui, sans-serif"
-        filter={`url(#soft-glow-${league})`}
-      >
-        {t.number}
-      </text>
-
-      {/* Unique tier symbol below number */}
+      {/* Big centered emblem (no number — like Critique AI character avatars) */}
       <g
-        transform={`translate(${cx}, ${cy + innerR * 0.2}) scale(${size * 0.004})`}
+        transform={`translate(${cx}, ${cy}) scale(${size * 0.005})`}
         stroke={t.secondary}
-        strokeWidth="1.5"
+        strokeWidth="1.8"
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
       >
-        {/* Star burst */}
-        {t.number === 1 && (
-          <>
-            <polygon points="0,-10 3,-3 10,-3 5,2 7,10 0,5 -7,10 -5,2 -10,-3 -3,-3" fill={t.primary} fillOpacity="0.4" />
-          </>
+        {/* BRONZE — Large shield */}
+        {league === 'BRONZE' && (
+          <g filter={`url(#soft-glow-${league})`}>
+            <path d="M0,-14 L12,-9 L12,4 Q12,10 0,14 Q-12,10 -12,4 L-12,-9 Z" fill={t.primary} fillOpacity="0.25" stroke={t.primary} />
+            <line x1="0" y1="-8" x2="0" y2="8" stroke={t.primary} strokeOpacity="0.6" />
+            <line x1="-5" y1="-3" x2="5" y2="-3" stroke={t.primary} strokeOpacity="0.6" />
+          </g>
         )}
-        {t.number === 2 && (
-          <>
-            <path d={t.path} stroke={t.primary} />
-            <line x1="-6" y1="-6" x2="6" y2="6" stroke={t.primary} strokeOpacity="0.5" />
-          </>
+        {/* SILVER — Crossed swords */}
+        {league === 'SILVER' && (
+          <g filter={`url(#soft-glow-${league})`}>
+            <line x1="-10" y1="-10" x2="10" y2="10" stroke={t.primary} />
+            <line x1="10" y1="-10" x2="-10" y2="10" stroke={t.primary} />
+            <circle cx="0" cy="0" r="3" fill={t.primary} fillOpacity="0.3" />
+          </g>
         )}
-        {t.number === 3 && (
-          <>
-            <path d={t.path} fill={t.primary} fillOpacity="0.3" stroke={t.accent} />
-            <line x1="0" y1="-4" x2="0" y2="4" stroke={t.primary} />
-          </>
+        {/* GOLD — Crown */}
+        {league === 'GOLD' && (
+          <g filter={`url(#soft-glow-${league})`}>
+            <path d="M-12,-6 L-8,-12 L-4,-4 L0,-10 L4,-4 L8,-12 L12,-6 L12,6 L-12,6 Z" fill={t.primary} fillOpacity="0.25" stroke={t.primary} />
+            <circle cx="0" cy="4" r="2" fill={t.primary} fillOpacity="0.5" />
+          </g>
         )}
-        {t.number === 4 && (
-          <>
-            <circle cx="0" cy="0" r="6" fill="none" stroke={t.primary} strokeWidth="1.5" />
-            <circle cx="0" cy="0" r="2" fill={t.primary} fillOpacity="0.5" />
-          </>
-        )}
-        {t.number === 5 && (
-          <>
-            <polygon points="0,-8 4,-3 8,-3 5,1 6,6 0,3 -6,6 -5,1 -8,-3 -4,-3" fill={t.primary} fillOpacity="0.3" />
+        {/* PLATINUM — Shooting star / comet */}
+        {league === 'PLATINUM' && (
+          <g filter={`url(#soft-glow-${league})`}>
+            <path d="M-14,0 L-8,-6 L-4,-2 L10,-10 L6,2 L12,6 L-2,8 L-6,12 L-8,2 Z" fill={t.primary} fillOpacity="0.2" stroke={t.primary} />
             <circle cx="0" cy="0" r="2" fill={t.primary} fillOpacity="0.6" />
-          </>
+          </g>
         )}
-        {t.number === 6 && (
-          <>
-            <path d="M-6,-6 Q0,-10 6,-6 Q10,0 6,6 Q0,10 -6,6 Q-10,0 -6,-6Z" fill={t.primary} fillOpacity="0.2" stroke={t.accent} />
-            <circle cx="0" cy="0" r="2" fill={t.primary} />
-          </>
+        {/* DIAMOND — Geometric crystal */}
+        {league === 'DIAMOND' && (
+          <g filter={`url(#soft-glow-${league})`}>
+            <polygon points="0,-12 10,-4 10,6 0,12 -10,6 -10,-4" fill={t.primary} fillOpacity="0.2" stroke={t.primary} />
+            <line x1="0" y1="-12" x2="0" y2="12" stroke={t.primary} strokeOpacity="0.4" />
+            <line x1="-10" y1="-4" x2="10" y2="-4" stroke={t.primary} strokeOpacity="0.4" />
+            <polygon points="0,-4 6,0 0,4 -6,0" fill={t.primary} fillOpacity="0.3" />
+          </g>
         )}
-        {t.number === 7 && (
-          <>
-            <path d="M0,-8 L6,6 L0,3 L-6,6 Z" fill={t.primary} fillOpacity="0.3" stroke={t.accent} strokeWidth="1.5" />
-            <circle cx="0" cy="1" r="1.5" fill={t.primary} />
-          </>
+        {/* MASTER — Wings */}
+        {league === 'MASTER' && (
+          <g filter={`url(#soft-glow-${league})`}>
+            <path d="M-2,0 Q-8,-6 -14,-4 Q-10,2 -6,0 Q-10,6 -14,10 Q-8,8 -2,4" fill={t.primary} fillOpacity="0.2" stroke={t.primary} />
+            <path d="M2,0 Q8,-6 14,-4 Q10,2 6,0 Q10,6 14,10 Q8,8 2,4" fill={t.primary} fillOpacity="0.2" stroke={t.primary} />
+            <circle cx="0" cy="2" r="2" fill={t.primary} fillOpacity="0.5" />
+          </g>
+        )}
+        {/* GRANDMASTER — Dragon / flame crest */}
+        {league === 'GRANDMASTER' && (
+          <g filter={`url(#soft-glow-${league})`}>
+            <path d="M0,-12 Q6,-8 8,-4 Q12,-2 10,2 Q8,6 4,8 Q6,12 2,10 Q0,14 -2,10 Q-6,12 -4,8 Q-8,6 -10,2 Q-12,-2 -8,-4 Q-6,-8 0,-12Z" fill={t.primary} fillOpacity="0.2" stroke={t.primary} />
+            <circle cx="0" cy="0" r="2.5" fill={t.primary} fillOpacity="0.5" />
+            <path d="M-3,-6 L0,-10 L3,-6" stroke={t.primary} strokeOpacity="0.6" />
+          </g>
         )}
       </g>
     </svg>
@@ -408,10 +382,6 @@ export function LeagueShield({ league, size = 48, animate = true, showLabel = fa
 
 export function getLeagueLabel(league: League): string {
   return TIERS[league].label;
-}
-
-export function getLeagueTierNumber(league: League): number {
-  return TIERS[league].number;
 }
 
 export const LEAGUE_ORDER: League[] = ['BRONZE', 'SILVER', 'GOLD', 'PLATINUM', 'DIAMOND', 'MASTER', 'GRANDMASTER'];
