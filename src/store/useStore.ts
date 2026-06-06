@@ -11,6 +11,7 @@ interface AppState {
   xpAnimation: { amount: number; show: boolean } | null;
   levelUpAnimation: { level: number; show: boolean } | null;
   achievementAnimation: { title: string; show: boolean } | null;
+  _hydrated: boolean;
 
   setUser: (user: UserProfile | null) => void;
   setTasks: (tasks: Task[]) => void;
@@ -34,6 +35,7 @@ export const useStore = create<AppState>()(
       quests: [],
       achievements: [],
       isLoading: true,
+      _hydrated: false,
       xpAnimation: null,
       levelUpAnimation: null,
       achievementAnimation: null,
@@ -84,6 +86,9 @@ export const useStore = create<AppState>()(
         quests: state.quests,
         achievements: state.achievements,
       }),
+      onRehydrateStorage: () => () => {
+        useStore.setState({ _hydrated: true });
+      },
     }
   )
 );
