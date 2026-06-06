@@ -26,6 +26,8 @@ export async function GET(
       level: true,
       xp: true,
       rank: true,
+      league: true,
+      lastPromotion: true,
       achievementPoints: true,
       dailyStreak: true,
       weeklyStreak: true,

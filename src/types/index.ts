@@ -2,6 +2,21 @@ export type TaskDifficulty = 'EASY' | 'MEDIUM' | 'HARD' | 'EPIC' | 'LEGENDARY';
 export type TaskStatus = 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED' | 'EXPIRED';
 export type QuestType = 'DAILY' | 'WEEKLY' | 'MONTHLY';
 export type Goal = 'FITNESS' | 'LEARNING' | 'CODING' | 'READING' | 'BUSINESS' | 'SELF_IMPROVEMENT' | 'NDA_PREPARATION' | 'CAREER_GROWTH' | 'COMMUNICATION_SKILLS' | 'CREATIVITY' | 'MINDFULNESS' | 'PRODUCTIVITY';
+export type League = 'BRONZE' | 'SILVER' | 'GOLD' | 'PLATINUM' | 'DIAMOND' | 'MASTER' | 'GRANDMASTER';
+
+export const LEAGUE_ORDER: League[] = ['BRONZE', 'SILVER', 'GOLD', 'PLATINUM', 'DIAMOND', 'MASTER', 'GRANDMASTER'];
+
+export function getNextLeague(league: League): League | null {
+  const idx = LEAGUE_ORDER.indexOf(league);
+  if (idx >= LEAGUE_ORDER.length - 1) return null;
+  return LEAGUE_ORDER[idx + 1];
+}
+
+export function getPrevLeague(league: League): League | null {
+  const idx = LEAGUE_ORDER.indexOf(league);
+  if (idx <= 0) return null;
+  return LEAGUE_ORDER[idx - 1];
+}
 
 export interface UserProfile {
   id: string;
@@ -16,6 +31,8 @@ export interface UserProfile {
   level: number;
   xp: number;
   rank: string;
+  league: League;
+  lastPromotion: Date | null;
   achievementPoints: number;
   dailyStreak: number;
   weeklyStreak: number;

@@ -29,6 +29,16 @@ enum QuestType {
   MONTHLY
 }
 
+enum League {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+  DIAMOND
+  MASTER
+  GRANDMASTER
+}
+
 enum Goal {
   FITNESS
   LEARNING
@@ -61,6 +71,8 @@ model User {
   level         Int      @default(1)
   xp            Int      @default(0)
   rank          String   @default("Newcomer")
+  league        League   @default(BRONZE)
+  lastPromotion DateTime?
   achievementPoints Int  @default(0)
 
   dailyStreak   Int      @default(0)

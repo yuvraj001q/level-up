@@ -6,6 +6,7 @@ import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion } from 'framer-motion';
 import { Zap, Sparkles, TrendingUp, ListChecks, Swords, Trophy } from 'lucide-react';
 import { StatsCardSkeleton, CardSkeleton } from '@/components/ui/Skeleton';
+import { LeagueShield, getLeagueLabel } from '@/components/ui/LeagueShield';
 import { XPBar } from '@/components/ui/XPBar';
 import { StreakCounter } from '@/components/ui/StreakCounter';
 import { TaskCard } from '@/components/ui/TaskCard';
@@ -145,7 +146,7 @@ export default function DashboardPage() {
           <div className="skeleton h-8 w-72 mb-2" />
           <div className="skeleton h-4 w-44" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
           {[...Array(4)].map((_, i) => <StatsCardSkeleton key={i} />)}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -219,12 +220,10 @@ export default function DashboardPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
           <div className="glass p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-accent-blue/10 flex items-center justify-center">
-                <ListChecks className="w-5 h-5 text-accent-blue" />
-              </div>
+              <LeagueShield league={user.league} size={40} />
               <div>
-                <p className="text-xs text-text-muted uppercase tracking-wider">Done Today</p>
-                <p className="text-2xl font-bold">{tasksCompletedToday}</p>
+                <p className="text-xs text-text-muted uppercase tracking-wider">League</p>
+                <p className="text-lg font-bold gradient-text">{getLeagueLabel(user.league)}</p>
               </div>
             </div>
           </div>

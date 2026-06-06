@@ -10,6 +10,7 @@ export async function GET() {
         level: true,
         xp: true,
         rank: true,
+        league: true,
         dailyStreak: true,
         achievementPoints: true,
       },

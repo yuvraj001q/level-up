@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion } from 'framer-motion';
 import { Users, Trophy, Zap, Flame, Medal, Crown, Loader2 } from 'lucide-react';
+import { LeagueShield, getLeagueLabel } from '@/components/ui/LeagueShield';
+import type { League } from '@/types';
 
 interface LeaderboardUser {
   id: string;
@@ -11,6 +13,7 @@ interface LeaderboardUser {
   level: number;
   xp: number;
   rank: string;
+  league: League;
   dailyStreak: number;
   achievementPoints: number;
 }
@@ -74,7 +77,7 @@ export default function LeaderboardPage() {
         })}
       </div>
 
-      <div className="space-y-2">
+            <div className="space-y-2">
         {sortedUsers.length === 0 ? (
           <div className="glass p-12 text-center">
             <Users className="w-12 h-12 mx-auto text-text-muted mb-4" />
@@ -89,29 +92,32 @@ export default function LeaderboardPage() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.03 }}
-                className={`glass-hover p-4 flex items-center gap-4 ${
+                className={`glass-hover p-3 flex items-center gap-3 ${
                   isMe ? 'border-accent-blue/30 bg-accent-blue/5' : ''
                 }`}
               >
-                <div className="w-8 text-center">
-                  {i === 0 ? <Crown className="w-5 h-5 text-accent-orange mx-auto" />
-                    : i === 1 ? <Medal className="w-5 h-5 text-text-muted mx-auto" />
-                    : i === 2 ? <Medal className="w-5 h-5 text-accent-orange/60 mx-auto" />
-                    : <span className="text-text-muted text-sm">{i + 1}</span>}
+                <div className="w-7 text-center flex-shrink-0">
+                  {i === 0 ? <Crown className="w-4 h-4 text-accent-orange mx-auto" />
+                    : i === 1 ? <Medal className="w-4 h-4 text-text-muted mx-auto" />
+                    : i === 2 ? <Medal className="w-4 h-4 text-accent-orange/60 mx-auto" />
+                    : <span className="text-text-muted text-xs">{i + 1}</span>}
                 </div>
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent-blue to-accent-cyan flex items-center justify-center text-white font-bold text-sm">
+                <div className="flex-shrink-0">
+                  <LeagueShield league={u.league} size={36} />
+                </div>
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-accent-blue to-accent-cyan flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
                   {u.name?.[0]?.toUpperCase() || '?'}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium">
+                  <p className="text-sm font-medium truncate">
                     {u.name || 'Anonymous'}
                     {isMe && <span className="text-accent-blue text-xs ml-2">(you)</span>}
                   </p>
                   <p className="text-xs text-text-muted">
-                    Level {u.level} &middot; {u.rank}
+                    {getLeagueLabel(u.league)} &middot; Level {u.level}
                   </p>
                 </div>
-                <div className="text-right">
+                <div className="text-right flex-shrink-0">
                   {sortBy === 'xp' && <p className="text-sm font-semibold">{u.xp.toLocaleString()} XP</p>}
                   {sortBy === 'streak' && <p className="text-sm font-semibold flex items-center gap-1 justify-end"><Flame className="w-3 h-3 text-accent-orange" />{u.dailyStreak}</p>}
                   {sortBy === 'achievements' && <p className="text-sm font-semibold">{u.achievementPoints} pts</p>}
