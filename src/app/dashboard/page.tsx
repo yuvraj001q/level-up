@@ -6,7 +6,7 @@ import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion } from 'framer-motion';
 import { Zap, Sparkles, TrendingUp, ListChecks, Swords, Trophy } from 'lucide-react';
 import { StatsCardSkeleton, CardSkeleton } from '@/components/ui/Skeleton';
-import { LeagueShield, getLeagueLabel } from '@/components/ui/LeagueShield';
+import { LeagueShield, getLeagueLabel, getLeagueTierNumber } from '@/components/ui/LeagueShield';
 import { XPBar } from '@/components/ui/XPBar';
 import { StreakCounter } from '@/components/ui/StreakCounter';
 import { TaskCard } from '@/components/ui/TaskCard';
@@ -212,13 +212,22 @@ export default function DashboardPage() {
             </div>
           </div>
         </motion.div>
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-          <div className="glass p-4">
-            <div className="flex items-center gap-3">
-              <LeagueShield league={user.league} size={40} />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="relative"
+        >
+          <div className="glass p-4 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-accent-blue/5" />
+            <div className="relative flex items-center gap-4">
+              <LeagueShield league={user.league} size={52} animate={true} showLabel={false} />
               <div>
-                <p className="text-xs text-text-muted uppercase tracking-wider">League</p>
-                <p className="text-lg font-bold gradient-text">{getLeagueLabel(user.league)}</p>
+                <p className="text-xs text-text-muted uppercase tracking-wider mb-0.5">Current League</p>
+                <p className="text-xl font-bold gradient-text">{getLeagueLabel(user.league)}</p>
+                <p className="text-[10px] text-text-muted mt-0.5">
+                  Tier {getLeagueTierNumber(user.league)} of 7
+                </p>
               </div>
             </div>
           </div>
