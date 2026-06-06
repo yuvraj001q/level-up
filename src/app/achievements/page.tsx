@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion } from 'framer-motion';
 import { Trophy, Lock, Sparkles, Footprints, Flame, Award, BookOpen, Dumbbell, Hammer, CheckCircle, Target, Star, Crown, TrendingUp, CalendarCheck, CalendarDays, Swords } from 'lucide-react';
 import { useStore } from '@/store/useStore';
+import { CardSkeleton } from '@/components/ui/Skeleton';
 import type { Achievement } from '@/types';
 
 const ICON_MAP: Record<string, React.ElementType> = {
@@ -16,15 +17,39 @@ const ICON_MAP: Record<string, React.ElementType> = {
 export default function AchievementsPage() {
   const { session, status } = useRequireAuth();
   const { achievements, setAchievements } = useStore();
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (status !== 'authenticated' || !session?.user?.id) return;
     fetch(`/api/achievements?userId=${session.user.id}`)
       .then((r) => r.json())
-      .then(setAchievements);
+      .then((data) => { setAchievements(data); setLoaded(true); });
   }, [status, session, setAchievements]);
 
   if (status === 'loading') return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent-blue border-t-transparent rounded-full animate-spin" /></div>;
+
+  if (!loaded) {
+    return (
+      <div className="p-4 md:p-8 max-w-5xl mx-auto">
+        <div className="mb-8">
+          <div className="skeleton h-8 w-44 mb-2" />
+          <div className="skeleton h-4 w-32" />
+        </div>
+        <div className="mb-8">
+          <div className="skeleton h-6 w-24 mb-4" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {[...Array(6)].map((_, i) => <CardSkeleton key={i} />)}
+          </div>
+        </div>
+        <div>
+          <div className="skeleton h-6 w-20 mb-4" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {[...Array(6)].map((_, i) => <CardSkeleton key={i} />)}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const unlocked = achievements.filter((a) => a.unlocked);
   const locked = achievements.filter((a) => !a.unlocked);

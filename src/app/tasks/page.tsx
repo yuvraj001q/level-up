@@ -5,6 +5,7 @@ import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Sparkles, Loader2, ListChecks, Filter } from 'lucide-react';
 import { TaskCard } from '@/components/ui/TaskCard';
+import { CardSkeleton } from '@/components/ui/Skeleton';
 import { useStore } from '@/store/useStore';
 import { getLevelInfo } from '@/lib/game';
 import type { Task, TaskDifficulty, Goal } from '@/types';
@@ -45,12 +46,13 @@ export default function TasksPage() {
   const [creating, setCreating] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all');
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (status !== 'authenticated' || !session?.user?.id) return;
     fetch(`/api/tasks?userId=${session.user.id}`)
       .then((r) => r.json())
-      .then(setTasks);
+      .then((data) => { setTasks(data); setLoaded(true); });
   }, [status, session, setTasks]);
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -138,6 +140,23 @@ export default function TasksPage() {
   });
 
   if (status === 'loading') return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent-blue border-t-transparent rounded-full animate-spin" /></div>;
+
+  if (!loaded) {
+    return (
+      <div className="p-4 md:p-8 max-w-5xl mx-auto">
+        <div className="mb-8">
+          <div className="skeleton h-8 w-28 mb-2" />
+          <div className="skeleton h-4 w-44" />
+        </div>
+        <div className="flex gap-2 mb-6">
+          {[...Array(3)].map((_, i) => <div key={i} className="skeleton h-8 w-20 rounded-lg" />)}
+        </div>
+        <div className="space-y-2">
+          {[...Array(5)].map((_, i) => <CardSkeleton key={i} />)}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto">

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion } from 'framer-motion';
 import { Zap, Sparkles, TrendingUp, ListChecks, Swords, Trophy } from 'lucide-react';
+import { StatsCardSkeleton, CardSkeleton } from '@/components/ui/Skeleton';
 import { XPBar } from '@/components/ui/XPBar';
 import { StreakCounter } from '@/components/ui/StreakCounter';
 import { TaskCard } from '@/components/ui/TaskCard';
@@ -139,10 +140,23 @@ export default function DashboardPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <Zap className="w-12 h-12 mx-auto text-accent-blue animate-pulse-glow" />
-          <p className="text-text-muted mt-4">Loading your dashboard...</p>
+      <div className="p-4 md:p-8 max-w-7xl mx-auto">
+        <div className="mb-8">
+          <div className="skeleton h-8 w-72 mb-2" />
+          <div className="skeleton h-4 w-44" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {[...Array(4)].map((_, i) => <StatsCardSkeleton key={i} />)}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-4">
+            <div className="skeleton h-6 w-36 mb-4" />
+            {[...Array(4)].map((_, i) => <CardSkeleton key={i} />)}
+          </div>
+          <div className="space-y-4">
+            <div className="skeleton h-6 w-32 mb-4" />
+            {[...Array(2)].map((_, i) => <CardSkeleton key={i} />)}
+          </div>
         </div>
       </div>
     );

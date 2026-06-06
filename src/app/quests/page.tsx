@@ -7,6 +7,7 @@ import { Swords, Loader2, RefreshCw } from 'lucide-react';
 import { QuestCard } from '@/components/ui/QuestCard';
 import { useStore } from '@/store/useStore';
 import { getLevelInfo } from '@/lib/game';
+import { CardSkeleton } from '@/components/ui/Skeleton';
 import type { Quest, QuestType } from '@/types';
 
 export default function QuestsPage() {
@@ -14,6 +15,7 @@ export default function QuestsPage() {
   const { quests, setQuests, showXpAnimation, showLevelUpAnimation } = useStore();
   const [activeTab, setActiveTab] = useState<QuestType>('DAILY');
   const [generating, setGenerating] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (status !== 'authenticated' || !session?.user?.id) return;
@@ -24,7 +26,7 @@ export default function QuestsPage() {
     if (!session?.user?.id) return;
     fetch(`/api/quests?userId=${session.user.id}`)
       .then((r) => r.json())
-      .then(setQuests);
+      .then((data) => { setQuests(data); setLoaded(true); });
   };
 
   const handleGenerate = async () => {
@@ -68,6 +70,23 @@ export default function QuestsPage() {
   });
 
   if (status === 'loading') return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent-blue border-t-transparent rounded-full animate-spin" /></div>;
+
+  if (!loaded) {
+    return (
+      <div className="p-4 md:p-8 max-w-5xl mx-auto">
+        <div className="mb-8">
+          <div className="skeleton h-8 w-28 mb-2" />
+          <div className="skeleton h-4 w-44" />
+        </div>
+        <div className="flex gap-2 mb-6">
+          {[...Array(3)].map((_, i) => <div key={i} className="skeleton h-8 w-24 rounded-xl" />)}
+        </div>
+        <div className="space-y-2">
+          {[...Array(4)].map((_, i) => <CardSkeleton key={i} />)}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto">
