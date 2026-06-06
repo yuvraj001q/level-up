@@ -1,10 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 1024 1024">
   <defs>
-    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#3b82f6"/>
-      <stop offset="100%" stop-color="#06b6d4"/>
-    </linearGradient>
+    <radialGradient id="bg" cx="45%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#6ee7b7"/>
+      <stop offset="50%" stop-color="#4ade80"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="30%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="12" flood-color="#16a34a" flood-opacity="0.4"/>
+    </filter>
   </defs>
-  <rect width="512" height="512" rx="96" fill="#0a0a1a"/>
-  <path d="M277 85l-128 192h96l-32 150 160-214h-107l107-128z" fill="url(#g)"/>
+  <rect width="1024" height="1024" rx="192" fill="url(#bg)"/>
+  <rect width="1024" height="1024" rx="192" fill="url(#glow)"/>
+  <path d="M555 170l-256 384h192l-64 300 320-428h-214l214-256z" fill="white" filter="url(#shadow)"/>
 </svg>
