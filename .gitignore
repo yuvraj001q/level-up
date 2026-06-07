@@ -46,5 +46,6 @@ android/local.properties
 
 # temp files
 tmp*.sql
+check-*.sql
 check-*.ts
 cleanup.sql
