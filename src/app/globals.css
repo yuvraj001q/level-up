@@ -34,7 +34,7 @@ body {
 }
 
 a, button, input[type="submit"], input[type="button"], select, summary, label, [role="button"], [role="link"] {
-  cursor: url('/roblox-cursor.cur'), pointer;
+  cursor: url('/roblox-pointer.cur'), pointer;
 }
 
 .glass {
