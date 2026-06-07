@@ -16,23 +16,34 @@ export async function GET(req: NextRequest) {
   const email = searchParams.get('email');
   const username = searchParams.get('username');
 
-  if (username) {
-    const user = await prisma.user.findUnique({
-      where: { username },
-      select: { id: true, name: true, username: true, email: true, image: true, level: true, league: true },
-    });
-    return NextResponse.json(user || null);
-  }
+  try {
+    if (username) {
+      const user = await prisma.user.findUnique({
+        where: { username },
+        select: { id: true, name: true, username: true, email: true, image: true, level: true, league: true },
+      });
+      return NextResponse.json(user || null);
+    }
 
-  if (email) {
-    const user = await prisma.user.findUnique({
-      where: { email },
-      select: { id: true, name: true, username: true, email: true, image: true, level: true, league: true },
-    });
-    return NextResponse.json(user || null);
-  }
+    if (email) {
+      const user = await prisma.user.findUnique({
+        where: { email },
+        select: { id: true, name: true, username: true, email: true, image: true, level: true, league: true },
+      });
+      return NextResponse.json(user || null);
+    }
 
-  return NextResponse.json({ error: 'email or username required' }, { status: 400 });
+    return NextResponse.json({ error: 'email or username required' }, { status: 400 });
+  } catch {
+    if (email) {
+      const user = await prisma.user.findUnique({
+        where: { email },
+        select: { id: true, name: true, email: true, image: true, level: true, league: true },
+      });
+      return NextResponse.json(user ? { ...user, username: null } : null);
+    }
+    return NextResponse.json(null);
+  }
 }
 
 export async function POST(req: Request) {
@@ -111,6 +122,21 @@ export async function PATCH(req: Request) {
 
     return NextResponse.json(user);
   } catch {
-    return NextResponse.json({ error: 'Update failed' }, { status: 500 });
+    try {
+      const { userId, ...data } = await req.json();
+      const setClauses = Object.keys(data)
+        .map((k) => `"${k}" = $${Object.keys(data).indexOf(k) + 2}`)
+        .join(', ');
+      const values = Object.values(data);
+      // @ts-expect-error raw SQL
+      const rows = await prisma.$queryRawUnsafe<Record<string, any>[]>(
+        `UPDATE "User" SET ${setClauses} WHERE id = $1 RETURNING id, name, email, image, age, bio, goals, interests, "productivityLevel", level, xp, rank, league, "lastPromotion", "achievementPoints", "dailyStreak", "weeklyStreak", "longestStreak", "lastActiveAt", "streakFreeze", phone, "phoneVerified"`,
+        userId,
+        ...values
+      );
+      return NextResponse.json(rows[0] ? { ...rows[0], username: null, league: rows[0].league as any } : null);
+    } catch {
+      return NextResponse.json({ error: 'Update failed' }, { status: 500 });
+    }
   }
 }
