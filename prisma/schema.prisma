@@ -101,6 +101,20 @@ model User {
   monthlyQuestsGeneratedAt DateTime?
 
   emailVerified DateTime?
+  phone         String?  @unique
+  phoneVerified Boolean  @default(false)
+}
+
+model OtpToken {
+  id         String   @id @default(cuid())
+  identifier String
+  token      String
+  type       String   @default("PHONE")
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  used       Boolean  @default(false)
+
+  @@index([identifier, token])
 }
 
 model Account {

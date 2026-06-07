@@ -39,6 +39,8 @@ export interface UserProfile {
   longestStreak: number;
   lastActiveAt: Date | null;
   streakFreeze: number;
+  phone: string | null;
+  phoneVerified: boolean;
 }
 
 export interface Task {

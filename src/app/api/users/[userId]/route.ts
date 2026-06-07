@@ -34,6 +34,8 @@ export async function GET(
       longestStreak: true,
       lastActiveAt: true,
       streakFreeze: true,
+      phone: true,
+      phoneVerified: true,
     },
   });
 

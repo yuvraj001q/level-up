@@ -66,6 +66,8 @@ export async function PATCH(req: Request) {
         longestStreak: true,
         lastActiveAt: true,
         streakFreeze: true,
+        phone: true,
+        phoneVerified: true,
       },
     });
 
