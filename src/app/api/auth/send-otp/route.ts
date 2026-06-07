@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import twilio from 'twilio';
+
+const twilioClient = process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN
+  ? twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
+  : null;
 
 export async function POST(req: Request) {
   try {
@@ -31,10 +36,19 @@ export async function POST(req: Request) {
       data: { phone: phoneStr, phoneVerified: false },
     });
 
-    console.log(`[OTP] ${phoneStr}: ${otp}`);
+    if (twilioClient && process.env.TWILIO_PHONE_NUMBER) {
+      await twilioClient.messages.create({
+        body: `Your Level Up verification code is: ${otp}. Valid for 10 minutes.`,
+        from: process.env.TWILIO_PHONE_NUMBER,
+        to: phoneStr,
+      });
+    } else {
+      console.log(`[OTP] ${phoneStr}: ${otp}`);
+    }
 
     return NextResponse.json({ message: 'OTP sent', debug: process.env.NODE_ENV === 'development' ? otp : undefined });
-  } catch {
+  } catch (e) {
+    console.error('[OTP Error]', e);
     return NextResponse.json({ error: 'Failed to send OTP' }, { status: 500 });
   }
 }
