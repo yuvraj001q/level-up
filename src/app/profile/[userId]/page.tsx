@@ -190,58 +190,86 @@ export default function PublicProfilePage() {
           </div>
         )}
 
-        {/* XP history charts */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="glass p-4">
-            <h3 className="text-sm font-semibold flex items-center gap-2 mb-3">
+        {/* Combined XP history chart */}
+        {currentUser && profile.id !== session?.user?.id ? (
+          <div className="glass p-6 mb-6">
+            <h3 className="text-sm font-semibold flex items-center gap-2 mb-4">
               <TrendingUp className="w-3.5 h-3.5 text-accent-cyan" />
-              {displayName}&apos;s XP History
+              XP History Comparison
+            </h3>
+            {(() => {
+              const { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } = require('recharts');
+
+              const dateMap: Record<string, { date: string; you: number; them: number }> = {};
+              for (const d of myXpData) {
+                const key = d.date.split('T')[0];
+                if (!dateMap[key]) dateMap[key] = { date: key, you: 0, them: 0 };
+                dateMap[key].you += d.xp;
+              }
+              for (const d of xpData) {
+                const key = d.date.split('T')[0];
+                if (!dateMap[key]) dateMap[key] = { date: key, you: 0, them: 0 };
+                dateMap[key].them += d.xp;
+              }
+
+              const chartData = Object.values(dateMap)
+                .sort((a, b) => a.date.localeCompare(b.date))
+                .slice(-30);
+
+              if (chartData.length === 0) {
+                return <p className="text-xs text-text-muted text-center py-4">No data yet</p>;
+              }
+
+              return (
+                <ResponsiveContainer width="100%" height={250}>
+                  <LineChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                    <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.4)' }} tickFormatter={(v: string) => {
+                      const d = new Date(v);
+                      return `${d.getMonth() + 1}/${d.getDate()}`;
+                    }} />
+                    <YAxis tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.4)' }} />
+                    <Tooltip
+                      contentStyle={{
+                        background: 'rgba(15,15,25,0.9)',
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        borderRadius: 8,
+                        fontSize: 12,
+                      }}
+                      labelFormatter={(v: string) => new Date(v).toLocaleDateString()}
+                    />
+                    <Line type="monotone" dataKey="you" stroke="#3b82f6" strokeWidth={2} dot={false} name="You" />
+                    <Line type="monotone" dataKey="them" stroke="#22d3ee" strokeWidth={2} dot={false} name={displayName} />
+                  </LineChart>
+                </ResponsiveContainer>
+              );
+            })()}
+          </div>
+        ) : (
+          <div className="glass p-6 mb-6">
+            <h3 className="text-sm font-semibold flex items-center gap-2 mb-4">
+              <TrendingUp className="w-3.5 h-3.5 text-accent-cyan" />
+              XP History
             </h3>
             {xpData.length === 0 ? (
               <p className="text-xs text-text-muted text-center py-4">No data yet</p>
             ) : (
-              <div className="flex items-end gap-1 h-24">
-                {xpData.slice(-14).map((d, i) => {
-                  const max = Math.max(...xpData.slice(-14).map((p) => p.xp), 1);
-                  return (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
-                      <div
-                        className="w-full rounded-t bg-gradient-to-t from-accent-blue/40 to-accent-cyan/40 hover:from-accent-blue/60 hover:to-accent-cyan/60 transition-all"
-                        style={{ height: `${(d.xp / max) * 100}%` }}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
+              (() => {
+                const { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } = require('recharts');
+                const data = xpData.slice(-14).map((d: any) => ({ date: d.date.split('T')[0], xp: d.xp }));
+                return (
+                  <ResponsiveContainer width="100%" height={200}>
+                    <BarChart data={data}>
+                      <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.4)' }} tickFormatter={(v: string) => { const d = new Date(v); return `${d.getMonth() + 1}/${d.getDate()}`; }} />
+                      <YAxis tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.4)' }} />
+                      <Bar dataKey="xp" fill="#3b82f6" radius={[2, 2, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                );
+              })()
             )}
           </div>
-
-          {currentUser && profile.id !== session?.user?.id && (
-            <div className="glass p-4">
-              <h3 className="text-sm font-semibold flex items-center gap-2 mb-3">
-                <TrendingUp className="w-3.5 h-3.5 text-accent-blue" />
-                Your XP History
-              </h3>
-              {myXpData.length === 0 ? (
-                <p className="text-xs text-text-muted text-center py-4">No data yet</p>
-              ) : (
-                <div className="flex items-end gap-1 h-24">
-                  {myXpData.slice(-14).map((d, i) => {
-                    const max = Math.max(...myXpData.slice(-14).map((p) => p.xp), 1);
-                    return (
-                      <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
-                        <div
-                          className="w-full rounded-t bg-gradient-to-t from-accent-purple/40 to-accent-pink/40 hover:from-accent-purple/60 hover:to-accent-pink/60 transition-all"
-                          style={{ height: `${(d.xp / max) * 100}%` }}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+        )}
       </motion.div>
     </div>
   );
