@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import type { League } from '@/types';
+import '@/app/league-tiers.css';
 
 interface LeagueShieldProps {
   league: League;
@@ -347,90 +348,64 @@ export function LeagueShield({ league, size = 48, animate = true, showLabel = fa
   const t = TIERS[league];
 
   return (
-    <motion.div
-      className="relative inline-flex flex-col items-center justify-center gap-1"
+    <div
+      className={`league-tier league-tier--${league}`}
       style={{ width: size, height: showLabel ? size + 18 : size }}
     >
-      <motion.div
-        className="relative"
-        style={{ width: size, height: size }}
-        animate={
-          animate
-            ? {
-                y: [0, -size * 0.02, 0],
-              }
-            : undefined
-        }
-        transition={
-          animate
-            ? { duration: 3, repeat: Infinity, ease: 'easeInOut' }
-            : undefined
-        }
-      >
+      <div className="league-tier__container" style={animate ? {
+        animation: `tier-float var(--tier-float-duration, 3s) ease-in-out infinite`,
+      } : { animation: 'none' }}>
         {/* Outer glow aura */}
-        <motion.div
-          className="absolute inset-0 rounded-full"
+        <div
+          className={`league-tier__aura ${animate ? 'is-animated' : ''}`}
           style={{
             background: `radial-gradient(circle, ${t.glow} 0%, transparent 70%)`,
-            filter: 'blur(12px)',
+            filter: `blur(${size * 0.25}px)`,
+            animationDuration: animate ? undefined : '0s',
           }}
-          animate={
-            animate
-              ? {
-                  scale: [1, 1.08, 1],
-                  opacity: [0.5, 0.8, 0.5],
-                }
-              : undefined
-          }
-          transition={
-            animate
-              ? { duration: 2.5, repeat: Infinity, ease: 'easeInOut' }
-              : undefined
-          }
         />
 
-        {/* Rotating light ring */}
-        <motion.div
-          className="absolute inset-0 rounded-full"
-          style={{
-            background: `conic-gradient(from 0deg, transparent, ${t.primary}, transparent, ${t.accent}, transparent)`,
-            filter: 'blur(6px)',
-            opacity: 0.35,
-          }}
-          animate={animate ? { rotate: 360 } : undefined}
-          transition={animate ? { duration: 5, repeat: Infinity, ease: 'linear' } : undefined}
-        />
+        {/* Rotating light rings */}
+        <div className="league-tier__ring league-tier__ring--primary" />
+        <div className="league-tier__ring league-tier__ring--secondary" />
 
-        {/* Counter-rotating ring */}
-        <motion.div
-          className="absolute inset-0 rounded-full"
-          style={{
-            background: `conic-gradient(from 90deg, transparent, ${t.secondary}, transparent, ${t.primary}, transparent)`,
-            filter: 'blur(4px)',
-            opacity: 0.2,
-          }}
-          animate={animate ? { rotate: -360 } : undefined}
-          transition={animate ? { duration: 7, repeat: Infinity, ease: 'linear' } : undefined}
-        />
+        {/* Heat distortion (Grandmaster+) */}
+        {['GRANDMASTER', 'CHALLENGER'].includes(league) && animate && (
+          <div className="league-tier__heat-distort" />
+        )}
+
+        {/* Metallic shine overlay (Platinum+) */}
+        {['PLATINUM', 'EMERALD', 'DIAMOND', 'MASTER', 'GRANDMASTER', 'CHALLENGER'].includes(league) && (
+          <div className="league-tier__shine" />
+        )}
+
+        {/* Core flash (Master+) */}
+        {['MASTER', 'GRANDMASTER', 'CHALLENGER'].includes(league) && (
+          <div className="league-tier__core-flash" />
+        )}
+
+        {/* Floating particles (Challenger only) */}
+        {league === 'CHALLENGER' && animate && (
+          <div className="league-tier__particles">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div key={i} className="league-tier__particle" />
+            ))}
+          </div>
+        )}
 
         {/* The badge SVG */}
-        <div className="relative z-10 w-full h-full">
+        <div className="league-tier__emblem">
           <LeagueBadgeSvg league={league} size={size} />
         </div>
-      </motion.div>
+      </div>
 
       {/* Label */}
       {showLabel && (
-        <motion.span
-          className="text-[10px] font-bold uppercase tracking-widest"
-          style={{ color: t.primary }}
-          animate={animate ? { opacity: [0.7, 1, 0.7] } : undefined}
-          transition={animate ? { duration: 2, repeat: Infinity, ease: 'easeInOut' } : undefined}
-        >
+        <span className="league-tier__label" style={{ color: t.primary }}>
           {t.label}
-        </motion.span>
+        </span>
       )}
-    </motion.div>
+    </div>
   );
 }
 

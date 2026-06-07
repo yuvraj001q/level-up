@@ -1,0 +1,414 @@
+/* ============================================================
+   LEAGUE TIERS — CSS Architecture & Animation System
+   Tiers: Iron → Bronze → Silver → Gold → Platinum →
+          Emerald → Diamond → Master → Grandmaster → Challenger
+   ============================================================ */
+
+/* ---- Custom Properties per Tier ---- */
+
+.league-tier {
+  --tier-float-duration: 3s;
+  --tier-float-distance: -2%;
+  --tier-pulse-duration: 3s;
+  --tier-glow-opacity: 0.5;
+  --tier-glow-blur: 12px;
+  --tier-shine-opacity: 0;
+  --tier-scale-hover: 1;
+  --tier-particle-count: 0;
+
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ----- FOUNDATION TIERS (Static, Heavy) ----- */
+
+/* IRON — Dull, oxidized. No glow. Barely moves. */
+.league-tier--IRON {
+  --tier-glow: rgba(107, 114, 128, 0.3);
+  --tier-glow-blur: 8px;
+  --tier-glow-opacity: 0.15;
+  --tier-float-duration: 5s;
+  --tier-float-distance: -1%;
+  --tier-pulse-duration: 0s;
+}
+
+.league-tier--IRON:hover {
+  transform: translateY(-2px);
+}
+
+/* BRONZE — Warm copper. Subtle inner edge. */
+.league-tier--BRONZE {
+  --tier-glow: rgba(205, 127, 50, 0.35);
+  --tier-glow-opacity: 0.25;
+  --tier-float-duration: 4.5s;
+  --tier-float-distance: -1.2%;
+  --tier-pulse-duration: 0s;
+}
+
+.league-tier--BRONZE:hover {
+  transform: translateY(-3px);
+}
+
+/* SILVER — Cold steel. Ambient drop-shadow begins. */
+.league-tier--SILVER {
+  --tier-glow: rgba(192, 192, 192, 0.4);
+  --tier-glow-opacity: 0.35;
+  --tier-float-duration: 4s;
+  --tier-float-distance: -1.5%;
+  --tier-pulse-duration: 4s;
+  --tier-shine-opacity: 0;
+}
+
+.league-tier--SILVER .league-tier__glow {
+  filter: drop-shadow(0 0 6px var(--tier-glow));
+}
+
+/* ----- PRESTIGE TIERS (Polished, Glowing) ----- */
+
+/* GOLD — Warm yellow glow. Pulse begins. */
+.league-tier--GOLD {
+  --tier-glow: rgba(255, 215, 0, 0.55);
+  --tier-glow-opacity: 0.5;
+  --tier-float-duration: 3.5s;
+  --tier-float-distance: -1.8%;
+  --tier-pulse-duration: 3s;
+  --tier-scale-hover: 1.03;
+}
+
+.league-tier--GOLD:hover {
+  transform: scale(1.03) translateY(-3px);
+}
+
+/* PLATINUM — Icy teal. Metallic shine on hover. */
+.league-tier--PLATINUM {
+  --tier-glow: rgba(135, 206, 235, 0.5);
+  --tier-glow-opacity: 0.55;
+  --tier-float-duration: 3.2s;
+  --tier-float-distance: -2%;
+  --tier-pulse-duration: 2.8s;
+  --tier-shine-opacity: 0;
+  --tier-scale-hover: 1.04;
+}
+
+.league-tier--PLATINUM:hover {
+  transform: scale(1.04) translateY(-3px);
+}
+
+.league-tier--PLATINUM:hover .league-tier__shine {
+  --tier-shine-opacity: 1;
+  animation: shine-sweep 0.8s ease-in-out forwards;
+}
+
+/* EMERALD — Vibrant green. Intense core. */
+.league-tier--EMERALD {
+  --tier-glow: rgba(80, 200, 120, 0.55);
+  --tier-glow-opacity: 0.6;
+  --tier-float-duration: 3s;
+  --tier-float-distance: -2.2%;
+  --tier-pulse-duration: 2.5s;
+  --tier-scale-hover: 1.05;
+}
+
+.league-tier--EMERALD:hover {
+  transform: scale(1.05) translateY(-3px);
+}
+
+/* ----- APEX TIERS (Crystals & Magic, Alive) ----- */
+
+/* DIAMOND — Sapphire/cyan. Multi-layered shadows. Float loop. */
+.league-tier--DIAMOND {
+  --tier-glow: rgba(0, 255, 255, 0.5);
+  --tier-glow-opacity: 0.65;
+  --tier-float-duration: 2.8s;
+  --tier-float-distance: -2.5%;
+  --tier-pulse-duration: 2.2s;
+  --tier-scale-hover: 1.05;
+  --tier-shine-opacity: 0.2;
+}
+
+.league-tier--DIAMOND .league-tier__glow {
+  filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.3))
+          drop-shadow(0 0 20px rgba(0, 200, 255, 0.15));
+}
+
+/* MASTER — Arcane purple. Faster float. Flash on hover. */
+.league-tier--MASTER {
+  --tier-glow: rgba(168, 85, 247, 0.55);
+  --tier-glow-opacity: 0.7;
+  --tier-float-duration: 2.4s;
+  --tier-float-distance: -2.8%;
+  --tier-pulse-duration: 2s;
+  --tier-scale-hover: 1.06;
+  --tier-shine-opacity: 0.25;
+}
+
+.league-tier--MASTER:hover {
+  transform: scale(1.06) translateY(-3px);
+}
+
+.league-tier--MASTER:hover .league-tier__core-flash {
+  animation: core-flash 0.4s ease-out forwards;
+}
+
+/* GRANDMASTER — Fiery crimson. Heat distortion behind. */
+.league-tier--GRANDMASTER {
+  --tier-glow: rgba(239, 68, 68, 0.6);
+  --tier-glow-opacity: 0.75;
+  --tier-float-duration: 2.2s;
+  --tier-float-distance: -3%;
+  --tier-pulse-duration: 1.8s;
+  --tier-scale-hover: 1.07;
+  --tier-shine-opacity: 0.3;
+}
+
+.league-tier--GRANDMASTER .league-tier__heat-distort {
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(ellipse at center, rgba(239, 68, 68, 0.15) 0%, transparent 70%);
+  filter: blur(16px) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='wobble'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.015' numOctaves='2' result='noise'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='noise' scale='4' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3C/svg%3E#wobble");
+  animation: heat-wobble 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* CHALLENGER — Gold + cyan core. Supreme effects. */
+.league-tier--CHALLENGER {
+  --tier-glow: rgba(251, 191, 36, 0.7);
+  --tier-glow-opacity: 0.85;
+  --tier-float-duration: 2s;
+  --tier-float-distance: -3.5%;
+  --tier-pulse-duration: 1.5s;
+  --tier-scale-hover: 1.08;
+  --tier-shine-opacity: 0.35;
+  --tier-particle-count: 12;
+}
+
+.league-tier--CHALLENGER .league-tier__glow {
+  filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.4))
+          drop-shadow(0 0 30px rgba(251, 191, 36, 0.2))
+          drop-shadow(0 0 60px rgba(6, 182, 212, 0.15));
+}
+
+/* ---- Animation Keyframes ---- */
+
+/* Floating / bobbing up and down */
+@keyframes tier-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(var(--tier-float-distance)); }
+}
+
+/* Glow pulse (opacity + scale) */
+@keyframes tier-pulse-glow {
+  0%, 100% {
+    opacity: var(--tier-glow-opacity);
+    transform: scale(1);
+  }
+  50% {
+    opacity: calc(var(--tier-glow-opacity) * 1.4);
+    transform: scale(1.06);
+  }
+}
+
+/* Metallic shine sweep (Platinum+) */
+@keyframes shine-sweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%) skewX(-20deg);
+  }
+  30% {
+    opacity: var(--tier-shine-opacity, 0.4);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%) skewX(-20deg);
+  }
+}
+
+/* Master hover flash */
+@keyframes core-flash {
+  0% {
+    opacity: 1;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.3);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+/* Grandmaster heat-wave distortion */
+@keyframes heat-wobble {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.4;
+  }
+  25% {
+    transform: scale(1.02) rotate(0.5deg);
+    opacity: 0.5;
+  }
+  75% {
+    transform: scale(0.98) rotate(-0.5deg);
+    opacity: 0.35;
+  }
+}
+
+/* Challenger particle drift */
+@keyframes particle-drift {
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.6;
+  }
+  80% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(-40px) translateX(var(--drift-x, 10px)) scale(0.3);
+    opacity: 0;
+  }
+}
+
+/* ---- Structural Layer Classes ---- */
+
+.league-tier__container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  animation: tier-float var(--tier-float-duration, 3s) ease-in-out infinite;
+}
+
+.league-tier__aura {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--tier-glow) 0%, transparent 70%);
+  filter: blur(var(--tier-glow-blur, 12px));
+  pointer-events: none;
+}
+
+.league-tier__aura.is-animated {
+  animation: tier-pulse-glow var(--tier-pulse-duration, 3s) ease-in-out infinite;
+}
+
+/* Rotating light rings */
+.league-tier__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  filter: blur(6px);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.league-tier__ring--primary {
+  background: conic-gradient(from 0deg, transparent, var(--tier-glow), transparent, transparent);
+  animation: ring-spin 5s linear infinite;
+}
+
+.league-tier__ring--secondary {
+  background: conic-gradient(from 90deg, transparent, transparent, var(--tier-glow), transparent);
+  filter: blur(4px);
+  opacity: 0.2;
+  animation: ring-spin-reverse 7s linear infinite;
+}
+
+@keyframes ring-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ring-spin-reverse {
+  to { transform: rotate(-360deg); }
+}
+
+/* Metallic shine overlay */
+.league-tier__shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 30%,
+    rgba(255, 255, 255, 0.25) 40%,
+    transparent 60%
+  );
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* Master core flash */
+.league-tier__core-flash {
+  position: absolute;
+  inset: -10%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, var(--tier-glow) 40%, transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* SVG / Image layer (always on top) */
+.league-tier__emblem {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+}
+
+/* Challenger floating particles */
+.league-tier__particles {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.league-tier__particle {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--tier-glow);
+  opacity: 0;
+  animation: particle-drift 2.5s ease-out infinite;
+  animation-delay: var(--p-delay, 0s);
+  --drift-x: calc(var(--p-index, 0) * 8px - 20px);
+}
+
+.league-tier__particle:nth-child(1) { --p-delay: 0s; --p-index: 0; }
+.league-tier__particle:nth-child(2) { --p-delay: 0.3s; --p-index: 1; }
+.league-tier__particle:nth-child(3) { --p-delay: 0.6s; --p-index: 2; }
+.league-tier__particle:nth-child(4) { --p-delay: 0.9s; --p-index: 3; }
+.league-tier__particle:nth-child(5) { --p-delay: 1.2s; --p-index: 4; }
+.league-tier__particle:nth-child(6) { --p-delay: 1.5s; --p-index: 5; }
+.league-tier__particle:nth-child(7) { --p-delay: 0.15s; --p-index: 6; }
+.league-tier__particle:nth-child(8) { --p-delay: 0.45s; --p-index: 7; }
+.league-tier__particle:nth-child(9) { --p-delay: 0.75s; --p-index: 8; }
+.league-tier__particle:nth-child(10) { --p-delay: 1.05s; --p-index: 9; }
+.league-tier__particle:nth-child(11) { --p-delay: 1.35s; --p-index: 10; }
+.league-tier__particle:nth-child(12) { --p-delay: 1.65s; --p-index: 11; }
+
+/* Label */
+.league-tier__label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tier-color, inherit);
+  animation: label-pulse 2s ease-in-out infinite;
+}
+
+@keyframes label-pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
