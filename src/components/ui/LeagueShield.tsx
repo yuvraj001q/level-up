@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import type { League } from '@/types';
 import '@/app/league-tiers.css';
 
@@ -114,270 +113,149 @@ const TIERS: Record<League, TierArt> = {
   },
 };
 
-const BG_PARTICLES = 8;
-
 function LeagueBadgeSvg({ league, size }: { league: League; size: number }) {
   const t = TIERS[league];
-  const pad = size * 0.08;
   const cx = size / 2;
   const cy = size / 2;
-  const innerR = size * 0.32;
-  const outerR = size * 0.42;
 
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} fill="none">
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <radialGradient id={`bg-${league}`} cx="50%" cy="40%" r="60%">
-          <stop offset="0%" stopColor={t.bgFrom} />
-          <stop offset="100%" stopColor={t.bgTo} />
-        </radialGradient>
-        <radialGradient id={`core-${league}`} cx="40%" cy="35%">
-          <stop offset="0%" stopColor={t.primary} stopOpacity="0.3" />
-          <stop offset="60%" stopColor={t.accent} stopOpacity="0.1" />
-          <stop offset="100%" stopColor={t.bgFrom} stopOpacity="0.95" />
-        </radialGradient>
-        <linearGradient id={`rim-${league}`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor={t.primary} />
-          <stop offset="30%" stopColor={t.secondary} />
-          <stop offset="70%" stopColor={t.accent} />
-          <stop offset="100%" stopColor={t.primary} />
-        </linearGradient>
-        <linearGradient id={`rim-shade-${league}`} x1="0" y1="1" x2="1" y2="0">
-          <stop offset="0%" stopColor={t.primary} stopOpacity="0.3" />
-          <stop offset="100%" stopColor="transparent" />
-        </linearGradient>
-        <filter id={`glow-${league}`}>
-          <feDropShadow dx="0" dy="0" stdDeviation={size * 0.06} floodColor={t.primary} floodOpacity="0.6" />
-        </filter>
         <filter id={`soft-glow-${league}`}>
-          <feDropShadow dx="0" dy="0" stdDeviation={size * 0.03} floodColor={t.primary} floodOpacity="0.3" />
+          <feDropShadow dx="0" dy="0" stdDeviation={size * 0.04} floodColor={t.primary} floodOpacity="0.35" />
         </filter>
-        <clipPath id={`clip-${league}`}>
-          <path d={generateShieldPath(cx, cy, outerR, pad)} />
-        </clipPath>
       </defs>
 
-      {/* Background circle */}
-      <circle cx={cx} cy={cy} r={size / 2 - pad * 0.5} fill="url(#bg-bg)" fillOpacity="0.3" />
-
-      {/* Floating orbital particles */}
-      {Array.from({ length: BG_PARTICLES }).map((_, i) => {
-        const angle = (i / BG_PARTICLES) * Math.PI * 2;
-        const dist = outerR * 1.15;
-        const px = cx + Math.cos(angle) * dist;
-        const py = cy + Math.sin(angle) * dist;
-        const r = size * 0.015 + Math.random() * size * 0.01;
-        return (
-          <circle key={i} cx={px} cy={py} r={r} fill={t.primary} fillOpacity={0.15 + Math.random() * 0.15} />
-        );
-      })}
-
-      {/* Outer ring glow */}
-      <path
-        d={generateShieldPath(cx, cy, outerR + size * 0.02, pad - size * 0.02)}
-        fill="none"
-        stroke={t.glow}
-        strokeWidth={size * 0.04}
-        strokeOpacity="0.3"
-        filter={`url(#glow-${league})`}
-      />
-
-      {/* Shield background with gradient */}
-      <path d={generateShieldPath(cx, cy, outerR, pad)} fill="url(#core-bg)" stroke="none" />
-      <path d={generateShieldPath(cx, cy, outerR, pad)} fill="url(#core)" stroke="none" />
-
-      {/* Shield rim */}
-      <path
-        d={generateShieldPath(cx, cy, outerR, pad)}
-        fill="none"
-        stroke={`url(#rim-${league})`}
-        strokeWidth={size * 0.025}
-        filter={`url(#soft-glow-${league})`}
-      />
-
-      {/* Inner rim highlight */}
-      <path
-        d={generateShieldPath(cx, cy, outerR - size * 0.04, pad + size * 0.04)}
-        fill="none"
-        stroke={t.primary}
-        strokeWidth={size * 0.008}
-        strokeOpacity="0.3"
-      />
-
-      {/* Inner decorative ring (orbit) */}
-      <ellipse
-        cx={cx}
-        cy={cy}
-        rx={innerR * 1.1}
-        ry={innerR * 0.6}
-        fill="none"
-        stroke={t.primary}
-        strokeWidth={size * 0.008}
-        strokeOpacity="0.2"
-        transform={`rotate(-15 ${cx} ${cy})`}
-      />
-      <ellipse
-        cx={cx}
-        cy={cy}
-        rx={innerR * 1.1}
-        ry={innerR * 0.6}
-        fill="none"
-        stroke={t.accent}
-        strokeWidth={size * 0.008}
-        strokeOpacity="0.15"
-        transform={`rotate(15 ${cx} ${cy})`}
-      />
-
-      {/* Center emblem area — dark circle */}
-      <circle cx={cx} cy={cy} r={innerR * 0.55} fill={t.bgTo} fillOpacity="0.6" stroke={t.primary} strokeWidth={size * 0.015} strokeOpacity="0.35" />
-
-      {/* Emblem: each tier has a distinct crest matching its description */}
+      {/* Emblem scales to fill ~70% of the SVG */}
       <g
-        transform={`translate(${cx}, ${cy}) scale(${size * 0.005})`}
-        stroke={t.secondary}
-        strokeWidth="1.5"
+        transform={`translate(${cx}, ${cy}) scale(${size * 0.018})`}
         strokeLinecap="round"
         strokeLinejoin="round"
-        fill="none"
       >
-        {/* IRON — Jagged W-shape, broken helmet, blunt and crude */}
+        {/* IRON — Jagged broken helmet, crude W-shape, blunt edges */}
         {league === 'IRON' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <path d="M-14,-4 L-8,-2 L-10,4 L-4,0 L-6,8 L0,2 L6,8 L4,0 L10,4 L8,-2 L14,-4 L12,6 L6,10 L0,12 L-6,10 L-12,6 Z"
-              fill={t.primary} fillOpacity="0.12" stroke={t.primary} strokeWidth="1.8" />
-            <path d="M-10,0 L-4,-6 L0,-2 L4,-6 L10,0" stroke={t.accent} strokeOpacity="0.4" strokeWidth="2" />
-            <path d="M-6,4 L0,-1 L6,4" stroke={t.accent} strokeOpacity="0.25" strokeWidth="1.5" />
+            <path d="M-10,-8 L-6,-4 L-8,0 L-3,2 L-5,6 L0,3 L5,6 L3,2 L8,0 L6,-4 L10,-8 L8,2 L4,6 L-4,6 L-8,2 Z"
+              fill={t.primary} fillOpacity="0.15" stroke={t.primary} strokeWidth="1.4" />
+            <path d="M-6,6 L-2,1 L2,1 L6,6" stroke={t.secondary} strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M-7,-2 L-3,-5 L0,-2 L3,-5 L7,-2" stroke={t.accent} strokeOpacity="0.5" strokeWidth="1.5" />
+            <line x1="0" y1="-2" x2="0" y2="3" stroke={t.secondary} strokeOpacity="0.3" strokeWidth="1" />
           </g>
         )}
 
-        {/* BRONZE — Wider wingspan, central peak, sharp edges */}
+        {/* BRONZE — Wider wings, sharp tips, central peak */}
         {league === 'BRONZE' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <path d="M-14,-6 L-8,-10 L-4,-4 L0,-8 L4,-4 L8,-10 L14,-6 L12,4 L6,10 L0,12 L-6,10 L-12,4 Z"
-              fill={t.primary} fillOpacity="0.15" stroke={t.primary} strokeWidth="1.6" />
-            <path d="M-10,0 L-5,-6 L0,-2 L5,-6 L10,0" stroke={t.accent} strokeOpacity="0.3" />
-            <line x1="0" y1="-2" x2="0" y2="10" stroke={t.primary} strokeOpacity="0.4" />
+            <path d="M-12,-6 L-7,-9 L-3,-4 L0,-7 L3,-4 L7,-9 L12,-6 L10,2 L6,8 L0,10 L-6,8 L-10,2 Z"
+              fill={t.primary} fillOpacity="0.18" stroke={t.primary} strokeWidth="1.5" />
+            <path d="M-8,0 L-3,-5 L0,-2 L3,-5 L8,0" stroke={t.secondary} strokeOpacity="0.4" />
+            <line x1="0" y1="-2" x2="0" y2="8" stroke={t.accent} strokeOpacity="0.35" strokeWidth="1.5" />
+            <circle cx="0" cy="3" r="1.5" fill={t.primary} fillOpacity="0.3" />
           </g>
         )}
 
-        {/* SILVER — Sweeping wing tips upward, pronounced central crest */}
+        {/* SILVER — Sweeping up-turned wing tips, pronounced crest */}
         {league === 'SILVER' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <path d="M-14,-8 Q-10,-14 -6,-6 L-2,-2 L0,-4 L2,-2 L6,-6 Q10,-14 14,-8 L12,2 L6,8 L2,10 L-2,10 L-6,8 L-12,2 Z"
-              fill={t.primary} fillOpacity="0.15" stroke={t.primary} strokeWidth="1.5" />
-            <path d="M-10,-4 Q-6,-10 -3,-4" stroke={t.accent} strokeOpacity="0.3" />
-            <path d="M10,-4 Q6,-10 3,-4" stroke={t.accent} strokeOpacity="0.3" />
-            <line x1="0" y1="-4" x2="0" y2="8" stroke={t.primary} strokeOpacity="0.5" strokeWidth="2" />
-            <circle cx="0" cy="4" r="2" fill={t.primary} fillOpacity="0.3" />
+            <path d="M-12,-6 Q-8,-12 -4,-5 L-2,-2 L0,-4 L2,-2 L4,-5 Q8,-12 12,-6 L10,1 L5,7 L2,9 L-2,9 L-5,7 L-10,1 Z"
+              fill={t.primary} fillOpacity="0.18" stroke={t.primary} strokeWidth="1.5" />
+            <path d="M-8,-2 Q-5,-7 -2,-3" stroke={t.secondary} strokeOpacity="0.35" />
+            <path d="M8,-2 Q5,-7 2,-3" stroke={t.secondary} strokeOpacity="0.35" />
+            <line x1="0" y1="-4" x2="0" y2="7" stroke={t.accent} strokeOpacity="0.4" strokeWidth="1.5" />
+            <circle cx="0" cy="3" r="2" fill={t.primary} fillOpacity="0.2" />
           </g>
         )}
 
-        {/* GOLD — Thick multi-layered wings, wide */}
+        {/* GOLD — Thick multi-layered wings, wide spread */}
         {league === 'GOLD' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <path d="M-16,-2 Q-12,-12 -6,-8 L-3,-4 L0,-6 L3,-4 L6,-8 Q12,-12 16,-2 L14,6 L8,10 L3,12 L-3,12 L-8,10 L-14,6 Z"
-              fill={t.primary} fillOpacity="0.18" stroke={t.primary} strokeWidth="1.8" />
-            <path d="M-14,0 Q-8,-8 -4,-4" stroke={t.accent} strokeOpacity="0.3" strokeWidth="1.2" />
-            <path d="M14,0 Q8,-8 4,-4" stroke={t.accent} strokeOpacity="0.3" strokeWidth="1.2" />
-            <path d="M-4,4 L0,-2 L4,4" stroke={t.primary} strokeOpacity="0.5" strokeWidth="2" />
-            <circle cx="0" cy="6" r="2.5" fill={t.primary} fillOpacity="0.25" />
+            <path d="M-14,-1 Q-10,-10 -5,-7 L-2,-3 L0,-5 L2,-3 L5,-7 Q10,-10 14,-1 L12,5 L7,9 L3,11 L-3,11 L-7,9 L-12,5 Z"
+              fill={t.primary} fillOpacity="0.2" stroke={t.primary} strokeWidth="1.6" />
+            <path d="M-12,1 Q-7,-6 -3,-3" stroke={t.secondary} strokeOpacity="0.3" strokeWidth="0.8" fill="none" />
+            <path d="M12,1 Q7,-6 3,-3" stroke={t.secondary} strokeOpacity="0.3" strokeWidth="0.8" fill="none" />
+            <path d="M-4,3 L0,-1 L4,3" stroke={t.accent} strokeOpacity="0.5" strokeWidth="2" />
+            <circle cx="0" cy="5" r="2" fill={t.primary} fillOpacity="0.25" />
           </g>
         )}
 
-        {/* PLATINUM — Aggressive upward-pointing shards, angular */}
+        {/* PLATINUM — Sharp upward-pointing shards, highly angular */}
         {league === 'PLATINUM' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <path d="M-16,-2 L-12,-10 L-8,-4 L-4,-12 L0,-4 L4,-12 L8,-4 L12,-10 L16,-2 L14,6 L8,10 L4,12 L0,6 L-4,12 L-8,10 L-14,6 Z"
-              fill={t.primary} fillOpacity="0.15" stroke={t.primary} strokeWidth="1.6" />
-            <path d="M-10,0 L-6,-6 L-2,0" stroke={t.accent} strokeOpacity="0.3" />
-            <path d="M10,0 L6,-6 L2,0" stroke={t.accent} strokeOpacity="0.3" />
-            <polygon points="0,-6 3,0 0,4 -3,0" fill={t.primary} fillOpacity="0.2" />
+            <path d="M-14,0 L-11,-8 L-7,-3 L-4,-10 L0,-3 L4,-10 L7,-3 L11,-8 L14,0 L12,5 L7,9 L4,11 L0,5 L-4,11 L-7,9 L-12,5 Z"
+              fill={t.primary} fillOpacity="0.18" stroke={t.primary} strokeWidth="1.4" />
+            <polygon points="-8,-1 -4,-6 -1,-1" fill={t.primary} fillOpacity="0.15" stroke={t.secondary} strokeOpacity="0.3" strokeWidth="0.8" />
+            <polygon points="8,-1 4,-6 1,-1" fill={t.primary} fillOpacity="0.15" stroke={t.secondary} strokeOpacity="0.3" strokeWidth="0.8" />
+            <polygon points="0,-4 2,1 0,4 -2,1" fill={t.primary} fillOpacity="0.25" />
           </g>
         )}
 
-        {/* EMERALD — Wide sweeping upward arcs, crystalline yet organic */}
+        {/* EMERALD — Wide sweeping upward arcs, crystalline organic */}
         {league === 'EMERALD' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <path d="M-16,-4 Q-12,-14 -6,-10 Q-3,-8 0,-10 Q3,-8 6,-10 Q12,-14 16,-4 L14,4 Q8,12 4,10 Q2,8 0,10 Q-2,8 -4,10 Q-8,12 -14,4 Z"
-              fill={t.primary} fillOpacity="0.15" stroke={t.primary} strokeWidth="1.6" />
-            <path d="M-12,-2 Q-6,-8 -2,-4" stroke={t.accent} strokeOpacity="0.3" strokeWidth="1.2" />
-            <path d="M12,-2 Q6,-8 2,-4" stroke={t.accent} strokeOpacity="0.3" strokeWidth="1.2" />
-            <path d="M-6,2 Q0,-4 6,2" stroke={t.primary} strokeOpacity="0.4" strokeWidth="1.5" />
+            <path d="M-14,-2 Q-10,-12 -5,-9 Q-2,-7 0,-9 Q2,-7 5,-9 Q10,-12 14,-2 L12,4 Q7,10 4,9 Q2,7 0,9 Q-2,7 -4,9 Q-7,10 -12,4 Z"
+              fill={t.primary} fillOpacity="0.18" stroke={t.primary} strokeWidth="1.5" />
+            <path d="M-10,0 Q-5,-6 -2,-3" stroke={t.secondary} strokeOpacity="0.35" strokeWidth="1" />
+            <path d="M10,0 Q5,-6 2,-3" stroke={t.secondary} strokeOpacity="0.35" strokeWidth="1" />
+            <path d="M-5,3 Q0,-2 5,3" stroke={t.accent} strokeOpacity="0.4" strokeWidth="1.5" />
+            <circle cx="0" cy="4" r="1.5" fill={t.primary} fillOpacity="0.2" />
           </g>
         )}
 
-        {/* DIAMOND — Heavily faceted, sharp crystalline spikes */}
+        {/* DIAMOND — Heavily faceted crystal, sharp spikes */}
         {league === 'DIAMOND' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <path d="M0,-14 L6,-10 L10,-6 L12,0 L10,4 L6,8 L0,12 L-6,8 L-10,4 L-12,0 L-10,-6 L-6,-10 Z"
-              fill={t.primary} fillOpacity="0.18" stroke={t.primary} strokeWidth="1.6" />
-            <polygon points="0,-14 6,-6 0,-2 -6,-6" fill={t.primary} fillOpacity="0.1" stroke={t.primary} strokeOpacity="0.3" />
-            <polygon points="-10,-6 -4,-2 0,4 -6,0" fill={t.primary} fillOpacity="0.1" stroke={t.primary} strokeOpacity="0.3" />
-            <polygon points="10,-6 4,-2 0,4 6,0" fill={t.primary} fillOpacity="0.1" stroke={t.primary} strokeOpacity="0.3" />
-            <polygon points="0,4 -4,8 4,8" fill={t.primary} fillOpacity="0.15" />
-            <line x1="0" y1="-14" x2="0" y2="12" stroke={t.primary} strokeOpacity="0.3" strokeWidth="1" />
+            <path d="M0,-12 L5,-9 L9,-5 L11,0 L9,4 L5,7 L0,11 L-5,7 L-9,4 L-11,0 L-9,-5 L-5,-9 Z"
+              fill={t.primary} fillOpacity="0.2" stroke={t.primary} strokeWidth="1.5" />
+            <polygon points="0,-12 5,-5 0,-1 -5,-5" fill={t.primary} fillOpacity="0.1" stroke={t.secondary} strokeOpacity="0.3" strokeWidth="0.8" />
+            <polygon points="-9,-5 -3,-1 0,3 -5,0" fill={t.primary} fillOpacity="0.1" stroke={t.secondary} strokeOpacity="0.3" strokeWidth="0.8" />
+            <polygon points="9,-5 3,-1 0,3 5,0" fill={t.primary} fillOpacity="0.1" stroke={t.secondary} strokeOpacity="0.3" strokeWidth="0.8" />
+            <polygon points="0,3 -4,7 4,7" fill={t.primary} fillOpacity="0.15" />
+            <line x1="0" y1="-12" x2="0" y2="11" stroke={t.accent} strokeOpacity="0.3" strokeWidth="1" />
           </g>
         )}
 
         {/* MASTER — Arcane ethereal upward sweep, pure energy */}
         {league === 'MASTER' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <path d="M-16,-6 Q-10,-16 -4,-10 Q-2,-8 0,-10 Q2,-8 4,-10 Q10,-16 16,-6 L14,4 Q8,10 4,8 L2,6 L-2,6 L-4,8 Q-8,10 -14,4 Z"
-              fill={t.primary} fillOpacity="0.15" stroke={t.primary} strokeWidth="1.6" />
-            <path d="M-12,-2 Q-8,-10 -4,-6" stroke={t.accent} strokeOpacity="0.35" strokeWidth="1.3" />
-            <path d="M12,-2 Q8,-10 4,-6" stroke={t.accent} strokeOpacity="0.35" strokeWidth="1.3" />
-            <path d="M-8,2 Q-4,-4 0,0 Q4,-4 8,2" stroke={t.primary} strokeOpacity="0.5" strokeWidth="1.8" />
-            <polygon points="0,-4 3,2 0,6 -3,2" fill={t.primary} fillOpacity="0.25" />
-            <circle cx="0" cy="1" r="2" fill={t.primary} fillOpacity="0.4" />
+            <path d="M-14,-4 Q-9,-14 -3,-9 Q-1,-7 0,-9 Q1,-7 3,-9 Q9,-14 14,-4 L12,3 Q7,9 3,7 L1,5 L-1,5 L-3,7 Q-7,9 -12,3 Z"
+              fill={t.primary} fillOpacity="0.18" stroke={t.primary} strokeWidth="1.5" />
+            <path d="M-10,1 Q-6,-7 -3,-4" stroke={t.secondary} strokeOpacity="0.4" strokeWidth="1.2" />
+            <path d="M10,1 Q6,-7 3,-4" stroke={t.secondary} strokeOpacity="0.4" strokeWidth="1.2" />
+            <path d="M-6,3 Q-3,-2 0,1 Q3,-2 6,3" stroke={t.accent} strokeOpacity="0.5" strokeWidth="1.8" />
+            <polygon points="0,-3 2,2 0,5 -2,2" fill={t.primary} fillOpacity="0.25" />
+            <circle cx="0" cy="1" r="1.5" fill={t.primary} fillOpacity="0.4" />
           </g>
         )}
 
-        {/* GRANDMASTER — Demonic/fiery V-center, massive flared top wings */}
+        {/* GRANDMASTER — Demonic V-center, fiery flared top wings */}
         {league === 'GRANDMASTER' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <path d="M-18,-4 Q-14,-16 -6,-12 L-2,-8 L0,-14 L2,-8 L6,-12 Q14,-16 18,-4 L16,6 L10,12 L4,14 L0,10 L-4,14 L-10,12 L-16,6 Z"
-              fill={t.primary} fillOpacity="0.18" stroke={t.primary} strokeWidth="1.8" />
-            <path d="M-14,0 Q-8,-10 -4,-6" stroke={t.accent} strokeOpacity="0.35" strokeWidth="1.3" />
-            <path d="M14,0 Q8,-10 4,-6" stroke={t.accent} strokeOpacity="0.35" strokeWidth="1.3" />
-            <path d="M0,-14 L0,4" stroke={t.accent} strokeOpacity="0.4" strokeWidth="2" />
-            <path d="M-6,2 Q0,-4 6,2" stroke={t.primary} strokeOpacity="0.5" strokeWidth="1.5" />
-            <path d="M-4,6 L0,2 L4,6" stroke={t.accent} strokeOpacity="0.4" />
+            <path d="M-16,-2 Q-12,-14 -5,-11 L-2,-7 L0,-13 L2,-7 L5,-11 Q12,-14 16,-2 L14,5 L9,11 L4,13 L0,9 L-4,13 L-9,11 L-14,5 Z"
+              fill={t.primary} fillOpacity="0.2" stroke={t.primary} strokeWidth="1.6" />
+            <path d="M-12,1 Q-7,-8 -3,-5" stroke={t.secondary} strokeOpacity="0.4" strokeWidth="1.2" />
+            <path d="M12,1 Q7,-8 3,-5" stroke={t.secondary} strokeOpacity="0.4" strokeWidth="1.2" />
+            <path d="M0,-13 L0,3" stroke={t.accent} strokeOpacity="0.45" strokeWidth="2" />
+            <path d="M-5,3 Q0,-3 5,3" stroke={t.accent} strokeOpacity="0.5" strokeWidth="1.5" />
+            <path d="M-3,7 L0,3 L3,7" stroke={t.secondary} strokeOpacity="0.5" strokeWidth="1.5" />
           </g>
         )}
 
-        {/* CHALLENGER — Ultimate crown/crest, massive wingspan, star core */}
+        {/* CHALLENGER — Supreme crown/crest, massive wingspan, star core */}
         {league === 'CHALLENGER' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <path d="M-20,-2 Q-16,-18 -8,-14 L-4,-10 L-2,-14 L0,-12 L2,-14 L4,-10 L8,-14 Q16,-18 20,-2 L18,8 L12,14 L6,16 L0,12 L-6,16 L-12,14 L-18,8 Z"
-              fill={t.primary} fillOpacity="0.18" stroke={t.primary} strokeWidth="2" />
-            <path d="M-16,2 Q-10,-12 -4,-6" stroke={t.accent} strokeOpacity="0.3" strokeWidth="1.3" />
-            <path d="M16,2 Q10,-12 4,-6" stroke={t.accent} strokeOpacity="0.3" strokeWidth="1.3" />
-            <polygon points="0,-12 3,-4 8,-4 4,1 6,8 0,4 -6,8 -4,1 -8,-4 -3,-4"
-              fill={t.primary} fillOpacity="0.15" stroke={t.primary} strokeWidth="1.2" />
-            <circle cx="0" cy="0" r="4" fill={t.accent} fillOpacity="0.15" stroke={t.accent} strokeWidth="1.5" />
-            <circle cx="0" cy="0" r="2" fill={t.accent} fillOpacity="0.3" />
+            <path d="M-18,0 Q-14,-16 -7,-13 L-3,-9 L-1,-13 L0,-11 L1,-13 L3,-9 L7,-13 Q14,-16 18,0 L16,7 L11,13 L5,15 L0,11 L-5,15 L-11,13 L-16,7 Z"
+              fill={t.primary} fillOpacity="0.2" stroke={t.primary} strokeWidth="1.8" />
+            <path d="M-14,2 Q-9,-10 -3,-5" stroke={t.secondary} strokeOpacity="0.35" strokeWidth="1.2" />
+            <path d="M14,2 Q9,-10 3,-5" stroke={t.secondary} strokeOpacity="0.35" strokeWidth="1.2" />
+            <polygon points="0,-11 3,-2 7,-2 4,2 6,8 0,5 -6,8 -4,2 -7,-2 -3,-2"
+              fill={t.primary} fillOpacity="0.12" stroke={t.accent} strokeWidth="1.2" />
+            <circle cx="0" cy="0" r="3.5" fill={t.accent} fillOpacity="0.12" stroke={t.accent} strokeWidth="1.5" />
+            <circle cx="0" cy="0" r="1.8" fill={t.accent} fillOpacity="0.3" />
           </g>
         )}
       </g>
     </svg>
   );
-}
-
-function generateShieldPath(cx: number, cy: number, r: number, pad: number): string {
-  const top = cy - r;
-  const bottom = cy + r * 0.75;
-  const left = cx - r;
-  const right = cx + r;
-  const midY = cy;
-  return `M ${cx} ${top + pad}
-    Q ${right + pad * 0.5} ${midY - r * 0.3}
-    ${right - pad} ${midY + r * 0.1}
-    Q ${right} ${midY + r * 0.6}
-    ${cx} ${bottom}
-    Q ${left} ${midY + r * 0.6}
-    ${left + pad} ${midY + r * 0.1}
-    Q ${left - pad * 0.5} ${midY - r * 0.3}
-    ${cx} ${top + pad} Z`;
 }
 
 export function LeagueShield({ league, size = 48, animate = true, showLabel = false }: LeagueShieldProps) {
