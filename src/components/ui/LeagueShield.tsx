@@ -231,7 +231,7 @@ function LeagueBadgeSvg({ league, size }: { league: League; size: number }) {
       {/* Center emblem area — dark circle */}
       <circle cx={cx} cy={cy} r={innerR * 0.55} fill={t.bgTo} fillOpacity="0.6" stroke={t.primary} strokeWidth={size * 0.015} strokeOpacity="0.35" />
 
-      {/* Crest-style emblem with wing frame + central icon */}
+      {/* Emblem: each tier has a distinct crest matching its description */}
       <g
         transform={`translate(${cx}, ${cy}) scale(${size * 0.005})`}
         stroke={t.secondary}
@@ -240,109 +240,122 @@ function LeagueBadgeSvg({ league, size }: { league: League; size: number }) {
         strokeLinejoin="round"
         fill="none"
       >
-        {/* Common wing frame for all tiers */}
-        <path d="M-14,-4 Q-10,-12 -6,-6 Q-2,-2 -2,-2" stroke={t.primary} strokeOpacity="0.25" strokeWidth="1.2" />
-        <path d="M14,-4 Q10,-12 6,-6 Q2,-2 2,-2" stroke={t.primary} strokeOpacity="0.25" strokeWidth="1.2" />
-        <path d="M-14,4 Q-10,12 -6,6 Q-2,2 -2,2" stroke={t.primary} strokeOpacity="0.15" strokeWidth="1" />
-        <path d="M14,4 Q10,12 6,6 Q2,2 2,2" stroke={t.primary} strokeOpacity="0.15" strokeWidth="1" />
-
-        {/* IRON — Broken chain link */}
+        {/* IRON — Jagged W-shape, broken helmet, blunt and crude */}
         {league === 'IRON' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <path d="M-8,-2 L-3,-6 L0,-2 L3,-6 L8,-2 L8,6 L0,10 L-8,6 Z" fill={t.primary} fillOpacity="0.15" stroke={t.primary} />
-            <line x1="0" y1="-2" x2="0" y2="10" stroke={t.primary} strokeOpacity="0.4" strokeWidth="2" />
-            <line x1="-4" y1="-2" x2="-1" y2="-6" stroke={t.primary} strokeOpacity="0.3" />
-            <line x1="4" y1="-2" x2="1" y2="-6" stroke={t.primary} strokeOpacity="0.3" />
+            <path d="M-14,-4 L-8,-2 L-10,4 L-4,0 L-6,8 L0,2 L6,8 L4,0 L10,4 L8,-2 L14,-4 L12,6 L6,10 L0,12 L-6,10 L-12,6 Z"
+              fill={t.primary} fillOpacity="0.12" stroke={t.primary} strokeWidth="1.8" />
+            <path d="M-10,0 L-4,-6 L0,-2 L4,-6 L10,0" stroke={t.accent} strokeOpacity="0.4" strokeWidth="2" />
+            <path d="M-6,4 L0,-1 L6,4" stroke={t.accent} strokeOpacity="0.25" strokeWidth="1.5" />
           </g>
         )}
 
-        {/* BRONZE — Crest shield */}
+        {/* BRONZE — Wider wingspan, central peak, sharp edges */}
         {league === 'BRONZE' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <path d="M-8,-8 L8,-8 L10,0 L6,8 L0,10 L-6,8 L-10,0 Z" fill={t.primary} fillOpacity="0.2" stroke={t.primary} />
-            <line x1="0" y1="-8" x2="0" y2="10" stroke={t.primary} strokeOpacity="0.5" />
-            <line x1="-6" y1="0" x2="6" y2="0" stroke={t.primary} strokeOpacity="0.4" />
+            <path d="M-14,-6 L-8,-10 L-4,-4 L0,-8 L4,-4 L8,-10 L14,-6 L12,4 L6,10 L0,12 L-6,10 L-12,4 Z"
+              fill={t.primary} fillOpacity="0.15" stroke={t.primary} strokeWidth="1.6" />
+            <path d="M-10,0 L-5,-6 L0,-2 L5,-6 L10,0" stroke={t.accent} strokeOpacity="0.3" />
+            <line x1="0" y1="-2" x2="0" y2="10" stroke={t.primary} strokeOpacity="0.4" />
           </g>
         )}
 
-        {/* SILVER — Winged blade */}
+        {/* SILVER — Sweeping wing tips upward, pronounced central crest */}
         {league === 'SILVER' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <path d="M0,-10 L3,-2 L8,2 L3,6 L0,10 L-3,6 L-8,2 L-3,-2 Z" fill={t.primary} fillOpacity="0.2" stroke={t.primary} />
-            <path d="M-6,-6 Q-3,-10 0,-10 Q3,-10 6,-6" fill={t.primary} fillOpacity="0.15" stroke={t.primary} strokeWidth="1.2" />
-            <circle cx="0" cy="2" r="1.5" fill={t.primary} fillOpacity="0.4" />
+            <path d="M-14,-8 Q-10,-14 -6,-6 L-2,-2 L0,-4 L2,-2 L6,-6 Q10,-14 14,-8 L12,2 L6,8 L2,10 L-2,10 L-6,8 L-12,2 Z"
+              fill={t.primary} fillOpacity="0.15" stroke={t.primary} strokeWidth="1.5" />
+            <path d="M-10,-4 Q-6,-10 -3,-4" stroke={t.accent} strokeOpacity="0.3" />
+            <path d="M10,-4 Q6,-10 3,-4" stroke={t.accent} strokeOpacity="0.3" />
+            <line x1="0" y1="-4" x2="0" y2="8" stroke={t.primary} strokeOpacity="0.5" strokeWidth="2" />
+            <circle cx="0" cy="4" r="2" fill={t.primary} fillOpacity="0.3" />
           </g>
         )}
 
-        {/* GOLD — Winged crown */}
+        {/* GOLD — Thick multi-layered wings, wide */}
         {league === 'GOLD' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <path d="M-9,-4 L-6,-9 L-3,-3 L0,-7 L3,-3 L6,-9 L9,-4 L9,5 L-9,5 Z" fill={t.primary} fillOpacity="0.2" stroke={t.primary} />
-            <path d="M-10,-2 Q-7,-6 -6,-3" stroke={t.primary} strokeOpacity="0.3" strokeWidth="1" />
-            <path d="M10,-2 Q7,-6 6,-3" stroke={t.primary} strokeOpacity="0.3" strokeWidth="1" />
-            <circle cx="0" cy="2" r="2" fill={t.primary} fillOpacity="0.4" />
+            <path d="M-16,-2 Q-12,-12 -6,-8 L-3,-4 L0,-6 L3,-4 L6,-8 Q12,-12 16,-2 L14,6 L8,10 L3,12 L-3,12 L-8,10 L-14,6 Z"
+              fill={t.primary} fillOpacity="0.18" stroke={t.primary} strokeWidth="1.8" />
+            <path d="M-14,0 Q-8,-8 -4,-4" stroke={t.accent} strokeOpacity="0.3" strokeWidth="1.2" />
+            <path d="M14,0 Q8,-8 4,-4" stroke={t.accent} strokeOpacity="0.3" strokeWidth="1.2" />
+            <path d="M-4,4 L0,-2 L4,4" stroke={t.primary} strokeOpacity="0.5" strokeWidth="2" />
+            <circle cx="0" cy="6" r="2.5" fill={t.primary} fillOpacity="0.25" />
           </g>
         )}
 
-        {/* PLATINUM — Winged diamond */}
+        {/* PLATINUM — Aggressive upward-pointing shards, angular */}
         {league === 'PLATINUM' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <polygon points="0,-9 7,-3 7,5 0,9 -7,5 -7,-3" fill={t.primary} fillOpacity="0.2" stroke={t.primary} />
-            <line x1="0" y1="-9" x2="0" y2="9" stroke={t.primary} strokeOpacity="0.4" />
-            <line x1="-7" y1="-3" x2="7" y2="-3" stroke={t.primary} strokeOpacity="0.3" />
-            <polygon points="0,-3 4,0 0,3 -4,0" fill={t.primary} fillOpacity="0.3" />
+            <path d="M-16,-2 L-12,-10 L-8,-4 L-4,-12 L0,-4 L4,-12 L8,-4 L12,-10 L16,-2 L14,6 L8,10 L4,12 L0,6 L-4,12 L-8,10 L-14,6 Z"
+              fill={t.primary} fillOpacity="0.15" stroke={t.primary} strokeWidth="1.6" />
+            <path d="M-10,0 L-6,-6 L-2,0" stroke={t.accent} strokeOpacity="0.3" />
+            <path d="M10,0 L6,-6 L2,0" stroke={t.accent} strokeOpacity="0.3" />
+            <polygon points="0,-6 3,0 0,4 -3,0" fill={t.primary} fillOpacity="0.2" />
           </g>
         )}
 
-        {/* EMERALD — Laurel crest */}
+        {/* EMERALD — Wide sweeping upward arcs, crystalline yet organic */}
         {league === 'EMERALD' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <path d="M-8,4 Q-4,-10 0,-4 Q4,-10 8,4 Q4,8 0,9 Q-4,8 -8,4Z" fill={t.primary} fillOpacity="0.2" stroke={t.primary} />
-            <path d="M-6,-4 Q-3,-8 0,-6 Q3,-8 6,-4" fill={t.primary} fillOpacity="0.15" stroke={t.primary} strokeWidth="1.2" />
-            <line x1="0" y1="-4" x2="0" y2="8" stroke={t.primary} strokeOpacity="0.3" />
+            <path d="M-16,-4 Q-12,-14 -6,-10 Q-3,-8 0,-10 Q3,-8 6,-10 Q12,-14 16,-4 L14,4 Q8,12 4,10 Q2,8 0,10 Q-2,8 -4,10 Q-8,12 -14,4 Z"
+              fill={t.primary} fillOpacity="0.15" stroke={t.primary} strokeWidth="1.6" />
+            <path d="M-12,-2 Q-6,-8 -2,-4" stroke={t.accent} strokeOpacity="0.3" strokeWidth="1.2" />
+            <path d="M12,-2 Q6,-8 2,-4" stroke={t.accent} strokeOpacity="0.3" strokeWidth="1.2" />
+            <path d="M-6,2 Q0,-4 6,2" stroke={t.primary} strokeOpacity="0.4" strokeWidth="1.5" />
           </g>
         )}
 
-        {/* DIAMOND — Faceted crystal */}
+        {/* DIAMOND — Heavily faceted, sharp crystalline spikes */}
         {league === 'DIAMOND' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <polygon points="0,-10 8,-4 8,4 0,10 -8,4 -8,-4" fill={t.primary} fillOpacity="0.2" stroke={t.primary} />
-            <line x1="0" y1="-10" x2="0" y2="10" stroke={t.primary} strokeOpacity="0.5" strokeWidth="2" />
-            <polygon points="-8,-4 0,-2 8,-4 0,3" fill={t.primary} fillOpacity="0.15" stroke={t.primary} strokeOpacity="0.3" />
-            <polygon points="0,3 -4,6 4,6" fill={t.primary} fillOpacity="0.2" />
+            <path d="M0,-14 L6,-10 L10,-6 L12,0 L10,4 L6,8 L0,12 L-6,8 L-10,4 L-12,0 L-10,-6 L-6,-10 Z"
+              fill={t.primary} fillOpacity="0.18" stroke={t.primary} strokeWidth="1.6" />
+            <polygon points="0,-14 6,-6 0,-2 -6,-6" fill={t.primary} fillOpacity="0.1" stroke={t.primary} strokeOpacity="0.3" />
+            <polygon points="-10,-6 -4,-2 0,4 -6,0" fill={t.primary} fillOpacity="0.1" stroke={t.primary} strokeOpacity="0.3" />
+            <polygon points="10,-6 4,-2 0,4 6,0" fill={t.primary} fillOpacity="0.1" stroke={t.primary} strokeOpacity="0.3" />
+            <polygon points="0,4 -4,8 4,8" fill={t.primary} fillOpacity="0.15" />
+            <line x1="0" y1="-14" x2="0" y2="12" stroke={t.primary} strokeOpacity="0.3" strokeWidth="1" />
           </g>
         )}
 
-        {/* MASTER — Double wings + gem */}
+        {/* MASTER — Arcane ethereal upward sweep, pure energy */}
         {league === 'MASTER' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <path d="M-4,-6 Q-8,-10 -12,-4 Q-8,0 -4,-2" fill={t.primary} fillOpacity="0.15" stroke={t.primary} />
-            <path d="M4,-6 Q8,-10 12,-4 Q8,0 4,-2" fill={t.primary} fillOpacity="0.15" stroke={t.primary} />
-            <path d="M-4,2 Q-10,6 -12,10 Q-6,8 -2,4" fill={t.primary} fillOpacity="0.1" stroke={t.primary} />
-            <path d="M4,2 Q10,6 12,10 Q6,8 2,4" fill={t.primary} fillOpacity="0.1" stroke={t.primary} />
-            <polygon points="0,-6 5,0 0,6 -5,0" fill={t.primary} fillOpacity="0.3" stroke={t.primary} />
-            <circle cx="0" cy="0" r="2" fill={t.primary} fillOpacity="0.5" />
+            <path d="M-16,-6 Q-10,-16 -4,-10 Q-2,-8 0,-10 Q2,-8 4,-10 Q10,-16 16,-6 L14,4 Q8,10 4,8 L2,6 L-2,6 L-4,8 Q-8,10 -14,4 Z"
+              fill={t.primary} fillOpacity="0.15" stroke={t.primary} strokeWidth="1.6" />
+            <path d="M-12,-2 Q-8,-10 -4,-6" stroke={t.accent} strokeOpacity="0.35" strokeWidth="1.3" />
+            <path d="M12,-2 Q8,-10 4,-6" stroke={t.accent} strokeOpacity="0.35" strokeWidth="1.3" />
+            <path d="M-8,2 Q-4,-4 0,0 Q4,-4 8,2" stroke={t.primary} strokeOpacity="0.5" strokeWidth="1.8" />
+            <polygon points="0,-4 3,2 0,6 -3,2" fill={t.primary} fillOpacity="0.25" />
+            <circle cx="0" cy="1" r="2" fill={t.primary} fillOpacity="0.4" />
           </g>
         )}
 
-        {/* GRANDMASTER — Flame crest */}
+        {/* GRANDMASTER — Demonic/fiery V-center, massive flared top wings */}
         {league === 'GRANDMASTER' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <path d="M0,-10 Q5,-6 7,-2 Q10,0 8,4 Q6,8 3,9 Q0,10 -3,9 Q-6,8 -8,4 Q-10,0 -7,-2 Q-5,-6 0,-10Z" fill={t.primary} fillOpacity="0.2" stroke={t.primary} />
-            <path d="M-8,-4 Q-11,-8 -13,-2 Q-10,2 -7,0" fill={t.primary} fillOpacity="0.1" stroke={t.primary} />
-            <path d="M8,-4 Q11,-8 13,-2 Q10,2 7,0" fill={t.primary} fillOpacity="0.1" stroke={t.primary} />
-            <circle cx="0" cy="2" r="2" fill={t.primary} fillOpacity="0.4" />
+            <path d="M-18,-4 Q-14,-16 -6,-12 L-2,-8 L0,-14 L2,-8 L6,-12 Q14,-16 18,-4 L16,6 L10,12 L4,14 L0,10 L-4,14 L-10,12 L-16,6 Z"
+              fill={t.primary} fillOpacity="0.18" stroke={t.primary} strokeWidth="1.8" />
+            <path d="M-14,0 Q-8,-10 -4,-6" stroke={t.accent} strokeOpacity="0.35" strokeWidth="1.3" />
+            <path d="M14,0 Q8,-10 4,-6" stroke={t.accent} strokeOpacity="0.35" strokeWidth="1.3" />
+            <path d="M0,-14 L0,4" stroke={t.accent} strokeOpacity="0.4" strokeWidth="2" />
+            <path d="M-6,2 Q0,-4 6,2" stroke={t.primary} strokeOpacity="0.5" strokeWidth="1.5" />
+            <path d="M-4,6 L0,2 L4,6" stroke={t.accent} strokeOpacity="0.4" />
           </g>
         )}
 
-        {/* CHALLENGER — Radiant star crest */}
+        {/* CHALLENGER — Ultimate crown/crest, massive wingspan, star core */}
         {league === 'CHALLENGER' && (
           <g filter={`url(#soft-glow-${league})`}>
-            <path d="M0,-10 L3,-4 L9,-4 L5,1 L7,8 L0,5 L-7,8 L-5,1 L-9,-4 L-3,-4 Z" fill={t.primary} fillOpacity="0.2" stroke={t.primary} />
-            <path d="M-10,-6 Q-13,-10 -15,-4 Q-12,0 -8,-2" fill={t.primary} fillOpacity="0.1" stroke={t.primary} />
-            <path d="M10,-6 Q13,-10 15,-4 Q12,0 8,-2" fill={t.primary} fillOpacity="0.1" stroke={t.primary} />
-            <circle cx="0" cy="0" r="3" fill={t.primary} fillOpacity="0.25" stroke={t.primary} />
-            <circle cx="0" cy="0" r="1.5" fill={t.accent} fillOpacity="0.5" />
+            <path d="M-20,-2 Q-16,-18 -8,-14 L-4,-10 L-2,-14 L0,-12 L2,-14 L4,-10 L8,-14 Q16,-18 20,-2 L18,8 L12,14 L6,16 L0,12 L-6,16 L-12,14 L-18,8 Z"
+              fill={t.primary} fillOpacity="0.18" stroke={t.primary} strokeWidth="2" />
+            <path d="M-16,2 Q-10,-12 -4,-6" stroke={t.accent} strokeOpacity="0.3" strokeWidth="1.3" />
+            <path d="M16,2 Q10,-12 4,-6" stroke={t.accent} strokeOpacity="0.3" strokeWidth="1.3" />
+            <polygon points="0,-12 3,-4 8,-4 4,1 6,8 0,4 -6,8 -4,1 -8,-4 -3,-4"
+              fill={t.primary} fillOpacity="0.15" stroke={t.primary} strokeWidth="1.2" />
+            <circle cx="0" cy="0" r="4" fill={t.accent} fillOpacity="0.15" stroke={t.accent} strokeWidth="1.5" />
+            <circle cx="0" cy="0" r="2" fill={t.accent} fillOpacity="0.3" />
           </g>
         )}
       </g>
