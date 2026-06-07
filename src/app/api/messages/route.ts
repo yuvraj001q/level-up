@@ -24,6 +24,16 @@ export async function GET(req: NextRequest) {
       },
     });
 
+    // Mark unread messages from others as read
+    await prisma.message.updateMany({
+      where: {
+        conversationId,
+        senderId: { not: session.user.id },
+        readAt: null,
+      },
+      data: { readAt: new Date() },
+    });
+
     return NextResponse.json(
       messages.map((m) => ({
         id: m.id,
