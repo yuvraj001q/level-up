@@ -4,28 +4,32 @@ import { getXpForDifficulty, getLevelInfo, getNewRank } from '@/lib/game';
 import { checkAchievements } from '@/lib/achievements';
 
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const userId = searchParams.get('userId');
+  try {
+    const { searchParams } = new URL(req.url);
+    const userId = searchParams.get('userId');
 
-  if (!userId) {
-    return NextResponse.json({ error: 'User ID required' }, { status: 400 });
+    if (!userId) {
+      return NextResponse.json({ error: 'User ID required' }, { status: 400 });
+    }
+
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const tasks = await prisma.task.findMany({
+      where: {
+        userId,
+        OR: [
+          { status: { not: 'COMPLETED' } },
+          { completedAt: { gte: twentyFourHoursAgo } },
+        ],
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+    });
+
+    return NextResponse.json(tasks);
+  } catch {
+    return NextResponse.json({ error: 'Failed to fetch tasks' }, { status: 500 });
   }
-
-  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-
-  const tasks = await prisma.task.findMany({
-    where: {
-      userId,
-      OR: [
-        { status: { not: 'COMPLETED' } },
-        { completedAt: { gte: twentyFourHoursAgo } },
-      ],
-    },
-    orderBy: { createdAt: 'desc' },
-    take: 50,
-  });
-
-  return NextResponse.json(tasks);
 }
 
 export async function POST(req: Request) {
@@ -57,10 +61,17 @@ export async function POST(req: Request) {
 
 export async function PATCH(req: Request) {
   try {
-    const { id, userId, status, ...data } = await req.json();
+    const body = await req.json();
+    const { id, userId, status } = body;
 
     if (!id || !userId) {
       return NextResponse.json({ error: 'Task ID and User ID required' }, { status: 400 });
+    }
+
+    const allowedFields = ['description', 'difficulty', 'category', 'deadline', 'notes', 'isAiGenerated'];
+    const data: Record<string, unknown> = {};
+    for (const field of allowedFields) {
+      if (body[field] !== undefined) data[field] = body[field];
     }
 
     const task = await prisma.task.findFirst({ where: { id, userId } });
@@ -195,6 +206,7 @@ export async function PATCH(req: Request) {
         ...data,
         status: status || task.status,
         completedAt: status === 'COMPLETED' ? new Date() : task.completedAt,
+        title: body.title || task.title,
       },
     });
 

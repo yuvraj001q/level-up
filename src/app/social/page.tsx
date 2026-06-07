@@ -5,9 +5,13 @@ import { motion } from 'framer-motion';
 import { MessageCircle, Users } from 'lucide-react';
 import { FriendsPanel } from '@/components/social/FriendsPanel';
 import { MessagesPanel } from '@/components/social/MessagesPanel';
+import { useRequireAuth } from '@/lib/useRequireAuth';
 
 export default function SocialPage() {
+  const { status } = useRequireAuth();
   const [chatTarget, setChatTarget] = useState<{ id: string; name: string } | null>(null);
+
+  if (status === 'loading') return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent-blue border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto">

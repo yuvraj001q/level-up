@@ -3,27 +3,31 @@ import { prisma } from '@/lib/prisma';
 import { ACHIEVEMENTS } from '@/lib/achievements';
 
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const userId = searchParams.get('userId');
+  try {
+    const { searchParams } = new URL(req.url);
+    const userId = searchParams.get('userId');
 
-  if (!userId) return NextResponse.json({ error: 'User ID required' }, { status: 400 });
+    if (!userId) return NextResponse.json({ error: 'User ID required' }, { status: 400 });
 
-  const userAchievements = await prisma.userAchievement.findMany({
-    where: { userId },
-    include: { achievement: true },
-  });
+    const userAchievements = await prisma.userAchievement.findMany({
+      where: { userId },
+      include: { achievement: true },
+    });
 
-  const allAchievements = ACHIEVEMENTS.map((a: { key: string; title: string; description: string; icon: string; xpReward: number; pointsReward: number; criteria: Record<string, unknown> }) => {
-    const unlocked = userAchievements.find((ua: { achievement: { key: string } }) => ua.achievement.key === a.key);
-    return {
-      ...a,
-      id: a.key,
-      unlocked: !!unlocked,
-      unlockedAt: (unlocked as { unlockedAt: Date } | undefined)?.unlockedAt || null,
-    };
-  });
+    const allAchievements = ACHIEVEMENTS.map((a: { key: string; title: string; description: string; icon: string; xpReward: number; pointsReward: number; criteria: Record<string, unknown> }) => {
+      const unlocked = userAchievements.find((ua: { achievement: { key: string } }) => ua.achievement.key === a.key);
+      return {
+        ...a,
+        id: a.key,
+        unlocked: !!unlocked,
+        unlockedAt: unlocked?.unlockedAt || null,
+      };
+    });
 
-  return NextResponse.json(allAchievements);
+    return NextResponse.json(allAchievements);
+  } catch {
+    return NextResponse.json({ error: 'Failed to fetch achievements' }, { status: 500 });
+  }
 }
 
 export async function POST(req: Request) {

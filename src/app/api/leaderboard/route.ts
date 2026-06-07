@@ -25,6 +25,7 @@ export async function GET() {
       const users = await prisma.$queryRaw<{
         id: string;
         name: string | null;
+        username: string | null;
         level: number;
         xp: number;
         rank: string;
@@ -32,13 +33,13 @@ export async function GET() {
         dailyStreak: number;
         achievementPoints: number;
       }[]>`
-        SELECT id, name, level, xp, rank, league, "dailyStreak", "achievementPoints"
+        SELECT id, name, username, level, xp, rank, league, "dailyStreak", "achievementPoints"
         FROM "User"
         ORDER BY xp DESC
         LIMIT 100
       `;
       return NextResponse.json(
-        users.map((u) => ({ ...u, username: null, league: u.league as any }))
+        users.map((u) => ({ ...u, league: u.league as any }))
       );
     } catch {
       return NextResponse.json({ error: 'Failed to fetch leaderboard' }, { status: 500 });

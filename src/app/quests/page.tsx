@@ -33,18 +33,24 @@ export default function QuestsPage() {
   const handleGenerate = async () => {
     if (!session?.user?.id) return;
     setGenerating(true);
-    const action = activeTab === 'DAILY' ? 'generate_daily' : activeTab === 'WEEKLY' ? 'generate_weekly' : 'generate_monthly';
-    await fetch('/api/quests', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: session.user.id, action }),
-    });
-    await loadQuests();
-    setGenerating(false);
+    try {
+      const action = activeTab === 'DAILY' ? 'generate_daily' : activeTab === 'WEEKLY' ? 'generate_weekly' : 'generate_monthly';
+      await fetch('/api/quests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: session.user.id, action }),
+      });
+      await loadQuests();
+    } catch {
+      // ignore
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const handleComplete = async (id: string) => {
     if (!session?.user?.id) return;
+    const store = useStore.getState();
     const res = await fetch('/api/quests', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -52,15 +58,15 @@ export default function QuestsPage() {
     });
     const data = await res.json();
     if (data.quest) {
-      useStore.getState().updateQuest(id, data.quest);
+      store.updateQuest(id, data.quest);
       if (data.xpAwarded) {
-        showXpAnimation(data.xpAwarded);
+        store.showXpAnimation(data.xpAwarded);
         if (data.leveledUp) {
-          const levelInfo = getLevelInfo((user?.xp || 0) + data.xpAwarded);
-          showLevelUpAnimation(levelInfo.level);
+          const levelInfo = getLevelInfo(data.user?.xp || 0);
+          store.showLevelUpAnimation(levelInfo.level);
         }
       }
-      if (data.user) useStore.getState().setUser(data.user);
+      if (data.user) store.setUser(data.user);
     }
   };
 

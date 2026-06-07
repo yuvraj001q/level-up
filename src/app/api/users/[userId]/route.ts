@@ -51,6 +51,7 @@ export async function GET(
       const rows = await prisma.$queryRaw<{
         id: string;
         name: string | null;
+        username: string | null;
         email: string | null;
         image: string | null;
         age: number | null;
@@ -72,7 +73,7 @@ export async function GET(
         phone: string | null;
         "phoneVerified": boolean;
       }[]>`
-        SELECT id, name, email, image, age, bio, goals, interests,
+        SELECT id, name, username, email, image, age, bio, goals, interests,
                "productivityLevel", level, xp, rank, league,
                "lastPromotion", "achievementPoints", "dailyStreak",
                "weeklyStreak", "longestStreak", "lastActiveAt",
@@ -86,7 +87,7 @@ export async function GET(
         return NextResponse.json({ error: 'User not found' }, { status: 404 });
       }
 
-      return NextResponse.json({ ...rows[0], username: null, league: rows[0].league as any });
+      return NextResponse.json({ ...rows[0], league: rows[0].league as any });
     } catch {
       return NextResponse.json({ error: 'Failed to fetch user' }, { status: 500 });
     }

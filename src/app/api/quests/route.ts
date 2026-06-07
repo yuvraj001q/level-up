@@ -4,28 +4,32 @@ import { generateDailyQuests, generateWeeklyQuests, generateMonthlyQuests } from
 import { getLevelInfo, getNewRank } from '@/lib/game';
 
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const userId = searchParams.get('userId');
-  const type = searchParams.get('type');
+  try {
+    const { searchParams } = new URL(req.url);
+    const userId = searchParams.get('userId');
+    const type = searchParams.get('type');
 
-  if (!userId) return NextResponse.json({ error: 'User ID required' }, { status: 400 });
+    if (!userId) return NextResponse.json({ error: 'User ID required' }, { status: 400 });
 
-  const where: Record<string, unknown> = { userId };
-  if (type) where.type = type;
+    const where: Record<string, unknown> = { userId };
+    if (type) where.type = type;
 
-  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  where.OR = [
-    { status: { not: 'COMPLETED' } },
-    { completedAt: { gte: twentyFourHoursAgo } },
-  ];
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    where.OR = [
+      { status: { not: 'COMPLETED' } },
+      { completedAt: { gte: twentyFourHoursAgo } },
+    ];
 
-  const quests = await prisma.quest.findMany({
-    where,
-    orderBy: { createdAt: 'desc' },
-    take: 30,
-  });
+    const quests = await prisma.quest.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      take: 30,
+    });
 
-  return NextResponse.json(quests);
+    return NextResponse.json(quests);
+  } catch {
+    return NextResponse.json({ error: 'Failed to fetch quests' }, { status: 500 });
+  }
 }
 
 export async function POST(req: Request) {

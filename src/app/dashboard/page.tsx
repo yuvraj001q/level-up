@@ -92,6 +92,7 @@ export default function DashboardPage() {
 
   const handleCompleteTask = async (id: string) => {
     if (!session?.user?.id) return;
+    const store = useStore.getState();
     const res = await fetch('/api/tasks', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -99,31 +100,33 @@ export default function DashboardPage() {
     });
     const data = await res.json();
     if (data.task) {
-      useStore.getState().updateTask(id, data.task);
+      store.updateTask(id, data.task);
       if (data.xpAwarded) {
-        showXpAnimation(data.xpAwarded);
+        store.showXpAnimation(data.xpAwarded);
         setXpToday((p) => p + data.xpAwarded);
         setTasksCompletedToday((p) => p + 1);
-        if (data.user) setUser(data.user);
+        if (data.user) store.setUser(data.user);
         if (data.leveledUp) {
-          const levelInfo = getLevelInfo((user?.xp || 0) + data.xpAwarded);
-          showLevelUpAnimation(levelInfo.level);
+          const levelInfo = getLevelInfo(data.user?.xp || 0);
+          store.showLevelUpAnimation(levelInfo.level);
         }
       }
       if (data.newAchievements?.length > 0) {
+        const allAchievements = store.achievements;
         data.newAchievements.forEach((key: string) => {
-          const ach = achievements.find((a) => a.key === key);
-          if (ach) showAchievementAnimation(ach.title);
+          const ach = allAchievements.find((a) => a.key === key);
+          if (ach) store.showAchievementAnimation(ach.title);
         });
         fetch(`/api/achievements?userId=${session.user.id}`)
           .then((r) => r.json())
-          .then(setAchievements);
+          .then(store.setAchievements);
       }
     }
   };
 
   const handleCompleteQuest = async (id: string) => {
     if (!session?.user?.id) return;
+    const store = useStore.getState();
     const res = await fetch('/api/quests', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -131,16 +134,16 @@ export default function DashboardPage() {
     });
     const data = await res.json();
     if (data.quest) {
-      useStore.getState().updateQuest(id, data.quest);
+      store.updateQuest(id, data.quest);
       if (data.xpAwarded) {
-        showXpAnimation(data.xpAwarded);
+        store.showXpAnimation(data.xpAwarded);
         setXpToday((p) => p + data.xpAwarded);
         if (data.leveledUp) {
-          const levelInfo = getLevelInfo((user?.xp || 0) + data.xpAwarded);
-          showLevelUpAnimation(levelInfo.level);
+          const levelInfo = getLevelInfo(data.user?.xp || 0);
+          store.showLevelUpAnimation(levelInfo.level);
         }
       }
-      if (data.user) useStore.getState().setUser(data.user);
+      if (data.user) store.setUser(data.user);
     }
   };
 

@@ -49,10 +49,16 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  try {
+    const session = await auth();
+    if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { addresseeId } = await req.json();
+    let addresseeId: string;
+    try {
+      addresseeId = (await req.json()).addresseeId;
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+    }
   if (!addresseeId) return NextResponse.json({ error: 'addresseeId required' }, { status: 400 });
   if (addresseeId === session.user.id) return NextResponse.json({ error: 'Cannot friend yourself' }, { status: 400 });
 
@@ -81,50 +87,73 @@ export async function POST(req: NextRequest) {
     createdAt: friend.createdAt.toISOString(),
     otherUser: friend.addressee,
   });
+  } catch {
+    return NextResponse.json({ error: 'Failed to send friend request' }, { status: 500 });
+  }
 }
 
 export async function PATCH(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  try {
+    const session = await auth();
+    if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { id, status } = await req.json();
-  if (!id || !status) return NextResponse.json({ error: 'id and status required' }, { status: 400 });
+    let id: string, status: string;
+    try {
+      const body = await req.json();
+      id = body.id;
+      status = body.status;
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+    }
+    if (!id || !status) return NextResponse.json({ error: 'id and status required' }, { status: 400 });
 
-  const friend = await prisma.friend.findUnique({ where: { id } });
-  if (!friend) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-  if (friend.addresseeId !== session.user.id) return NextResponse.json({ error: 'Not your request' }, { status: 403 });
+    const friend = await prisma.friend.findUnique({ where: { id } });
+    if (!friend) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    if (friend.addresseeId !== session.user.id) return NextResponse.json({ error: 'Not your request' }, { status: 403 });
 
-  const updated = await prisma.friend.update({
-    where: { id },
-    data: { status },
-    include: {
-      requester: { select: { id: true, name: true, username: true, image: true, level: true, league: true } },
-    },
-  });
+    const updated = await prisma.friend.update({
+      where: { id },
+      data: { status: status as any },
+      include: {
+        requester: { select: { id: true, name: true, username: true, image: true, level: true, league: true } },
+      },
+    });
 
-  return NextResponse.json({
-    id: updated.id,
-    requesterId: updated.requesterId,
-    addresseeId: updated.addresseeId,
-    status: updated.status,
-    createdAt: updated.createdAt.toISOString(),
-    otherUser: updated.requester,
-  });
+    return NextResponse.json({
+      id: updated.id,
+      requesterId: updated.requesterId,
+      addresseeId: updated.addresseeId,
+      status: updated.status,
+      createdAt: updated.createdAt.toISOString(),
+      otherUser: updated.requester,
+    });
+  } catch {
+    return NextResponse.json({ error: 'Failed to update friend' }, { status: 500 });
+  }
 }
 
 export async function DELETE(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  try {
+    const session = await auth();
+    if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { id } = await req.json();
-  if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });
+    let id: string;
+    try {
+      id = (await req.json()).id;
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+    }
+    if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });
 
-  const friend = await prisma.friend.findUnique({ where: { id } });
-  if (!friend) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-  if (friend.requesterId !== session.user.id && friend.addresseeId !== session.user.id) {
-    return NextResponse.json({ error: 'Not your friend' }, { status: 403 });
+    const friend = await prisma.friend.findUnique({ where: { id } });
+    if (!friend) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    if (friend.requesterId !== session.user.id && friend.addresseeId !== session.user.id) {
+      return NextResponse.json({ error: 'Not your friend' }, { status: 403 });
+    }
+
+    await prisma.friend.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: 'Failed to delete friend' }, { status: 500 });
   }
-
-  await prisma.friend.delete({ where: { id } });
-  return NextResponse.json({ success: true });
 }

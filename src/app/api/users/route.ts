@@ -98,10 +98,21 @@ export async function POST(req: Request) {
 
 export async function PATCH(req: Request) {
   try {
-    const { userId, ...data } = await req.json();
+    const body = await req.json();
+    const { userId } = body;
 
     if (!userId) {
       return NextResponse.json({ error: 'User ID required' }, { status: 400 });
+    }
+
+    const allowedFields = ['name', 'username', 'bio', 'age', 'goals', 'interests', 'productivityLevel', 'phone', 'image'];
+    const data: Record<string, unknown> = {};
+    for (const field of allowedFields) {
+      if (body[field] !== undefined) data[field] = body[field];
+    }
+
+    if (Object.keys(data).length === 0) {
+      return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 });
     }
 
     const user = await prisma.user.update({
@@ -137,7 +148,19 @@ export async function PATCH(req: Request) {
     return NextResponse.json(user);
   } catch {
     try {
-      const { userId, ...data } = await req.json();
+      const body = await req.json();
+      const { userId } = body;
+
+      const allowedFields = ['name', 'username', 'bio', 'age', 'goals', 'interests', 'productivityLevel', 'phone', 'image'];
+      const data: Record<string, unknown> = {};
+      for (const field of allowedFields) {
+        if (body[field] !== undefined) data[field] = body[field];
+      }
+
+      if (Object.keys(data).length === 0) {
+        return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 });
+      }
+
       const setClauses = Object.keys(data)
         .map((k) => `"${k}" = $${Object.keys(data).indexOf(k) + 2}`)
         .join(', ');

@@ -238,7 +238,15 @@ export default function ProfilePage() {
 
   if (status === 'loading') return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent-blue border-t-transparent rounded-full animate-spin" /></div>;
 
-  const levelInfo = user ? getLevelInfo(user.xp) : null;
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-text-muted">Loading profile...</div>
+      </div>
+    );
+  }
+
+  const levelInfo = getLevelInfo(user.xp);
 
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto">

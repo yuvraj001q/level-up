@@ -21,8 +21,8 @@ export async function GET() {
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
     if (!user.referralCode) {
-      const code = session.user.email?.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12) +
-        Math.random().toString(36).slice(2, 6);
+      const emailPrefix = session.user.email?.split('@')[0]?.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12) || 'user';
+      const code = emailPrefix + Math.random().toString(36).slice(2, 6);
       await prisma.user.update({ where: { id: session.user.id }, data: { referralCode: code } });
       user.referralCode = code;
     }

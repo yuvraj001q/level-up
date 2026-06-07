@@ -17,6 +17,11 @@ export default function ReferralPage() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [origin, setOrigin] = useState('');
+
+  useEffect(() => {
+    setOrigin(window.location.origin);
+  }, []);
 
   useEffect(() => {
     if (status !== 'authenticated') return;
@@ -29,7 +34,7 @@ export default function ReferralPage() {
       .catch(() => setLoading(false));
   }, [status]);
 
-  const referralLink = data ? `${window.location.origin}/register?ref=${data.referralCode}` : '';
+  const referralLink = data && origin ? `${origin}/register?ref=${data.referralCode}` : '';
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(referralLink);
