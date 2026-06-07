@@ -261,6 +261,46 @@ export default function DashboardPage() {
             )}
           </motion.div>
 
+          {leaderboard.length > 0 && (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
+              className="lg:col-span-2"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold flex items-center gap-2">
+                  <Users className="w-4 h-4 text-accent-purple" />
+                  Leaderboard
+                </h2>
+                <button
+                  onClick={() => router.push('/leaderboard')}
+                  className="text-xs text-text-muted hover:text-text-primary transition-colors"
+                >
+                  View all
+                </button>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                {leaderboard.map((entry, i) => (
+                  <div
+                    key={entry.id}
+                    className={`flex flex-col items-center gap-1.5 p-3 rounded-xl transition-all text-center ${
+                      entry.id === session?.user?.id
+                        ? 'bg-accent-blue/10 ring-1 ring-accent-blue/30'
+                        : 'glass-hover'
+                    }`}
+                  >
+                    <span className={`text-xs font-bold ${
+                      i === 0 ? 'text-accent-yellow' : i === 1 ? 'text-text-secondary' : i === 2 ? 'text-accent-orange' : 'text-text-muted'
+                    }`}>
+                      #{i + 1}
+                    </span>
+                    <LeagueShield league={entry.league} size={28} animate={false} />
+                    <p className="text-xs font-medium truncate w-full">{entry.name || 'Anonymous'}</p>
+                    <p className="text-[10px] text-text-muted">Lv.{entry.level} &middot; {entry.xp.toLocaleString()} XP</p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold flex items-center gap-2">
@@ -283,47 +323,6 @@ export default function DashboardPage() {
         </div>
 
         <div className="space-y-4">
-          {leaderboard.length > 0 && (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold flex items-center gap-2">
-                  <Users className="w-4 h-4 text-accent-purple" />
-                  Leaderboard
-                </h2>
-                <button
-                  onClick={() => router.push('/leaderboard')}
-                  className="text-xs text-text-muted hover:text-text-primary transition-colors"
-                >
-                  View all
-                </button>
-              </div>
-              <div className="space-y-1.5">
-                {leaderboard.map((entry, i) => (
-                  <div
-                    key={entry.id}
-                    className={`flex items-center gap-3 p-2.5 rounded-xl transition-all ${
-                      entry.id === session?.user?.id
-                        ? 'bg-accent-blue/10 ring-1 ring-accent-blue/30'
-                        : 'glass-hover'
-                    }`}
-                  >
-                    <span className={`w-6 text-xs font-bold text-center ${
-                      i === 0 ? 'text-accent-yellow' : i === 1 ? 'text-text-secondary' : i === 2 ? 'text-accent-orange' : 'text-text-muted'
-                    }`}>
-                      {i + 1}
-                    </span>
-                    <LeagueShield league={entry.league} size={24} animate={false} />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{entry.name || 'Anonymous'}</p>
-                      <p className="text-xs text-text-muted">Level {entry.level}</p>
-                    </div>
-                    <span className="text-xs font-semibold text-text-primary">{entry.xp.toLocaleString()} XP</span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold flex items-center gap-2">
