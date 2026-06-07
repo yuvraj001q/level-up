@@ -54,6 +54,11 @@ export default function DashboardPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userId, action: 'generate_weekly' }),
         }).catch(() => {});
+        fetch(`/api/quests?userId=${userId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, action: 'generate_monthly' }),
+        }).catch(() => {});
 
         // XP today
         const today = new Date();
@@ -174,6 +179,7 @@ export default function DashboardPage() {
   });
   const dailyQuests = quests.filter((q) => q.type === 'DAILY' && q.status !== 'COMPLETED');
   const weeklyQuests = quests.filter((q) => q.type === 'WEEKLY' && q.status !== 'COMPLETED');
+  const monthlyQuests = quests.filter((q) => q.type === 'MONTHLY' && q.status !== 'COMPLETED');
   const recentAchievements = achievements.filter((a) => a.unlocked).slice(0, 4);
   const pendingTasks = tasks.filter((t) => t.status === 'PENDING');
 
@@ -366,6 +372,26 @@ export default function DashboardPage() {
             ) : (
               <div className="space-y-2">
                 {weeklyQuests.slice(0, 3).map((quest) => (
+                  <QuestCard key={quest.id} quest={quest} onComplete={handleCompleteQuest} />
+                ))}
+              </div>
+            )}
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <Swords className="w-4 h-4 text-accent-purple" />
+                Monthly Quests
+              </h2>
+            </div>
+            {monthlyQuests.length === 0 ? (
+              <div className="glass p-6 text-center">
+                <p className="text-sm text-text-muted">No monthly quests yet.</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {monthlyQuests.slice(0, 3).map((quest) => (
                   <QuestCard key={quest.id} quest={quest} onComplete={handleCompleteQuest} />
                 ))}
               </div>
