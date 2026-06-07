@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   LayoutDashboard,
   ListChecks,
@@ -19,6 +19,7 @@ import {
   X,
   Download,
   MessageCircle,
+  Gift,
 } from 'lucide-react';
 
 const NAV_ITEMS = [
@@ -28,7 +29,8 @@ const NAV_ITEMS = [
   { href: '/achievements', label: 'Achievements', icon: Trophy },
   { href: '/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/leaderboard', label: 'Leaderboard', icon: Users },
-  { href: '/social', label: 'Social', icon: MessageCircle },
+  { href: '/social', label: 'Social', icon: MessageCircle, badge: 'unread' as const },
+  { href: '/referral', label: 'Referral', icon: Gift },
   { href: '/download', label: 'Download', icon: Download },
 ];
 
@@ -36,6 +38,20 @@ export function Navbar() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    if (!session) return;
+    const fetchUnread = () => {
+      fetch('/api/messages/unread')
+        .then((r) => r.json())
+        .then((d) => setUnreadCount(d.count || 0))
+        .catch(() => {});
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 30000);
+    return () => clearInterval(interval);
+  }, [session]);
 
   if (!session || pathname === '/login' || pathname === '/register') return null;
 
@@ -72,6 +88,11 @@ export function Navbar() {
               >
                 <Icon className="w-4 h-4" />
                 {item.label}
+                {item.badge === 'unread' && unreadCount > 0 && (
+                  <span className="ml-auto min-w-[20px] h-5 flex items-center justify-center rounded-full bg-accent-red text-white text-[10px] font-bold px-1">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
                 {isActive && (
                   <motion.div
                     layoutId="activeNav"

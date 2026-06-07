@@ -1,0 +1,3 @@
+ALTER TABLE "User" DROP CONSTRAINT IF EXISTS "User_referralCode_key";
+ALTER TABLE "User" ALTER COLUMN "referralCode" DROP NOT NULL;
+ALTER TABLE "User" ALTER COLUMN "referralCode" SET DEFAULT '';

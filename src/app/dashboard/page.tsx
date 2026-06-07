@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion } from 'framer-motion';
-import { Zap, Sparkles, TrendingUp, ListChecks, Swords, Trophy, Users } from 'lucide-react';
+import { Zap, Sparkles, TrendingUp, ListChecks, Swords, Trophy, Users, MessageCircle } from 'lucide-react';
 import { StatsCardSkeleton, CardSkeleton } from '@/components/ui/Skeleton';
 import { LeagueShield, getLeagueLabel } from '@/components/ui/LeagueShield';
 import { XPBar } from '@/components/ui/XPBar';
@@ -21,6 +21,7 @@ export default function DashboardPage() {
   const [xpToday, setXpToday] = useState(0);
   const [tasksCompletedToday, setTasksCompletedToday] = useState(0);
   const [leaderboard, setLeaderboard] = useState<{ id: string; name: string; level: number; xp: number; league: League; rank: number | null }[]>([]);
+  const [unreadMessages, setUnreadMessages] = useState(0);
 
   useEffect(() => {
     if (status !== 'authenticated' || !session?.user?.id) return;
@@ -81,6 +82,11 @@ export default function DashboardPage() {
     fetch('/api/leaderboard')
       .then(r => r.json())
       .then(data => { if (Array.isArray(data)) setLeaderboard(data.slice(0, 5)); })
+      .catch(() => {});
+
+    fetch('/api/messages/unread')
+      .then(r => r.json())
+      .then(d => setUnreadMessages(d.count || 0))
       .catch(() => {});
   }, [status, session, setUser, setTasks, setQuests, setAchievements, setLoading]);
 
@@ -329,6 +335,30 @@ export default function DashboardPage() {
         </div>
 
         <div className="space-y-4">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
+            <button onClick={() => router.push('/social')} className="w-full text-left glass-hover p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-accent-cyan/10 flex items-center justify-center relative">
+                  <MessageCircle className="w-5 h-5 text-accent-cyan" />
+                  {unreadMessages > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-accent-red text-white text-[9px] font-bold px-1">
+                      {unreadMessages > 99 ? '99+' : unreadMessages}
+                    </span>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">Messages</p>
+                  <p className="text-xs text-text-muted">
+                    {unreadMessages > 0
+                      ? `${unreadMessages} unread message${unreadMessages !== 1 ? 's' : ''}`
+                      : 'No unread messages'}
+                  </p>
+                </div>
+                <MessageCircle className="w-4 h-4 text-text-muted" />
+              </div>
+            </button>
+          </motion.div>
+
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold flex items-center gap-2">

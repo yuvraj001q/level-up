@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX IF NOT EXISTS "User_referralCode_key" ON "User" ("referralCode"); ALTER TABLE "User" ALTER COLUMN "referralCode" SET NOT NULL;

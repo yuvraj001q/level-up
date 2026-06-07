@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password } = await req.json();
+    const { name, email, password, referralCode } = await req.json();
 
     if (!email || !password) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
@@ -64,6 +64,22 @@ export async function POST(req: Request) {
     const existing = await prisma.user.findUnique({ where: { username } });
     if (existing || !username) username = generateUsername(name, email);
 
+    let referredById: string | undefined;
+    if (referralCode) {
+      const referrer = await prisma.user.findUnique({ where: { referralCode } });
+      if (referrer) {
+        referredById = referrer.id;
+        await prisma.user.update({
+          where: { id: referrer.id },
+          data: { referralPoints: { increment: 10 } },
+        });
+        await prisma.referralVisit.updateMany({
+          where: { referralCode, converted: false },
+          data: { converted: true },
+        });
+      }
+    }
+
     const user = await prisma.user.create({
       data: {
         name,
@@ -72,6 +88,8 @@ export async function POST(req: Request) {
         password: hashedPassword,
         goals: [],
         interests: [],
+        referralCode: username || generateUsername(name, email),
+        referredById,
       },
     });
 
