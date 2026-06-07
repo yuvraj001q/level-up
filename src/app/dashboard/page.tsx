@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion } from 'framer-motion';
-import { Zap, Sparkles, TrendingUp, ListChecks, Swords, Trophy } from 'lucide-react';
+import { Zap, Sparkles, TrendingUp, ListChecks, Swords, Trophy, Users } from 'lucide-react';
 import { StatsCardSkeleton, CardSkeleton } from '@/components/ui/Skeleton';
 import { LeagueShield, getLeagueLabel } from '@/components/ui/LeagueShield';
 import { XPBar } from '@/components/ui/XPBar';
@@ -12,7 +12,7 @@ import { StreakCounter } from '@/components/ui/StreakCounter';
 import { TaskCard } from '@/components/ui/TaskCard';
 import { useStore } from '@/store/useStore';
 import { getLevelInfo } from '@/lib/game';
-import type { Task, Quest, UserProfile } from '@/types';
+import type { Task, Quest, UserProfile, League } from '@/types';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -20,6 +20,7 @@ export default function DashboardPage() {
   const { setUser, setTasks, setQuests, setAchievements, setLoading, showXpAnimation, showLevelUpAnimation, showAchievementAnimation, user, tasks, quests, achievements } = useStore();
   const [xpToday, setXpToday] = useState(0);
   const [tasksCompletedToday, setTasksCompletedToday] = useState(0);
+  const [leaderboard, setLeaderboard] = useState<{ id: string; name: string; level: number; xp: number; league: League; rank: number | null }[]>([]);
 
   useEffect(() => {
     if (status !== 'authenticated' || !session?.user?.id) return;
@@ -71,6 +72,11 @@ export default function DashboardPage() {
         setTasksCompletedToday(todayCompleted.length);
       })
       .finally(() => setLoading(false));
+
+    fetch('/api/leaderboard')
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data)) setLeaderboard(data.slice(0, 5)); })
+      .catch(() => {});
   }, [status, session, setUser, setTasks, setQuests, setAchievements, setLoading]);
 
   const handleCompleteTask = async (id: string) => {
@@ -277,6 +283,47 @@ export default function DashboardPage() {
         </div>
 
         <div className="space-y-4">
+          {leaderboard.length > 0 && (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold flex items-center gap-2">
+                  <Users className="w-4 h-4 text-accent-purple" />
+                  Leaderboard
+                </h2>
+                <button
+                  onClick={() => router.push('/leaderboard')}
+                  className="text-xs text-text-muted hover:text-text-primary transition-colors"
+                >
+                  View all
+                </button>
+              </div>
+              <div className="space-y-1.5">
+                {leaderboard.map((entry, i) => (
+                  <div
+                    key={entry.id}
+                    className={`flex items-center gap-3 p-2.5 rounded-xl transition-all ${
+                      entry.id === session?.user?.id
+                        ? 'bg-accent-blue/10 ring-1 ring-accent-blue/30'
+                        : 'glass-hover'
+                    }`}
+                  >
+                    <span className={`w-6 text-xs font-bold text-center ${
+                      i === 0 ? 'text-accent-yellow' : i === 1 ? 'text-text-secondary' : i === 2 ? 'text-accent-orange' : 'text-text-muted'
+                    }`}>
+                      {i + 1}
+                    </span>
+                    <LeagueShield league={entry.league} size={24} animate={false} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{entry.name || 'Anonymous'}</p>
+                      <p className="text-xs text-text-muted">Level {entry.level}</p>
+                    </div>
+                    <span className="text-xs font-semibold text-text-primary">{entry.xp.toLocaleString()} XP</span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold flex items-center gap-2">
