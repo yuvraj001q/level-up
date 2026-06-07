@@ -43,3 +43,8 @@ android/app/build/
 android/local.properties
 # APK is tracked intentionally for Vercel serving
 # public/level-up.apk
+
+# temp files
+tmp*.sql
+check-*.ts
+cleanup.sql
