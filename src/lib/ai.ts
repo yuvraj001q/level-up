@@ -184,6 +184,48 @@ const TASK_TEMPLATES: Record<string, { easy: string[]; medium: string[]; hard: s
     hard: ['Complete 8 Pomodoro sessions', 'Finish all planned tasks', 'Deep work for 4 hours', 'Complete a weekly review', 'Optimize workflow'],
     epic: ['Achieve inbox zero', 'Complete a 12-hour productivity day', 'Finish a major project ahead of schedule', 'Systemize your workflow', 'Build a productivity system'],
   },
+  FINANCE: {
+    easy: ['Review daily expenses', 'Log today transactions', 'Check bank balance', 'Set daily budget', 'Find one way to save money'],
+    medium: ['Create a monthly budget', 'Review weekly spending', 'Research one investment', 'Pay off a small debt', 'Set up an automatic savings transfer'],
+    hard: ['Analyze quarterly finances', 'Create a financial plan', 'Research stocks or mutual funds', 'Negotiate a better rate on a bill', 'Complete tax preparation'],
+    epic: ['Build a diversified portfolio', 'Create a 5-year financial roadmap', 'Achieve a savings milestone', 'Launch a side income stream', 'Complete a full financial audit'],
+  },
+  HEALTH_WELLNESS: {
+    easy: ['Drink 8 glasses of water', 'Take a 10-min walk', 'Stretch for 5 minutes', 'Eat one serving of vegetables', 'Get 7-8 hours of sleep'],
+    medium: ['Cook a healthy meal', 'Do a 20-min workout', 'Track your meals for the day', 'Practice good posture all day', 'Take a power nap'],
+    hard: ['Complete a full health checkup', 'Follow a diet plan for the day', 'Do 45-min intense workout', 'Meditate for 20 minutes', 'Detox from sugar for the day'],
+    epic: ['Complete a 30-day health challenge', 'Achieve a fitness goal weight', 'Run a half marathon', 'Complete a wellness retreat day', 'Transform your daily routine'],
+  },
+  TRAVEL: {
+    easy: ['Research one travel destination', 'Plan a weekend itinerary', 'Check passport validity', 'Browse flight deals', 'Create a packing list'],
+    medium: ['Book accommodation for a trip', 'Plan a detailed day itinerary', 'Learn 10 phrases in a foreign language', 'Set a travel savings goal', 'Organize travel documents'],
+    hard: ['Plan a full 7-day trip itinerary', 'Book a complete trip', 'Create a travel budget', 'Find hidden local attractions', 'Arrange transportation'],
+    epic: ['Plan a multi-country trip', 'Travel to a new country', 'Complete a solo travel experience', 'Write a travel guide', 'Capture and share a travel photobook'],
+  },
+  SOCIAL_SKILLS: {
+    easy: ['Start a conversation with a stranger', 'Compliment someone genuinely', 'Smile at 5 people today', 'Practice active listening for 10 min', 'Ask open-ended questions'],
+    medium: ['Attend a social event', 'Network with 3 new people', 'Practice public speaking for 5 min', 'Have a deep conversation', 'Give a toast or speech'],
+    hard: ['Lead a group discussion', 'Speak at a small event', 'Negotiate a win-win outcome', 'Handle a difficult conversation well', 'Mentor someone for an hour'],
+    epic: ['Speak at a conference', 'Build a community group', 'Teach a workshop on communication', 'Mediate a conflict successfully', 'Deliver a TED-style talk'],
+  },
+  WRITING: {
+    easy: ['Write 100 words', 'Journal for 5 minutes', 'Write a short poem', 'Draft an email', 'Write a one-paragraph story'],
+    medium: ['Write 500 words', 'Write a blog post draft', 'Journal for 15 minutes', 'Write a short essay', 'Edit a piece of writing'],
+    hard: ['Write 2000 words', 'Complete a short story', 'Write a detailed article', 'Start a writing portfolio', 'Submit writing for publication'],
+    epic: ['Write 5000+ words in a day', 'Complete a book chapter', 'Publish an article or story', 'Win a writing competition', 'Complete a NanoWriMo challenge'],
+  },
+  LANGUAGE: {
+    easy: ['Learn 5 new vocabulary words', 'Practice for 10 minutes', 'Watch a short video in target language', 'Label 10 household items', 'Listen to a song in target language'],
+    medium: ['Have a 5-min conversation', 'Complete a language lesson', 'Write 10 sentences', 'Read a short article', 'Practice for 30 minutes'],
+    hard: ['Have a 15-min conversation', 'Watch a movie without subtitles', 'Write a one-page essay', 'Read a news article', 'Complete an entire lesson module'],
+    epic: ['Have a 30-min fluent conversation', 'Read a full book in target language', 'Pass a language certification test', 'Write a story in target language', 'Teach someone the basics'],
+  },
+  MUSIC: {
+    easy: ['Listen to a new genre for 15 min', 'Practice an instrument for 10 min', 'Learn the notes of a scale', 'Clap along to a beat', 'Sing along to a song'],
+    medium: ['Practice an instrument for 30 min', 'Learn a new song', 'Study music theory for 20 min', 'Compose a short melody', 'Record a practice session'],
+    hard: ['Practice for 1 hour', 'Learn a complex piece', 'Perform in front of someone', 'Write a full song', 'Master a difficult technique'],
+    epic: ['Perform at an open mic', 'Record a full track', 'Complete a music certification', 'Compose an original piece', 'Build a music portfolio'],
+  },
 };
 
 export function generateAITasks(input: AIQuestInput): GeneratedTask[] {

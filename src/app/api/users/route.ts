@@ -58,6 +58,8 @@ export async function PATCH(req: Request) {
         level: true,
         xp: true,
         rank: true,
+        league: true,
+        lastPromotion: true,
         achievementPoints: true,
         dailyStreak: true,
         weeklyStreak: true,
