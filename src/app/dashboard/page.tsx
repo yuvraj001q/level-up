@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion } from 'framer-motion';
-import { Zap, Sparkles, TrendingUp, ListChecks, Swords, Trophy, Users as UsersIcon } from 'lucide-react';
+import { Zap, Sparkles, TrendingUp, ListChecks, Swords, Trophy, Users } from 'lucide-react';
 import { StatsCardSkeleton, CardSkeleton } from '@/components/ui/Skeleton';
 import { LeagueShield, getLeagueLabel } from '@/components/ui/LeagueShield';
 import { XPBar } from '@/components/ui/XPBar';
@@ -13,8 +13,6 @@ import { TaskCard } from '@/components/ui/TaskCard';
 import { useStore } from '@/store/useStore';
 import { getLevelInfo } from '@/lib/game';
 import type { Task, Quest, UserProfile, League } from '@/types';
-import { FriendsPanel } from './FriendsPanel';
-import { MessagesPanel } from './MessagesPanel';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -23,7 +21,6 @@ export default function DashboardPage() {
   const [xpToday, setXpToday] = useState(0);
   const [tasksCompletedToday, setTasksCompletedToday] = useState(0);
   const [leaderboard, setLeaderboard] = useState<{ id: string; name: string; level: number; xp: number; league: League; rank: number | null }[]>([]);
-  const [chatTarget, setChatTarget] = useState<{ id: string; name: string } | null>(null);
 
   useEffect(() => {
     if (status !== 'authenticated' || !session?.user?.id) return;
@@ -276,7 +273,7 @@ export default function DashboardPage() {
             >
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold flex items-center gap-2">
-                  <UsersIcon className="w-4 h-4 text-accent-purple" />
+                  <Users className="w-4 h-4 text-accent-purple" />
                   Leaderboard
                 </h2>
                 <button
@@ -402,31 +399,6 @@ export default function DashboardPage() {
           </motion.div>
         </div>
       </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8 }}
-        className="mt-8"
-      >
-        <h2 className="text-lg font-semibold flex items-center gap-2 mb-4">
-          <UsersIcon className="w-4 h-4 text-accent-purple" />
-          Social
-        </h2>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div>
-            <FriendsPanel onStartChat={(id, name) => setChatTarget({ id, name })} />
-          </div>
-          <div className="lg:col-span-2">
-            <MessagesPanel
-              key={chatTarget?.id || 'inbox'}
-              friendId={chatTarget?.id}
-              friendName={chatTarget?.name}
-              onClose={() => setChatTarget(null)}
-            />
-          </div>
-        </div>
-      </motion.div>
     </div>
   );
 }

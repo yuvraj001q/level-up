@@ -18,6 +18,7 @@ import {
   Menu,
   X,
   Download,
+  MessageCircle,
 } from 'lucide-react';
 
 const NAV_ITEMS = [
@@ -27,6 +28,7 @@ const NAV_ITEMS = [
   { href: '/achievements', label: 'Achievements', icon: Trophy },
   { href: '/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/leaderboard', label: 'Leaderboard', icon: Users },
+  { href: '/social', label: 'Social', icon: MessageCircle },
   { href: '/download', label: 'Download', icon: Download },
 ];
 
