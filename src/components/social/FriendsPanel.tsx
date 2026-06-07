@@ -81,7 +81,7 @@ export function FriendsPanel({ onStartChat }: { onStartChat: (friendId: string, 
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all flex-1 justify-center ${
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-md text-xs font-medium transition-all flex-1 justify-center ${
               activeTab === tab.key ? 'bg-accent-blue/20 text-accent-blue' : 'text-text-muted hover:text-text-primary'
             }`}
           >
@@ -108,20 +108,20 @@ export function FriendsPanel({ onStartChat }: { onStartChat: (friendId: string, 
                 </div>
                 <button
                   onClick={() => router.push(`/profile/${f.otherUser.id}`)}
-                  className="p-1.5 rounded-lg hover:bg-accent-blue/10 text-text-muted hover:text-accent-blue transition-all"
+                  className="p-2 rounded-lg hover:bg-accent-blue/10 text-text-muted hover:text-accent-blue transition-all"
                   title="View profile"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={() => onStartChat(f.otherUser.id, f.otherUser.name || f.otherUser.username || 'Anonymous')}
-                  className="p-1.5 rounded-lg hover:bg-accent-blue/10 text-text-muted hover:text-accent-blue transition-all"
+                  className="p-2 rounded-lg hover:bg-accent-blue/10 text-text-muted hover:text-accent-blue transition-all"
                 >
                   <MessageCircle className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => handleRemove(f.id)}
-                  className="p-1.5 rounded-lg hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-all"
+                  className="p-2 rounded-lg hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-all"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -145,13 +145,13 @@ export function FriendsPanel({ onStartChat }: { onStartChat: (friendId: string, 
                 </div>
                 <button
                   onClick={() => handleRespond(f.id, 'ACCEPTED')}
-                  className="p-1.5 rounded-lg hover:bg-accent-green/10 text-text-muted hover:text-accent-green transition-all"
+                  className="p-2 rounded-lg hover:bg-accent-green/10 text-text-muted hover:text-accent-green transition-all"
                 >
                   <Check className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => handleRespond(f.id, 'BLOCKED')}
-                  className="p-1.5 rounded-lg hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-all"
+                  className="p-2 rounded-lg hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-all"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -188,14 +188,14 @@ export function FriendsPanel({ onStartChat }: { onStartChat: (friendId: string, 
               </div>
               <button
                 onClick={() => router.push(`/profile/${searchResult.id}`)}
-                className="p-1.5 rounded-lg hover:bg-accent-blue/10 text-text-muted hover:text-accent-blue transition-all"
+                className="p-2 rounded-lg hover:bg-accent-blue/10 text-text-muted hover:text-accent-blue transition-all"
                 title="View profile"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
               </button>
               <button
                 onClick={() => handleSendRequest(searchResult.id)}
-                className="p-1.5 rounded-lg bg-accent-blue/10 text-accent-blue hover:bg-accent-blue/20 transition-all"
+                className="p-2 rounded-lg bg-accent-blue/10 text-accent-blue hover:bg-accent-blue/20 transition-all"
               >
                 <UserPlus className="w-4 h-4" />
               </button>

@@ -92,7 +92,7 @@ export default function PublicProfilePage() {
 
         {/* Profile header */}
         <div className="glass p-6 mb-6">
-          <div className="flex items-center gap-5">
+          <div className="flex items-start gap-4 sm:items-center sm:gap-5">
             <LeagueShield league={profile.league} size={64} animate />
             <div className="flex-1">
               <div className="flex items-center gap-3 flex-wrap">
@@ -103,14 +103,14 @@ export default function PublicProfilePage() {
               </div>
               <p className="text-text-muted text-sm">@{profile.username} &middot; {getLeagueLabel(profile.league)}</p>
               {profile.bio && <p className="text-sm mt-2 text-text-secondary">{profile.bio}</p>}
-              <div className="flex items-center gap-4 mt-3 text-xs text-text-muted">
+              <div className="flex items-center gap-4 mt-3 text-xs text-text-muted flex-wrap">
                 <span className="flex items-center gap-1"><Trophy className="w-3 h-3" /> Level {profile.level}</span>
                 <span className="flex items-center gap-1"><Zap className="w-3 h-3" /> {profile.xp.toLocaleString()} XP</span>
                 <span className="flex items-center gap-1"><Flame className="w-3 h-3" /> {profile.dailyStreak} day streak</span>
                 <span className="flex items-center gap-1"><Target className="w-3 h-3" /> {profile.achievementPoints} pts</span>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={handleStartChat}
                 className="flex items-center gap-2 px-4 py-2 rounded-xl bg-accent-blue/10 text-accent-blue text-sm font-medium hover:bg-accent-blue/20 transition-all"

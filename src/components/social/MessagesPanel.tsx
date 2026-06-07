@@ -82,7 +82,7 @@ export function MessagesPanel({ friendId, friendName, onClose }: Props) {
     return (
       <div className="glass p-4 flex flex-col h-full">
         <div className="flex items-center gap-3 mb-3">
-          <button onClick={() => { setActiveConv(null); onClose(); }} className="p-1 rounded-lg hover:bg-bg-primary/50 transition-colors">
+          <button onClick={() => { setActiveConv(null); onClose(); }} className="p-2 rounded-lg hover:bg-bg-primary/50 transition-colors">
             <ArrowLeft className="w-4 h-4 text-text-muted" />
           </button>
           <div className="flex items-center gap-2">
@@ -132,7 +132,7 @@ export function MessagesPanel({ friendId, friendName, onClose }: Props) {
           <button
             onClick={handleSend}
             disabled={!input.trim()}
-            className="p-2 rounded-lg bg-accent-blue/10 text-accent-blue hover:bg-accent-blue/20 transition-all disabled:opacity-30"
+            className="p-2.5 rounded-lg bg-accent-blue/10 text-accent-blue hover:bg-accent-blue/20 transition-all disabled:opacity-30"
           >
             <Send className="w-4 h-4" />
           </button>

@@ -33,7 +33,7 @@ export function TaskCard({ task, onComplete }: TaskCardProps) {
     >
       <button
         onClick={() => onComplete(task.id)}
-        className="mt-0.5 flex-shrink-0"
+        className="mt-0.5 flex-shrink-0 p-1 -ml-1"
       >
         {isCompleted ? (
           <CheckCircle2 className="w-5 h-5 text-accent-green" />
@@ -49,7 +49,7 @@ export function TaskCard({ task, onComplete }: TaskCardProps) {
         {task.description && (
           <p className="text-xs text-text-muted mt-1">{task.description}</p>
         )}
-        <div className="flex items-center gap-3 mt-2">
+        <div className="flex items-center gap-3 mt-2 flex-wrap">
           <span className={`text-xs font-medium ${config.color}`}>
             <Zap className="w-3 h-3 inline mr-0.5" />
             +{config.xp} XP

@@ -25,7 +25,7 @@ export function QuestCard({ quest, onComplete }: QuestCardProps) {
     >
       <button
         onClick={() => onComplete(quest.id)}
-        className="mt-0.5 flex-shrink-0"
+        className="mt-0.5 flex-shrink-0 p-1 -ml-1"
       >
         {isCompleted ? (
           <CheckCircle2 className="w-5 h-5 text-accent-green" />
@@ -35,7 +35,7 @@ export function QuestCard({ quest, onComplete }: QuestCardProps) {
       </button>
 
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <p className={`text-sm font-medium ${isCompleted ? 'line-through text-text-muted' : 'text-text-primary'}`}>
             {quest.title}
           </p>
@@ -53,7 +53,7 @@ export function QuestCard({ quest, onComplete }: QuestCardProps) {
         {quest.description && (
           <p className="text-xs text-text-muted mt-1">{quest.description}</p>
         )}
-        <div className="flex items-center gap-3 mt-2">
+        <div className="flex items-center gap-3 mt-2 flex-wrap">
           <span className="text-xs font-medium text-accent-cyan">
             <Zap className="w-3 h-3 inline mr-0.5" />
             +{quest.xpReward} XP

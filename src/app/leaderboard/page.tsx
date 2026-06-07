@@ -125,7 +125,7 @@ function LeagueSection({ league, users, sessionUserId, sortBy, onSendRequest, fr
               </div>
 
               {i < 10 && (
-                <div className="flex-shrink-0 w-5 flex justify-center">
+                <div className="flex-shrink-0 w-5 justify-center hidden sm:flex">
                   <ZoneIcon className="w-3.5 h-3.5" style={{ color: zc.color }} />
                 </div>
               )}
@@ -147,27 +147,27 @@ function LeagueSection({ league, users, sessionUserId, sortBy, onSendRequest, fr
                   </p>
                   {i < 10 && (
                     <span
-                      className="text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded"
+                      className="text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded hidden sm:inline"
                       style={{ background: `${zc.color}18`, color: zc.color }}
                     >
                       {zc.label}
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-text-muted">
+                <p className="text-xs text-text-muted hidden sm:block">
                   @{u.username || 'unknown'} &middot; Level {u.level} &middot; {u.rank}
                 </p>
               </button>
 
               <div className="text-right flex-shrink-0">
-                {sortBy === 'xp' && <p className="text-sm font-semibold">{u.xp.toLocaleString()} XP</p>}
-                {sortBy === 'streak' && <p className="text-sm font-semibold flex items-center gap-1 justify-end"><Flame className="w-3 h-3 text-accent-orange" />{u.dailyStreak}</p>}
-                {sortBy === 'achievements' && <p className="text-sm font-semibold">{u.achievementPoints} pts</p>}
+                {sortBy === 'xp' && <p className="text-xs sm:text-sm font-semibold">{u.xp.toLocaleString()} XP</p>}
+                {sortBy === 'streak' && <p className="text-xs sm:text-sm font-semibold flex items-center gap-1 justify-end"><Flame className="w-3 h-3 text-accent-orange" />{u.dailyStreak}</p>}
+                {sortBy === 'achievements' && <p className="text-xs sm:text-sm font-semibold">{u.achievementPoints} pts</p>}
               </div>
 
               <button
                 onClick={() => router.push(`/profile/${u.id}`)}
-                className="p-1.5 rounded-lg hover:bg-accent-blue/10 text-text-muted hover:text-accent-blue transition-all"
+                className="p-2 rounded-lg hover:bg-accent-blue/10 text-text-muted hover:text-accent-blue transition-all"
                 title="View profile"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
@@ -175,13 +175,13 @@ function LeagueSection({ league, users, sessionUserId, sortBy, onSendRequest, fr
 
               {!isMe && (
                 isFriend ? (
-                  <div className="p-1.5 text-accent-green" title="Friend">
+                  <div className="p-2 text-accent-green" title="Friend">
                     <Check className="w-3.5 h-3.5" />
                   </div>
                 ) : (
                   <button
                     onClick={() => onSendRequest(u.id)}
-                    className="p-1.5 rounded-lg hover:bg-accent-green/10 text-text-muted hover:text-accent-green transition-all"
+                    className="p-2 rounded-lg hover:bg-accent-green/10 text-text-muted hover:text-accent-green transition-all"
                     title="Add friend"
                   >
                     <UserPlus className="w-3.5 h-3.5" />
@@ -254,7 +254,7 @@ export default function LeaderboardPage() {
         <p className="text-text-muted mt-1">See how you rank — click any player to view their profile and compare stats</p>
       </motion.div>
 
-      <div className="flex items-center gap-2 mb-6">
+      <div className="flex items-center gap-2 mb-6 flex-wrap">
         {([
           { key: 'xp', label: 'XP', icon: Zap },
           { key: 'streak', label: 'Streak', icon: Flame },

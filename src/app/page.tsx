@@ -85,7 +85,7 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
-              className="flex items-center justify-center gap-4"
+              className="flex items-center justify-center gap-4 flex-wrap"
             >
               <Link
                 href="/register"

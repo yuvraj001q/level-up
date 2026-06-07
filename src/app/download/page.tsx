@@ -38,7 +38,7 @@ export default function DownloadPage() {
           <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-accent-blue to-accent-cyan flex items-center justify-center">
             <Zap className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl font-bold mb-3">
+          <h1 className="text-3xl md:text-4xl font-bold mb-3">
             Get the <span className="gradient-text">App</span>
           </h1>
           <p className="text-text-secondary max-w-xl mx-auto">

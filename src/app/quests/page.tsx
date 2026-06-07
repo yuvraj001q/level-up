@@ -118,7 +118,7 @@ export default function QuestsPage() {
         </div>
       </motion.div>
 
-      <div className="flex items-center gap-2 mb-6">
+      <div className="flex items-center gap-2 mb-6 flex-wrap">
         {(['DAILY', 'WEEKLY', 'MONTHLY'] as QuestType[]).map((tab) => (
           <button
             key={tab}

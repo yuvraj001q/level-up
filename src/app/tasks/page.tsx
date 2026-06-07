@@ -267,7 +267,7 @@ export default function TasksPage() {
                     placeholder="Optional details"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm text-text-secondary mb-1">Difficulty</label>
                     <select

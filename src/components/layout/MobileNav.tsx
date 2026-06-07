@@ -21,7 +21,7 @@ export function MobileNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-bg-secondary/90 backdrop-blur-xl border-t border-border-subtle z-50 md:hidden">
-      <div className="flex items-center justify-around py-2 px-2">
+      <div className="flex items-center justify-around py-1 px-2">
         {MOBILE_NAV.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -29,7 +29,7 @@ export function MobileNav() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center gap-1 px-3 py-1 rounded-lg transition-colors ${
+              className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-colors ${
                 isActive ? 'text-accent-blue' : 'text-text-muted'
               }`}
             >
