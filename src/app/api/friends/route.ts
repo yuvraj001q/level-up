@@ -3,21 +3,22 @@ import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 
 export async function GET() {
-  const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  try {
+    const session = await auth();
+    if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const userId = session.user.id;
+    const userId = session.user.id;
 
-  const sent = await prisma.friend.findMany({
-    where: { requesterId: userId },
-    include: {
-      addressee: { select: { id: true, name: true, username: true, image: true, level: true, league: true } },
-    },
-  });
+    const sent = await prisma.friend.findMany({
+      where: { requesterId: userId },
+      include: {
+        addressee: { select: { id: true, name: true, username: true, image: true, level: true, league: true } },
+      },
+    });
 
-  const received = await prisma.friend.findMany({
-    where: { addresseeId: userId },
-    include: {
+    const received = await prisma.friend.findMany({
+      where: { addresseeId: userId },
+      include: {
       requester: { select: { id: true, name: true, username: true, image: true, level: true, league: true } },
     },
   });
@@ -42,6 +43,9 @@ export async function GET() {
   ];
 
   return NextResponse.json(friends);
+  } catch {
+    return NextResponse.json({ error: 'Failed to fetch friends' }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {

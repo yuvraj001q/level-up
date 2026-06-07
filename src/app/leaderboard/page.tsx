@@ -211,8 +211,8 @@ export default function LeaderboardPage() {
     }
 
     Promise.all([
-      fetch('/api/leaderboard').then((r) => r.json()),
-      fetch('/api/friends').then((r) => r.json()),
+      fetch('/api/leaderboard').then((r) => r.json()).catch(() => []),
+      fetch('/api/friends').then((r) => r.json()).catch(() => []),
     ])
       .then(([usersData, friendsData]) => {
         if (Array.isArray(usersData)) setUsers(usersData);
