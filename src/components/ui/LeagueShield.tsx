@@ -21,6 +21,15 @@ interface TierArt {
 }
 
 const TIERS: Record<League, TierArt> = {
+  IRON: {
+    primary: '#6b7280',
+    secondary: '#4b5563',
+    accent: '#374151',
+    glow: 'rgba(107,114,128,0.5)',
+    bgFrom: '#0f0f11',
+    bgTo: '#1a1a1f',
+    label: 'Iron',
+  },
   BRONZE: {
     primary: '#cd7f32',
     secondary: '#a0522d',
@@ -57,6 +66,15 @@ const TIERS: Record<League, TierArt> = {
     bgTo: '#141c24',
     label: 'Platinum',
   },
+  EMERALD: {
+    primary: '#50c878',
+    secondary: '#2e8b57',
+    accent: '#1a6b3c',
+    glow: 'rgba(80,200,120,0.4)',
+    bgFrom: '#05140a',
+    bgTo: '#0a1f10',
+    label: 'Emerald',
+  },
   DIAMOND: {
     primary: '#00ffff',
     secondary: '#00ced1',
@@ -83,6 +101,15 @@ const TIERS: Record<League, TierArt> = {
     bgFrom: '#1a0505',
     bgTo: '#2e0a0a',
     label: 'Grandmaster',
+  },
+  CHALLENGER: {
+    primary: '#fbbf24',
+    secondary: '#f59e0b',
+    accent: '#d97706',
+    glow: 'rgba(251,191,36,0.6)',
+    bgFrom: '#141005',
+    bgTo: '#241a08',
+    label: 'Challenger',
   },
 };
 
@@ -212,6 +239,15 @@ function LeagueBadgeSvg({ league, size }: { league: League; size: number }) {
         strokeLinejoin="round"
         fill="none"
       >
+        {/* IRON — Anvil / ingot */}
+        {league === 'IRON' && (
+          <g filter={`url(#soft-glow-${league})`}>
+            <rect x="-8" y="-6" width="16" height="12" rx="2" fill={t.primary} fillOpacity="0.2" stroke={t.primary} />
+            <rect x="-4" y="-8" width="8" height="2" rx="1" fill={t.primary} fillOpacity="0.3" stroke={t.primary} strokeWidth="1.2" />
+            <line x1="-6" y1="0" x2="6" y2="0" stroke={t.primary} strokeOpacity="0.5" />
+            <line x1="-5" y1="3" x2="5" y2="3" stroke={t.primary} strokeOpacity="0.3" />
+          </g>
+        )}
         {/* BRONZE — Large shield */}
         {league === 'BRONZE' && (
           <g filter={`url(#soft-glow-${league})`}>
@@ -242,6 +278,15 @@ function LeagueBadgeSvg({ league, size }: { league: League; size: number }) {
             <circle cx="0" cy="0" r="2" fill={t.primary} fillOpacity="0.6" />
           </g>
         )}
+        {/* EMERALD — Laurel / leaf crest */}
+        {league === 'EMERALD' && (
+          <g filter={`url(#soft-glow-${league})`}>
+            <path d="M-10,0 Q-6,-14 0,-6 Q6,-14 10,0 Q6,8 0,10 Q-6,8 -10,0Z" fill={t.primary} fillOpacity="0.2" stroke={t.primary} />
+            <line x1="-6" y1="-2" x2="6" y2="-2" stroke={t.primary} strokeOpacity="0.4" />
+            <line x1="0" y1="-6" x2="0" y2="8" stroke={t.primary} strokeOpacity="0.3" />
+            <circle cx="0" cy="0" r="2" fill={t.primary} fillOpacity="0.4" />
+          </g>
+        )}
         {/* DIAMOND — Geometric crystal */}
         {league === 'DIAMOND' && (
           <g filter={`url(#soft-glow-${league})`}>
@@ -265,6 +310,15 @@ function LeagueBadgeSvg({ league, size }: { league: League; size: number }) {
             <path d="M0,-12 Q6,-8 8,-4 Q12,-2 10,2 Q8,6 4,8 Q6,12 2,10 Q0,14 -2,10 Q-6,12 -4,8 Q-8,6 -10,2 Q-12,-2 -8,-4 Q-6,-8 0,-12Z" fill={t.primary} fillOpacity="0.2" stroke={t.primary} />
             <circle cx="0" cy="0" r="2.5" fill={t.primary} fillOpacity="0.5" />
             <path d="M-3,-6 L0,-10 L3,-6" stroke={t.primary} strokeOpacity="0.6" />
+          </g>
+        )}
+        {/* CHALLENGER — Radiant star / crest */}
+        {league === 'CHALLENGER' && (
+          <g filter={`url(#soft-glow-${league})`}>
+            <path d="M0,-14 L3,-5 L12,-5 L5,1 L8,10 L0,5 L-8,10 L-5,1 L-12,-5 L-3,-5 Z" fill={t.primary} fillOpacity="0.2" stroke={t.primary} />
+            <circle cx="0" cy="0" r="2.5" fill={t.primary} fillOpacity="0.5" />
+            <path d="M-6,-6 L6,6" stroke={t.primary} strokeOpacity="0.3" />
+            <path d="M6,-6 L-6,6" stroke={t.primary} strokeOpacity="0.3" />
           </g>
         )}
       </g>
@@ -384,4 +438,4 @@ export function getLeagueLabel(league: League): string {
   return TIERS[league].label;
 }
 
-export const LEAGUE_ORDER: League[] = ['BRONZE', 'SILVER', 'GOLD', 'PLATINUM', 'DIAMOND', 'MASTER', 'GRANDMASTER'];
+export const LEAGUE_ORDER: League[] = ['IRON', 'BRONZE', 'SILVER', 'GOLD', 'PLATINUM', 'EMERALD', 'DIAMOND', 'MASTER', 'GRANDMASTER', 'CHALLENGER'];

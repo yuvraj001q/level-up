@@ -30,13 +30,16 @@ enum QuestType {
 }
 
 enum League {
+  IRON
   BRONZE
   SILVER
   GOLD
   PLATINUM
+  EMERALD
   DIAMOND
   MASTER
   GRANDMASTER
+  CHALLENGER
 }
 
 enum Goal {

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Save, Loader2, Zap, Award, Flame, BarChart3, Trophy, Mail, Lock, Eye, EyeOff, CheckCircle2, Phone, Smartphone } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { getLevelInfo } from '@/lib/game';
+import { getLeagueLabel } from '@/components/ui/LeagueShield';
 import type { Goal } from '@/types';
 
 const GOALS: { value: Goal; label: string; emoji: string }[] = [
@@ -30,10 +31,9 @@ const GOALS: { value: Goal; label: string; emoji: string }[] = [
   { value: 'MUSIC', label: 'Music', emoji: '🎵' },
 ];
 
-const LEAGUE_LABELS: Record<string, string> = {
-  BRONZE: 'Bronze', SILVER: 'Silver', GOLD: 'Gold', PLATINUM: 'Platinum',
-  DIAMOND: 'Diamond', MASTER: 'Master', GRANDMASTER: 'Grandmaster',
-};
+const LEAGUE_LABELS: Record<string, string> = {};
+
+const getLeagueLabelSafe = (league: string) => getLeagueLabel(league as any) || league;
 
 export default function ProfilePage() {
   const { session, status, update } = useRequireAuth();
