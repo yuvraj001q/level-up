@@ -66,16 +66,12 @@ export async function POST(req: Request) {
 
     let referredById: string | undefined;
     if (referralCode) {
-      const referrer = await prisma.user.findUnique({ where: { referralCode } });
+      const referrer = await prisma.user.findFirst({ where: { referralCode } });
       if (referrer) {
         referredById = referrer.id;
         await prisma.user.update({
           where: { id: referrer.id },
           data: { referralPoints: { increment: 10 } },
-        });
-        await prisma.referralVisit.updateMany({
-          where: { referralCode, converted: false },
-          data: { converted: true },
         });
       }
     }

@@ -6,15 +6,12 @@ export async function POST(req: NextRequest) {
     const { code } = await req.json();
     if (!code) return NextResponse.json({ error: 'code required' }, { status: 400 });
 
-    const user = await prisma.user.findUnique({ where: { referralCode: code } });
+    const user = await prisma.user.findFirst({ where: { referralCode: code } });
     if (!user) return NextResponse.json({ error: 'Invalid referral code' }, { status: 404 });
 
-    await prisma.referralVisit.create({
-      data: {
-        referralCode: code,
-        visitorIp: req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown',
-        userAgent: req.headers.get('user-agent') || undefined,
-      },
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { referralVisits: { increment: 1 } },
     });
 
     return NextResponse.json({ success: true });

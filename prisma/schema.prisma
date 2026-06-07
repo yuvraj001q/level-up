@@ -122,12 +122,12 @@ model User {
   conversations       ConversationParticipant[]
   sentMessages        Message[]     @relation("SentMessages")
 
-  referralCode    String  @unique
+  referralCode    String?
   referredById    String?
   referredBy      User?   @relation("Referrals", fields: [referredById], references: [id])
   referrals       User[]  @relation("Referrals")
   referralPoints  Int     @default(0)
-  referralVisits  ReferralVisit[]
+  referralVisits  Int     @default(0)
 }
 
 model OtpToken {
@@ -191,20 +191,6 @@ model Message {
   sender       User         @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
 
   @@index([conversationId, createdAt])
-}
-
-model ReferralVisit {
-  id           String   @id @default(cuid())
-  referralCode String
-  visitorIp    String?
-  userAgent    String?
-  converted    Boolean  @default(false)
-  createdAt    DateTime @default(now())
-
-  user User @relation(fields: [referralCode], references: [referralCode])
-
-  @@index([referralCode])
-  @@index([createdAt])
 }
 
 model Account {
