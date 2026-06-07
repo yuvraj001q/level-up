@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Sparkles, Loader2, ListChecks, Filter } from 'lucide-react';
+import { Plus, Sparkles, Loader2, ListChecks } from 'lucide-react';
 import { TaskCard } from '@/components/ui/TaskCard';
 import { CardSkeleton } from '@/components/ui/Skeleton';
 import { useStore } from '@/store/useStore';
@@ -45,7 +45,6 @@ export default function TasksPage() {
   const [notes, setNotes] = useState('');
   const [creating, setCreating] = useState(false);
   const [generating, setGenerating] = useState(false);
-  const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all');
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -134,11 +133,8 @@ export default function TasksPage() {
     }
   };
 
-  const filteredTasks = tasks.filter((t) => {
-    if (filter === 'pending') return t.status === 'PENDING';
-    if (filter === 'completed') return t.status === 'COMPLETED';
-    return true;
-  });
+  const pendingTasks = tasks.filter((t) => t.status === 'PENDING');
+  const completedTasks = tasks.filter((t) => t.status === 'COMPLETED');
 
   if (status === 'loading') return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent-blue border-t-transparent rounded-full animate-spin" /></div>;
 
@@ -191,35 +187,44 @@ export default function TasksPage() {
         </div>
       </motion.div>
 
-      <div className="flex items-center gap-2 mb-6">
-        <Filter className="w-4 h-4 text-text-muted" />
-        {(['all', 'pending', 'completed'] as const).map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-              filter === f ? 'bg-accent-blue/10 text-accent-blue border border-accent-blue/20' : 'text-text-muted hover:text-text-secondary'
-            }`}
-          >
-            {f.charAt(0).toUpperCase() + f.slice(1)}
-          </button>
-        ))}
+      {/* Active Tasks */}
+      <div className="mb-8">
+        <div className="flex items-center gap-2 mb-4">
+          <h2 className="text-lg font-semibold">Active Tasks</h2>
+          <span className="text-xs bg-accent-blue/10 text-accent-blue px-2 py-0.5 rounded-full">{pendingTasks.length}</span>
+        </div>
+        <AnimatePresence>
+          <div className="space-y-2">
+            {pendingTasks.length === 0 ? (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass p-12 text-center">
+                <ListChecks className="w-12 h-12 mx-auto text-text-muted mb-4" />
+                <p className="text-text-muted">No pending tasks. Create one or generate AI tasks!</p>
+              </motion.div>
+            ) : (
+              pendingTasks.map((task) => (
+                <TaskCard key={task.id} task={task} onComplete={handleComplete} />
+              ))
+            )}
+          </div>
+        </AnimatePresence>
       </div>
 
-      <AnimatePresence>
-        <div className="space-y-2">
-          {filteredTasks.length === 0 ? (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass p-12 text-center">
-              <ListChecks className="w-12 h-12 mx-auto text-text-muted mb-4" />
-              <p className="text-text-muted">No tasks yet. Create one or generate AI tasks!</p>
-            </motion.div>
-          ) : (
-            filteredTasks.map((task) => (
-              <TaskCard key={task.id} task={task} onComplete={handleComplete} />
-            ))
-          )}
+      {/* Completed Tasks */}
+      {completedTasks.length > 0 && (
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <h2 className="text-lg font-semibold text-text-muted">Completed</h2>
+            <span className="text-xs text-text-muted/60 border border-border-subtle px-2 py-0.5 rounded-full">{completedTasks.length}</span>
+          </div>
+          <AnimatePresence>
+            <div className="space-y-2 opacity-60">
+              {completedTasks.map((task) => (
+                <TaskCard key={task.id} task={task} onComplete={handleComplete} />
+              ))}
+            </div>
+          </AnimatePresence>
         </div>
-      </AnimatePresence>
+      )}
 
       {/* Create Task Modal */}
       <AnimatePresence>

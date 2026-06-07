@@ -11,8 +11,16 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'User ID required' }, { status: 400 });
   }
 
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
   const tasks = await prisma.task.findMany({
-    where: { userId },
+    where: {
+      userId,
+      OR: [
+        { status: { not: 'COMPLETED' } },
+        { completedAt: { gte: twentyFourHoursAgo } },
+      ],
+    },
     orderBy: { createdAt: 'desc' },
     take: 50,
   });
