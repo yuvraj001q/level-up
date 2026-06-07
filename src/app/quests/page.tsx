@@ -33,13 +33,11 @@ export default function QuestsPage() {
   const handleGenerate = async () => {
     if (!session?.user?.id) return;
     setGenerating(true);
+    const action = activeTab === 'DAILY' ? 'generate_daily' : activeTab === 'WEEKLY' ? 'generate_weekly' : 'generate_monthly';
     await fetch('/api/quests', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userId: session.user.id,
-        action: activeTab === 'DAILY' ? 'generate_daily' : 'generate_weekly',
-      }),
+      body: JSON.stringify({ userId: session.user.id, action }),
     });
     await loadQuests();
     setGenerating(false);
@@ -64,11 +62,13 @@ export default function QuestsPage() {
     }
   };
 
-  const filteredQuests = quests.filter((q) => {
+  const tabQuests = quests.filter((q) => {
     if (activeTab === 'DAILY') return q.type === 'DAILY';
     if (activeTab === 'WEEKLY') return q.type === 'WEEKLY';
     return q.type === 'MONTHLY';
   });
+  const pendingQuests = tabQuests.filter((q) => q.status === 'PENDING');
+  const completedQuests = tabQuests.filter((q) => q.status === 'COMPLETED');
 
   if (status === 'loading') return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent-blue border-t-transparent rounded-full animate-spin" /></div>;
 
@@ -126,18 +126,40 @@ export default function QuestsPage() {
         ))}
       </div>
 
-      <div className="space-y-2">
-        {filteredQuests.length === 0 ? (
-          <div className="glass p-12 text-center">
-            <Swords className="w-12 h-12 mx-auto text-text-muted mb-4" />
-            <p className="text-text-muted">No quests available. Generate some to get started!</p>
-          </div>
-        ) : (
-          filteredQuests.map((quest) => (
-            <QuestCard key={quest.id} quest={quest} onComplete={handleComplete} />
-          ))
-        )}
+      {/* Active Quests */}
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-3">
+          <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider">Active</h3>
+          <span className="text-xs bg-accent-blue/10 text-accent-blue px-2 py-0.5 rounded-full">{pendingQuests.length}</span>
+        </div>
+        <div className="space-y-2">
+          {pendingQuests.length === 0 ? (
+            <div className="glass p-8 text-center">
+              <Swords className="w-10 h-10 mx-auto text-text-muted mb-3" />
+              <p className="text-sm text-text-muted">No active quests. Generate some to get started!</p>
+            </div>
+          ) : (
+            pendingQuests.map((quest) => (
+              <QuestCard key={quest.id} quest={quest} onComplete={handleComplete} />
+            ))
+          )}
+        </div>
       </div>
+
+      {/* Completed Quests */}
+      {completedQuests.length > 0 && (
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <h3 className="text-sm font-semibold text-text-muted uppercase tracking-wider">Completed</h3>
+            <span className="text-xs text-text-muted/60 border border-border-subtle px-2 py-0.5 rounded-full">{completedQuests.length}</span>
+          </div>
+          <div className="space-y-2 opacity-60">
+            {completedQuests.map((quest) => (
+              <QuestCard key={quest.id} quest={quest} onComplete={handleComplete} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

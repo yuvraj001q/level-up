@@ -288,7 +288,7 @@ export function generateDailyQuests(goals: Goal[], level: number, streak: number
   const quests: GeneratedTask[] = [];
   const shuffled = [...goals].sort(() => Math.random() - 0.5);
 
-  for (let i = 0; i < Math.min(3, shuffled.length); i++) {
+  for (let i = 0; i < Math.min(5, shuffled.length); i++) {
     const goal = shuffled[i];
     const templates = TASK_TEMPLATES[goal];
     if (!templates) continue;
@@ -333,7 +333,7 @@ export function generateWeeklyQuests(goals: Goal[], level: number): GeneratedTas
   const quests: GeneratedTask[] = [];
   const shuffled = [...goals].sort(() => Math.random() - 0.5);
 
-  for (const goal of shuffled.slice(0, 2)) {
+  for (const goal of shuffled.slice(0, 4)) {
     const templates = TASK_TEMPLATES[goal];
     if (!templates) continue;
 
@@ -358,5 +358,40 @@ export function generateWeeklyQuests(goals: Goal[], level: number): GeneratedTas
     }
   }
 
-  return quests;
+  return quests.slice(0, 7);
+}
+
+export function generateMonthlyQuests(goals: Goal[], level: number): GeneratedTask[] {
+  const quests: GeneratedTask[] = [];
+  const shuffled = [...goals].sort(() => Math.random() - 0.5);
+
+  const pool: { title: string; difficulty: TaskDifficulty; goal: Goal }[] = [];
+
+  for (const goal of shuffled) {
+    const templates = TASK_TEMPLATES[goal];
+    if (!templates) continue;
+
+    for (const title of templates.hard) {
+      pool.push({ title, difficulty: 'HARD', goal });
+    }
+    for (const title of templates.epic) {
+      pool.push({ title, difficulty: 'EPIC', goal });
+    }
+  }
+
+  pool.sort(() => Math.random() - 0.5);
+
+  for (const item of pool.slice(0, 10)) {
+    const isEpic = item.difficulty === 'EPIC';
+    quests.push({
+      title: isEpic ? `🏆 ${item.title}` : item.title,
+      description: isEpic
+        ? `Ambitious monthly ${item.goal.toLowerCase()} challenge. Push your limits!`
+        : `Monthly ${item.goal.toLowerCase()} quest. Complete this month for huge XP.`,
+      difficulty: item.difficulty,
+      category: item.goal,
+    });
+  }
+
+  return quests.slice(0, 10);
 }

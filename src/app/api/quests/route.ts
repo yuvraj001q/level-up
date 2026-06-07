@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { generateDailyQuests, generateWeeklyQuests } from '@/lib/ai';
+import { generateDailyQuests, generateWeeklyQuests, generateMonthlyQuests } from '@/lib/ai';
 import { getLevelInfo, getNewRank } from '@/lib/game';
 
 export async function GET(req: Request) {
@@ -12,6 +12,12 @@ export async function GET(req: Request) {
 
   const where: Record<string, unknown> = { userId };
   if (type) where.type = type;
+
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  where.OR = [
+    { status: { not: 'COMPLETED' } },
+    { completedAt: { gte: twentyFourHoursAgo } },
+  ];
 
   const quests = await prisma.quest.findMany({
     where,
@@ -111,6 +117,46 @@ export async function POST(req: Request) {
       await prisma.user.update({
         where: { id: userId },
         data: { weeklyQuestsGeneratedAt: new Date() },
+      });
+
+      return NextResponse.json(created);
+    }
+
+    if (action === 'generate_monthly') {
+      const now = new Date();
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+      if (user.monthlyQuestsGeneratedAt && user.monthlyQuestsGeneratedAt >= monthStart) {
+        const existing = await prisma.quest.findMany({
+          where: { userId, type: 'MONTHLY', createdAt: { gte: monthStart } },
+        });
+        return NextResponse.json(existing);
+      }
+
+      const mGoals = (user.goals.length > 0 ? user.goals : ['PRODUCTIVITY']) as any[];
+      const monthlyTasks = generateMonthlyQuests(mGoals, user.level);
+      const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
+      const created = [];
+      for (const task of monthlyTasks) {
+        const quest = await prisma.quest.create({
+          data: {
+            userId,
+            title: task.title,
+            description: task.description,
+            type: 'MONTHLY',
+            difficulty: task.difficulty,
+            xpReward: task.difficulty === 'HARD' ? 100 : 250,
+            category: task.category,
+            expiresAt: monthEnd,
+          },
+        });
+        created.push(quest);
+      }
+
+      await prisma.user.update({
+        where: { id: userId },
+        data: { monthlyQuestsGeneratedAt: new Date() },
       });
 
       return NextResponse.json(created);
