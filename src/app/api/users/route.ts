@@ -128,7 +128,6 @@ export async function PATCH(req: Request) {
         .map((k) => `"${k}" = $${Object.keys(data).indexOf(k) + 2}`)
         .join(', ');
       const values = Object.values(data);
-      // @ts-expect-error raw SQL
       const rows = await prisma.$queryRawUnsafe<Record<string, any>[]>(
         `UPDATE "User" SET ${setClauses} WHERE id = $1 RETURNING id, name, email, image, age, bio, goals, interests, "productivityLevel", level, xp, rank, league, "lastPromotion", "achievementPoints", "dailyStreak", "weeklyStreak", "longestStreak", "lastActiveAt", "streakFreeze", phone, "phoneVerified"`,
         userId,
