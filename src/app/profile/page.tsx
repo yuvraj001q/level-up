@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Save, Loader2, Zap, Award, Flame, BarChart3, Trophy, Mail, Lock, Eye, EyeOff, CheckCircle2, Phone, Smartphone } from 'lucide-react';
+import { Save, Loader2, Zap, Award, Flame, BarChart3, Trophy, Mail, Lock, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { getLevelInfo } from '@/lib/game';
 import { getLeagueLabel } from '@/components/ui/LeagueShield';
@@ -66,14 +66,6 @@ export default function ProfilePage() {
   const [showNewPw, setShowNewPw] = useState(false);
   const [showConfPw, setShowConfPw] = useState(false);
 
-  const [phone, setPhone] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpCode, setOtpCode] = useState('');
-  const [phoneUpdating, setPhoneUpdating] = useState(false);
-  const [phoneError, setPhoneError] = useState('');
-  const [phoneSuccess, setPhoneSuccess] = useState(false);
-  const [phoneVerified, setPhoneVerified] = useState(false);
-
   useEffect(() => {
     if (status !== 'authenticated' || !session?.user?.id) return;
 
@@ -88,8 +80,6 @@ export default function ProfilePage() {
           setBio(data.bio || '');
           setSelectedGoals(data.goals || []);
           setInterestsStr((data.interests || []).join(', '));
-          setPhone(data.phone || '');
-          setPhoneVerified(data.phoneVerified || false);
         }
       })
       .catch(() => {});
@@ -183,51 +173,6 @@ export default function ProfilePage() {
       setPasswordError(data.error || 'Failed to update password');
     }
     setPasswordUpdating(false);
-  };
-
-  const handleSendOtp = async () => {
-    if (!session?.user?.id || !phone) return;
-    setPhoneUpdating(true);
-    setPhoneError('');
-    setPhoneSuccess(false);
-    const res = await fetch('/api/auth/send-otp', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: session.user.id, phone }),
-    });
-    const data = await res.json();
-    if (res.ok) {
-      setOtpSent(true);
-      setOtpCode('');
-      if (data.debug) console.log('OTP:', data.debug);
-    } else {
-      setPhoneError(data.error || 'Failed to send OTP');
-    }
-    setPhoneUpdating(false);
-  };
-
-  const handleVerifyOtp = async () => {
-    if (!session?.user?.id || !phone || !otpCode) return;
-    setPhoneUpdating(true);
-    setPhoneError('');
-    setPhoneSuccess(false);
-    const res = await fetch('/api/auth/verify-otp', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: session.user.id, phone, otp: otpCode }),
-    });
-    const data = await res.json();
-    if (res.ok) {
-      setPhoneVerified(true);
-      setPhoneSuccess(true);
-      setOtpSent(false);
-      setOtpCode('');
-      if (data.user) setUser(data.user);
-      setTimeout(() => setPhoneSuccess(false), 3000);
-    } else {
-      setPhoneError(data.error || 'Verification failed');
-    }
-    setPhoneUpdating(false);
   };
 
   const toggleGoal = (goal: Goal) => {
@@ -429,61 +374,6 @@ export default function ProfilePage() {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.22 }}>
-            <div className="glass p-6">
-              <h2 className="text-lg font-semibold mb-4">Phone Number</h2>
-              <p className="text-xs text-text-muted mb-3">
-                {phoneVerified
-                  ? 'Your phone number is verified.'
-                  : phone
-                    ? 'Verify your phone number to enable it.'
-                    : 'Add a phone number for extra account security.'}
-              </p>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <div className="flex-1 relative">
-                    <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-                    <input
-                      value={phone}
-                      onChange={(e) => { setPhone(e.target.value); setOtpSent(false); setPhoneVerified(false); }}
-                      className="w-full bg-bg-primary border border-border-subtle rounded-xl py-2.5 pl-9 pr-4 text-sm text-text-primary focus:outline-none focus:border-accent-blue/50 disabled:opacity-50"
-                      placeholder="+1 (555) 123-4567"
-                      disabled={phoneVerified}
-                    />
-                  </div>
-                  {!phoneVerified && phone && (
-                    <button
-                      onClick={otpSent ? handleVerifyOtp : handleSendOtp}
-                      disabled={phoneUpdating || !phone}
-                      className="px-4 py-2.5 rounded-xl text-xs font-medium bg-accent-blue/10 text-accent-blue border border-accent-blue/20 hover:bg-accent-blue/20 transition-colors disabled:opacity-50 whitespace-nowrap"
-                    >
-                      {phoneUpdating ? <Loader2 className="w-3 h-3 animate-spin" /> : otpSent ? 'Verify' : 'Send OTP'}
-                    </button>
-                  )}
-                  {phoneVerified && (
-                    <span className="flex items-center gap-1 text-xs text-accent-green"><CheckCircle2 className="w-3 h-3" /> Verified</span>
-                  )}
-                </div>
-                {otpSent && !phoneVerified && (
-                  <div className="flex items-center gap-2">
-                    <input
-                      value={otpCode}
-                      onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                      className="w-32 bg-bg-primary border border-border-subtle rounded-xl py-2 px-3 text-sm text-text-primary text-center tracking-widest focus:outline-none focus:border-accent-blue/50"
-                      placeholder="000000"
-                      maxLength={6}
-                    />
-                    <button onClick={handleSendOtp} disabled={phoneUpdating} className="text-xs text-accent-blue hover:underline">
-                      Resend
-                    </button>
-                  </div>
-                )}
-                {phoneError && <p className="text-xs text-accent-red">{phoneError}</p>}
-                {phoneSuccess && <p className="text-xs text-accent-green flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Phone verified successfully!</p>}
-              </div>
             </div>
           </motion.div>
 
