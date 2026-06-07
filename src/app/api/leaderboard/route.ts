@@ -21,6 +21,27 @@ export async function GET() {
 
     return NextResponse.json(users);
   } catch {
-    return NextResponse.json({ error: 'Failed to fetch leaderboard' }, { status: 500 });
+    try {
+      const users = await prisma.$queryRaw<{
+        id: string;
+        name: string | null;
+        level: number;
+        xp: number;
+        rank: string;
+        league: string;
+        dailyStreak: number;
+        achievementPoints: number;
+      }[]>`
+        SELECT id, name, level, xp, rank, league, "dailyStreak", "achievementPoints"
+        FROM "User"
+        ORDER BY xp DESC
+        LIMIT 100
+      `;
+      return NextResponse.json(
+        users.map((u) => ({ ...u, username: null, league: u.league as any }))
+      );
+    } catch {
+      return NextResponse.json({ error: 'Failed to fetch leaderboard' }, { status: 500 });
+    }
   }
 }
