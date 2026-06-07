@@ -32,20 +32,23 @@ export async function POST(req: Request) {
       data: { phone: phoneStr, phoneVerified: false },
     });
 
-    const authKey = process.env.MSG91_AUTH_KEY;
-    if (authKey) {
-      const res = await fetch('https://api.msg91.com/api/v5/otp', {
+    const apiKey = process.env.FAST2SMS_API_KEY;
+    if (apiKey) {
+      const res = await fetch('https://www.fast2sms.com/dev/bulkV2', {
         method: 'POST',
-        headers: { authkey: authKey, 'Content-Type': 'application/json' },
+        headers: {
+          authorization: apiKey,
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
-          mobile: phoneStr,
-          otp,
-          sender: process.env.MSG91_SENDER_ID || 'LEVELU',
+          route: 'otp',
+          numbers: phoneStr,
+          variables_values: otp,
         }),
       });
-      if (!res.ok) {
-        const err = await res.text();
-        console.error('[MSG91 Error]', err);
+      const data = await res.json();
+      if (data.return !== true) {
+        console.error('[Fast2SMS Error]', JSON.stringify(data));
       }
     } else {
       console.log(`[OTP] ${phoneStr}: ${otp}`);
