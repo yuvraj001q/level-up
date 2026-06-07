@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion } from 'framer-motion';
 import { BarChart3, TrendingUp, Zap, CheckCircle, Loader2 } from 'lucide-react';
@@ -13,22 +13,28 @@ export default function AnalyticsPage() {
   const [xpData, setXpData] = useState<{ date: string; xp: number }[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const loadData = useCallback(async () => {
     if (status !== 'authenticated' || !session?.user?.id) {
       setLoading(false);
       return;
     }
 
-    Promise.all([
+    const [xpData, userData] = await Promise.all([
       fetch(`/api/xp?userId=${session.user.id}`).then((r) => r.json()),
-      fetch(`/api/tasks?userId=${session.user.id}`).then((r) => r.json()),
-    ])
-      .then(([xpData]) => {
-        setXpData(xpData?.chartData || []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      fetch(`/api/users/${session.user.id}`).then((r) => r.json()),
+    ]);
+    setXpData(xpData?.chartData || []);
+    if (userData?.id) useStore.getState().setUser(userData);
+    setLoading(false);
   }, [status, session]);
+
+  useEffect(() => { loadData(); }, [loadData]);
+
+  useEffect(() => {
+    const onFocus = () => loadData();
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+  }, [loadData]);
 
   if (status === 'loading' && loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-accent-blue" /></div>;
 

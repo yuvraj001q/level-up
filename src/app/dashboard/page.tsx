@@ -123,6 +123,7 @@ export default function DashboardPage() {
           showLevelUpAnimation(levelInfo.level);
         }
       }
+      if (data.user) useStore.getState().setUser(data.user);
     }
   };
 

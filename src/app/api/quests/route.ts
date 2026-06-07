@@ -232,7 +232,18 @@ export async function PATCH(req: Request) {
       },
     });
 
-    return NextResponse.json({ quest: updated, xpAwarded, leveledUp });
+    const updatedUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true, name: true, email: true, image: true, age: true, bio: true,
+        goals: true, interests: true, level: true, xp: true, rank: true,
+        league: true, lastPromotion: true, achievementPoints: true,
+        dailyStreak: true, weeklyStreak: true, longestStreak: true,
+        lastActiveAt: true, streakFreeze: true, phone: true, phoneVerified: true,
+      },
+    });
+
+    return NextResponse.json({ quest: updated, xpAwarded, leveledUp, user: updatedUser });
   } catch {
     return NextResponse.json({ error: 'Failed' }, { status: 500 });
   }

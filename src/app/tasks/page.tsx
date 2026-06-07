@@ -121,6 +121,7 @@ export default function TasksPage() {
           showLevelUpAnimation(levelInfo.level);
         }
       }
+      if (data.user) useStore.getState().setUser(data.user);
       if (data.newAchievements?.length > 0) {
         data.newAchievements.forEach((key: string) => {
           const ach = achievements.find((a) => a.key === key);

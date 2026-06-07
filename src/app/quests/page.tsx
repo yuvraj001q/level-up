@@ -12,7 +12,7 @@ import type { Quest, QuestType } from '@/types';
 
 export default function QuestsPage() {
   const { session, status } = useRequireAuth();
-  const { quests, setQuests, showXpAnimation, showLevelUpAnimation } = useStore();
+  const { quests, setQuests, showXpAnimation, showLevelUpAnimation, user } = useStore();
   const [activeTab, setActiveTab] = useState<QuestType>('DAILY');
   const [generating, setGenerating] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -56,9 +56,11 @@ export default function QuestsPage() {
       if (data.xpAwarded) {
         showXpAnimation(data.xpAwarded);
         if (data.leveledUp) {
-          showLevelUpAnimation(data.leveledUp);
+          const levelInfo = getLevelInfo((user?.xp || 0) + data.xpAwarded);
+          showLevelUpAnimation(levelInfo.level);
         }
       }
+      if (data.user) useStore.getState().setUser(data.user);
     }
   };
 
