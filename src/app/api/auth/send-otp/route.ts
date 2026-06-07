@@ -1,10 +1,5 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import twilio from 'twilio';
-
-const twilioClient = process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN
-  ? twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
-  : null;
 
 export async function POST(req: Request) {
   try {
@@ -14,7 +9,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'User ID and phone number required' }, { status: 400 });
     }
 
-    const phoneStr = String(phone).replace(/\s/g, '');
+    let phoneStr = String(phone).replace(/[\s\-\(\)]/g, '');
+    if (phoneStr.startsWith('+')) phoneStr = phoneStr.slice(1);
     if (phoneStr.length < 10) {
       return NextResponse.json({ error: 'Invalid phone number' }, { status: 400 });
     }
@@ -36,12 +32,21 @@ export async function POST(req: Request) {
       data: { phone: phoneStr, phoneVerified: false },
     });
 
-    if (twilioClient && process.env.TWILIO_PHONE_NUMBER) {
-      await twilioClient.messages.create({
-        body: `Your Level Up verification code is: ${otp}. Valid for 10 minutes.`,
-        from: process.env.TWILIO_PHONE_NUMBER,
-        to: phoneStr,
+    const authKey = process.env.MSG91_AUTH_KEY;
+    if (authKey) {
+      const res = await fetch('https://api.msg91.com/api/v5/otp', {
+        method: 'POST',
+        headers: { authkey: authKey, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mobile: phoneStr,
+          otp,
+          sender: process.env.MSG91_SENDER_ID || 'LEVELU',
+        }),
       });
+      if (!res.ok) {
+        const err = await res.text();
+        console.error('[MSG91 Error]', err);
+      }
     } else {
       console.log(`[OTP] ${phoneStr}: ${otp}`);
     }
