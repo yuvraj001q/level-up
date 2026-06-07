@@ -229,3 +229,117 @@ body {
   50% { border-color: rgba(59, 130, 246, 0.3); box-shadow: 0 0 30px rgba(59, 130, 246, 0.1), 0 0 60px rgba(6, 182, 212, 0.05); }
   100% { border-color: rgba(59, 130, 246, 0.15); box-shadow: 0 0 15px rgba(59, 130, 246, 0.05); }
 }
+
+/* ============================================
+   APEX PRESTIGE — CHALLENGER LEAGUE OVERRIDE
+   ============================================ */
+.theme-challenger {
+  --color-bg-primary: #000000;
+  --color-bg-secondary: #0a0a0a;
+  --color-bg-card: #111111;
+  --color-bg-glass: rgba(255, 255, 255, 0.02);
+  --color-bg-glass-hover: rgba(255, 255, 255, 0.04);
+  --color-border-subtle: #333333;
+  --color-border-accent: #555555;
+  --color-accent-blue: #555555;
+  --color-accent-cyan: #555555;
+  --color-accent-purple: #666666;
+  --color-accent-green: #444444;
+  --color-accent-orange: #444444;
+  --color-accent-red: #ffbf00;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #cccccc;
+  --color-text-muted: #999999;
+}
+
+.theme-challenger * {
+  border-radius: 0 !important;
+  scrollbar-width: thin;
+  scrollbar-color: #333333 transparent;
+}
+
+.theme-challenger body {
+  background-color: #000000;
+}
+
+.theme-challenger .glass,
+.theme-challenger .glass-hover {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: none;
+  border: 1px solid #333333;
+}
+
+.theme-challenger .glass-hover:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: #555555;
+  box-shadow: none;
+}
+
+.theme-challenger .gradient-text {
+  background: none;
+  -webkit-text-fill-color: #ffffff;
+  color: #ffffff;
+}
+
+.theme-challenger .glow-blue,
+.theme-challenger .glow-cyan {
+  box-shadow: none;
+}
+
+.theme-challenger .gradient-border::before {
+  background: #333333;
+  border-radius: 0;
+}
+
+.theme-challenger .animate-glow {
+  animation: none;
+}
+
+.theme-challenger .shimmer {
+  background: rgba(255, 255, 255, 0.03);
+  animation: none;
+}
+
+.theme-challenger .skeleton {
+  background: #1a1a1a;
+}
+
+.theme-challenger button:not(.challenger-amber) {
+  background: transparent;
+  border: 1px solid #333333;
+  color: #ffffff;
+}
+
+.theme-challenger button:not(.challenger-amber):hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.theme-challenger .challenger-amber {
+  background: #ffbf00 !important;
+  color: #000000 !important;
+  border: none !important;
+  font-weight: 700 !important;
+}
+
+.theme-challenger .challenger-amber:hover {
+  background: #e6a800 !important;
+}
+
+.theme-challenger input,
+.theme-challenger textarea,
+.theme-challenger select {
+  background: #0a0a0a !important;
+  border-color: #333333 !important;
+  color: #ffffff !important;
+}
+
+.theme-challenger input:focus,
+.theme-challenger textarea:focus,
+.theme-challenger select:focus {
+  border-color: #555555 !important;
+  box-shadow: none !important;
+}
+
+.theme-challenger .challenger-wolf-text {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 5L10 20L15 45L30 55L45 45L50 20Z' fill='none' stroke='rgba(255,255,255,0.03)' stroke-width='1'/%3E%3C/svg%3E") repeat;
+}

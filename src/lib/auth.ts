@@ -56,15 +56,31 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signIn: '/login',
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
+        // Fetch league on initial sign in
+        const dbUser = await prisma.user.findUnique({ where: { id: user.id }, select: { league: true, hasSeenAscension: true } });
+        if (dbUser) {
+          token.league = dbUser.league;
+          token.hasSeenAscension = dbUser.hasSeenAscension;
+        }
+      }
+      // Refresh league on session update (e.g., after promotion)
+      if (trigger === 'update') {
+        const dbUser = await prisma.user.findUnique({ where: { id: token.id as string }, select: { league: true, hasSeenAscension: true } });
+        if (dbUser) {
+          token.league = dbUser.league;
+          token.hasSeenAscension = dbUser.hasSeenAscension;
+        }
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
+        (session.user as any).league = token.league;
+        (session.user as any).hasSeenAscension = token.hasSeenAscension;
       }
       return session;
     },

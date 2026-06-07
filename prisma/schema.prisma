@@ -128,6 +128,8 @@ model User {
   referrals       User[]  @relation("Referrals")
   referralPoints  Int     @default(0)
   referralVisits  Int     @default(0)
+
+  hasSeenAscension Boolean @default(false)
 }
 
 model OtpToken {
