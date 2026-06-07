@@ -1,27 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Users, UserPlus, UserCheck, Check, X, Send, MessageCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Users, UserPlus, UserCheck, Check, X, Send, MessageCircle, ExternalLink } from 'lucide-react';
 import { LeagueShield, getLeagueLabel } from '@/components/ui/LeagueShield';
 import type { Friend, UserProfile } from '@/types';
 import { useStore } from '@/store/useStore';
 
-interface FriendWithUser extends Friend {
-  user: {
-    id: string;
-    name: string | null;
-    image: string | null;
-    level: number;
-    league: import('@/types').League;
-  };
-}
-
 export function FriendsPanel({ onStartChat }: { onStartChat: (friendId: string, name: string) => void }) {
+  const router = useRouter();
   const { user } = useStore();
   const [friends, setFriends] = useState<Friend[]>([]);
   const [pendingRequests, setPendingRequests] = useState<Friend[]>([]);
-  const [searchEmail, setSearchEmail] = useState('');
+  const [searchUsername, setSearchUsername] = useState('');
   const [searchResult, setSearchResult] = useState<UserProfile | null>(null);
   const [searching, setSearching] = useState(false);
   const [activeTab, setActiveTab] = useState<'friends' | 'requests' | 'add'>('friends');
@@ -38,9 +29,9 @@ export function FriendsPanel({ onStartChat }: { onStartChat: (friendId: string, 
   useEffect(() => { loadFriends(); }, []);
 
   const handleSearch = async () => {
-    if (!searchEmail.trim()) return;
+    if (!searchUsername.trim()) return;
     setSearching(true);
-    const res = await fetch(`/api/users?email=${encodeURIComponent(searchEmail)}`);
+    const res = await fetch(`/api/users?username=${encodeURIComponent(searchUsername)}`);
     const data = await res.json();
     setSearchResult(data?.id ? data : null);
     setSearching(false);
@@ -54,7 +45,7 @@ export function FriendsPanel({ onStartChat }: { onStartChat: (friendId: string, 
     });
     if (res.ok) {
       setSearchResult(null);
-      setSearchEmail('');
+      setSearchUsername('');
       loadFriends();
     }
   };
@@ -112,11 +103,18 @@ export function FriendsPanel({ onStartChat }: { onStartChat: (friendId: string, 
               <div key={f.id} className="flex items-center gap-3 p-2 rounded-xl glass-hover">
                 <LeagueShield league={f.otherUser.league} size={24} animate={false} />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{f.otherUser.name || 'Anonymous'}</p>
-                  <p className="text-[10px] text-text-muted">Lv.{f.otherUser.level} {getLeagueLabel(f.otherUser.league)}</p>
+                  <p className="text-sm font-medium truncate">{f.otherUser.name || f.otherUser.username || 'Anonymous'}</p>
+                  <p className="text-[10px] text-text-muted">@{f.otherUser.username} &middot; Lv.{f.otherUser.level} {getLeagueLabel(f.otherUser.league)}</p>
                 </div>
                 <button
-                  onClick={() => onStartChat(f.otherUser.id, f.otherUser.name || 'Anonymous')}
+                  onClick={() => router.push(`/profile/${f.otherUser.id}`)}
+                  className="p-1.5 rounded-lg hover:bg-accent-blue/10 text-text-muted hover:text-accent-blue transition-all"
+                  title="View profile"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => onStartChat(f.otherUser.id, f.otherUser.name || f.otherUser.username || 'Anonymous')}
                   className="p-1.5 rounded-lg hover:bg-accent-blue/10 text-text-muted hover:text-accent-blue transition-all"
                 >
                   <MessageCircle className="w-4 h-4" />
@@ -142,8 +140,8 @@ export function FriendsPanel({ onStartChat }: { onStartChat: (friendId: string, 
               <div key={f.id} className="flex items-center gap-3 p-2 rounded-xl glass-hover">
                 <LeagueShield league={f.otherUser.league} size={24} animate={false} />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{f.otherUser.name || 'Anonymous'}</p>
-                  <p className="text-[10px] text-text-muted">Lv.{f.otherUser.level}</p>
+                  <p className="text-sm font-medium truncate">{f.otherUser.name || f.otherUser.username || 'Anonymous'}</p>
+                  <p className="text-[10px] text-text-muted">@{f.otherUser.username}</p>
                 </div>
                 <button
                   onClick={() => handleRespond(f.id, 'ACCEPTED')}
@@ -167,10 +165,9 @@ export function FriendsPanel({ onStartChat }: { onStartChat: (friendId: string, 
         <div>
           <div className="flex gap-2 mb-3">
             <input
-              type="email"
-              value={searchEmail}
-              onChange={(e) => setSearchEmail(e.target.value)}
-              placeholder="Search by email..."
+              value={searchUsername}
+              onChange={(e) => setSearchUsername(e.target.value)}
+              placeholder="Search by username..."
               className="flex-1 bg-bg-primary/50 border border-border-subtle rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-accent-blue/50"
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             />
@@ -186,9 +183,16 @@ export function FriendsPanel({ onStartChat }: { onStartChat: (friendId: string, 
             <div className="flex items-center gap-3 p-2 rounded-xl glass-hover">
               <LeagueShield league={searchResult.league} size={24} animate={false} />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium">{searchResult.name || 'Anonymous'}</p>
-                <p className="text-[10px] text-text-muted">{searchResult.email}</p>
+                <p className="text-sm font-medium">{searchResult.name || searchResult.username || 'Anonymous'}</p>
+                <p className="text-[10px] text-text-muted">@{searchResult.username}</p>
               </div>
+              <button
+                onClick={() => router.push(`/profile/${searchResult.id}`)}
+                className="p-1.5 rounded-lg hover:bg-accent-blue/10 text-text-muted hover:text-accent-blue transition-all"
+                title="View profile"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+              </button>
               <button
                 onClick={() => handleSendRequest(searchResult.id)}
                 className="p-1.5 rounded-lg bg-accent-blue/10 text-accent-blue hover:bg-accent-blue/20 transition-all"
@@ -197,8 +201,8 @@ export function FriendsPanel({ onStartChat }: { onStartChat: (friendId: string, 
               </button>
             </div>
           )}
-          {searchResult === null && searchEmail && !searching && (
-            <p className="text-sm text-text-muted text-center py-2">No user found with that email</p>
+          {searchResult === null && searchUsername && !searching && (
+            <p className="text-sm text-text-muted text-center py-2">No user found with that username</p>
           )}
         </div>
       )}

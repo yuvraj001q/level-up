@@ -1,15 +1,17 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion } from 'framer-motion';
-import { Users, Trophy, Zap, Flame, Medal, Crown, Loader2, ArrowUp, Shield, ArrowDown } from 'lucide-react';
+import { Users, Trophy, Zap, Flame, Medal, Crown, Loader2, ArrowUp, Shield, ArrowDown, UserPlus, Check, ExternalLink } from 'lucide-react';
 import { LeagueShield, getLeagueLabel, LEAGUE_ORDER } from '@/components/ui/LeagueShield';
 import type { League } from '@/types';
 
 interface LeaderboardUser {
   id: string;
   name: string | null;
+  username: string | null;
   level: number;
   xp: number;
   rank: string;
@@ -50,7 +52,15 @@ function getZone(pos: number): Zone {
   return 'demotion';
 }
 
-function LeagueSection({ league, users, sessionUserId, sortBy }: { league: League; users: LeaderboardUser[]; sessionUserId?: string; sortBy: string }) {
+function LeagueSection({ league, users, sessionUserId, sortBy, onSendRequest, friendIds }: {
+  league: League;
+  users: LeaderboardUser[];
+  sessionUserId?: string;
+  sortBy: string;
+  onSendRequest: (id: string) => void;
+  friendIds: Set<string>;
+}) {
+  const router = useRouter();
   const sorted = [...users].sort((a, b) => {
     if (sortBy === 'streak') return b.dailyStreak - a.dailyStreak;
     if (sortBy === 'achievements') return b.achievementPoints - a.achievementPoints;
@@ -61,7 +71,6 @@ function LeagueSection({ league, users, sessionUserId, sortBy }: { league: Leagu
 
   return (
     <div className="mb-8">
-      {/* League header */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -74,7 +83,6 @@ function LeagueSection({ league, users, sessionUserId, sortBy }: { league: Leagu
         </div>
       </motion.div>
 
-      {/* Zone legend */}
       <div className="flex items-center gap-4 mb-3 text-[11px]">
         {(['promotion', 'safe', 'demotion'] as Zone[]).map((z) => {
           const cfg = ZONE_CONFIG[z];
@@ -94,6 +102,7 @@ function LeagueSection({ league, users, sessionUserId, sortBy }: { league: Leagu
           const zone = getZone(i);
           const zc = ZONE_CONFIG[zone];
           const ZoneIcon = zc.icon;
+          const isFriend = friendIds.has(u.id);
 
           return (
             <motion.div
@@ -108,7 +117,6 @@ function LeagueSection({ league, users, sessionUserId, sortBy }: { league: Leagu
               }`}
               style={isMe ? undefined : { borderLeft: `3px solid ${zc.color}40` }}
             >
-              {/* Rank */}
               <div className="w-7 text-center flex-shrink-0">
                 {i === 0 ? <Crown className="w-4 h-4 text-accent-orange mx-auto" />
                   : i === 1 ? <Medal className="w-4 h-4 text-text-muted mx-auto" />
@@ -116,28 +124,25 @@ function LeagueSection({ league, users, sessionUserId, sortBy }: { league: Leagu
                   : <span className="text-text-muted text-xs font-medium">{i + 1}</span>}
               </div>
 
-              {/* Zone indicator */}
               {i < 10 && (
                 <div className="flex-shrink-0 w-5 flex justify-center">
                   <ZoneIcon className="w-3.5 h-3.5" style={{ color: zc.color }} />
                 </div>
               )}
 
-              {/* League shield */}
               <div className="flex-shrink-0">
                 <LeagueShield league={u.league} size={32} animate={false} />
               </div>
 
-              {/* Avatar */}
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent-blue to-accent-cyan flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
-                {u.name?.[0]?.toUpperCase() || '?'}
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent-blue to-accent-cyan flex items-center justify-center text-white font-bold text-xs flex-shrink-0 cursor-pointer"
+                onClick={() => router.push(`/profile/${u.id}`)}>
+                {(u.name || u.username)?.[0]?.toUpperCase() || '?'}
               </div>
 
-              {/* Name + zone */}
-              <div className="flex-1 min-w-0">
+              <button onClick={() => router.push(`/profile/${u.id}`)} className="flex-1 min-w-0 text-left">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-medium truncate">
-                    {u.name || 'Anonymous'}
+                    {u.name || u.username || 'Anonymous'}
                     {isMe && <span className="text-accent-blue text-xs ml-1.5">(you)</span>}
                   </p>
                   {i < 10 && (
@@ -150,16 +155,39 @@ function LeagueSection({ league, users, sessionUserId, sortBy }: { league: Leagu
                   )}
                 </div>
                 <p className="text-xs text-text-muted">
-                  Level {u.level} &middot; {u.rank}
+                  @{u.username || 'unknown'} &middot; Level {u.level} &middot; {u.rank}
                 </p>
-              </div>
+              </button>
 
-              {/* Stats */}
               <div className="text-right flex-shrink-0">
                 {sortBy === 'xp' && <p className="text-sm font-semibold">{u.xp.toLocaleString()} XP</p>}
                 {sortBy === 'streak' && <p className="text-sm font-semibold flex items-center gap-1 justify-end"><Flame className="w-3 h-3 text-accent-orange" />{u.dailyStreak}</p>}
                 {sortBy === 'achievements' && <p className="text-sm font-semibold">{u.achievementPoints} pts</p>}
               </div>
+
+              <button
+                onClick={() => router.push(`/profile/${u.id}`)}
+                className="p-1.5 rounded-lg hover:bg-accent-blue/10 text-text-muted hover:text-accent-blue transition-all"
+                title="View profile"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+              </button>
+
+              {!isMe && (
+                isFriend ? (
+                  <div className="p-1.5 text-accent-green" title="Friend">
+                    <Check className="w-3.5 h-3.5" />
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => onSendRequest(u.id)}
+                    className="p-1.5 rounded-lg hover:bg-accent-green/10 text-text-muted hover:text-accent-green transition-all"
+                    title="Add friend"
+                  >
+                    <UserPlus className="w-3.5 h-3.5" />
+                  </button>
+                )
+              )}
             </motion.div>
           );
         })}
@@ -170,7 +198,9 @@ function LeagueSection({ league, users, sessionUserId, sortBy }: { league: Leagu
 
 export default function LeaderboardPage() {
   const { session, status } = useRequireAuth();
+  const router = useRouter();
   const [users, setUsers] = useState<LeaderboardUser[]>([]);
+  const [friends, setFriends] = useState<{ id: string; otherUser: { id: string } }[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<'xp' | 'streak' | 'achievements'>('xp');
 
@@ -180,14 +210,19 @@ export default function LeaderboardPage() {
       return;
     }
 
-    fetch('/api/leaderboard')
-      .then((r) => r.json())
-      .then((data) => {
-        setUsers(data);
+    Promise.all([
+      fetch('/api/leaderboard').then((r) => r.json()),
+      fetch('/api/friends').then((r) => r.json()),
+    ])
+      .then(([usersData, friendsData]) => {
+        if (Array.isArray(usersData)) setUsers(usersData);
+        if (Array.isArray(friendsData)) setFriends(friendsData.filter((f: any) => f.status === 'ACCEPTED'));
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, [status]);
+
+  const friendIds = useMemo(() => new Set(friends.map((f) => f.otherUser.id)), [friends]);
 
   const grouped = useMemo(() => {
     const map: Record<string, LeaderboardUser[]> = {};
@@ -198,16 +233,27 @@ export default function LeaderboardPage() {
     return map;
   }, [users]);
 
+  const handleSendRequest = async (addresseeId: string) => {
+    const res = await fetch('/api/friends', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ addresseeId }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setFriends((prev) => [...prev, data]);
+    }
+  };
+
   if (status === 'loading' && loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-accent-blue" /></div>;
 
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold">Leaderboard</h1>
-        <p className="text-text-muted mt-1">See how you rank — promotion, safe & demotion zones per league</p>
+        <p className="text-text-muted mt-1">See how you rank — click any player to view their profile and compare stats</p>
       </motion.div>
 
-      {/* Sort tabs */}
       <div className="flex items-center gap-2 mb-6">
         {([
           { key: 'xp', label: 'XP', icon: Zap },
@@ -232,7 +278,6 @@ export default function LeaderboardPage() {
         })}
       </div>
 
-      {/* Per-league sections */}
       {LEAGUE_ORDER.map((league) => (
         <LeagueSection
           key={league}
@@ -240,6 +285,8 @@ export default function LeaderboardPage() {
           users={grouped[league]}
           sessionUserId={session?.user?.id}
           sortBy={sortBy}
+          onSendRequest={handleSendRequest}
+          friendIds={friendIds}
         />
       ))}
 

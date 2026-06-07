@@ -39,6 +39,7 @@ export default function ProfilePage() {
   const { session, status, update } = useRequireAuth();
   const { user, setUser } = useStore();
   const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [age, setAge] = useState<number | ''>('');
   const [bio, setBio] = useState('');
   const [selectedGoals, setSelectedGoals] = useState<Goal[]>([]);
@@ -82,6 +83,7 @@ export default function ProfilePage() {
         if (data.id) {
           setUser(data);
           setName(data.name || '');
+          setUsername(data.username || '');
           setAge(data.age || '');
           setBio(data.bio || '');
           setSelectedGoals(data.goals || []);
@@ -113,6 +115,7 @@ export default function ProfilePage() {
       body: JSON.stringify({
         userId: session.user.id,
         name,
+        username: username || null,
         age: age || null,
         bio,
         goals: selectedGoals,
@@ -258,6 +261,18 @@ export default function ProfilePage() {
                     className="w-full bg-bg-primary border border-border-subtle rounded-xl py-2.5 px-4 text-sm text-text-primary focus:outline-none focus:border-accent-blue/50"
                     placeholder="Your name"
                   />
+                </div>
+                <div>
+                  <label className="block text-sm text-text-secondary mb-1">Username</label>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-text-muted">@</span>
+                    <input
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
+                      className="flex-1 bg-bg-primary border border-border-subtle rounded-xl py-2.5 px-4 text-sm text-text-primary focus:outline-none focus:border-accent-blue/50"
+                      placeholder="your_username"
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm text-text-secondary mb-1">Age</label>

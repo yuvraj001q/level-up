@@ -73,6 +73,7 @@ enum Goal {
 model User {
   id            String   @id @default(cuid())
   name          String?
+  username      String?  @unique
   email         String   @unique
   password      String?
   image         String?

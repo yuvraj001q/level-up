@@ -11,14 +11,14 @@ export async function GET() {
   const sent = await prisma.friend.findMany({
     where: { requesterId: userId },
     include: {
-      addressee: { select: { id: true, name: true, image: true, level: true, league: true } },
+      addressee: { select: { id: true, name: true, username: true, image: true, level: true, league: true } },
     },
   });
 
   const received = await prisma.friend.findMany({
     where: { addresseeId: userId },
     include: {
-      requester: { select: { id: true, name: true, image: true, level: true, league: true } },
+      requester: { select: { id: true, name: true, username: true, image: true, level: true, league: true } },
     },
   });
 
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
   const friend = await prisma.friend.create({
     data: { requesterId: session.user.id, addresseeId },
     include: {
-      addressee: { select: { id: true, name: true, image: true, level: true, league: true } },
+      addressee: { select: { id: true, name: true, username: true, image: true, level: true, league: true } },
     },
   });
 
@@ -94,7 +94,7 @@ export async function PATCH(req: NextRequest) {
     where: { id },
     data: { status },
     include: {
-      requester: { select: { id: true, name: true, image: true, level: true, league: true } },
+      requester: { select: { id: true, name: true, username: true, image: true, level: true, league: true } },
     },
   });
 

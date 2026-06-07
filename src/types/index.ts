@@ -29,6 +29,7 @@ export interface Friend {
   otherUser: {
     id: string;
     name: string | null;
+    username: string | null;
     image: string | null;
     level: number;
     league: League;
@@ -67,6 +68,7 @@ export interface MessageData {
 export interface UserProfile {
   id: string;
   name: string | null;
+  username: string | null;
   email: string;
   image: string | null;
   age: number | null;
