@@ -51,7 +51,7 @@ export function Navbar() {
     fetchUnread();
     const interval = setInterval(fetchUnread, 30000);
     return () => clearInterval(interval);
-  }, [session]);
+  }, [session, pathname]);
 
   if (!session || pathname === '/login' || pathname === '/register') return null;
 
