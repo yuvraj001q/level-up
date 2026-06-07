@@ -16,6 +16,7 @@ export default function ReferralPage() {
   } | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   useEffect(() => {
     if (status !== 'authenticated') return;
@@ -30,10 +31,10 @@ export default function ReferralPage() {
 
   const referralLink = data ? `${window.location.origin}/register?ref=${data.referralCode}` : '';
 
-  const handleCopy = () => {
+  const handleCopyLink = () => {
     navigator.clipboard.writeText(referralLink);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-accent-blue" /></div>;
@@ -83,6 +84,23 @@ export default function ReferralPage() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
         className="glass p-6 mb-6"
       >
+        <h2 className="text-sm font-semibold mb-3">Your Referral Code</h2>
+        <div className="flex items-center gap-2 mb-4">
+          <input
+            type="text"
+            readOnly
+            value={data?.referralCode || ''}
+            className="flex-1 bg-bg-primary border border-border-subtle rounded-xl px-4 py-3 text-sm text-text-primary font-mono text-center tracking-widest uppercase focus:outline-none"
+          />
+          <button
+            onClick={() => { navigator.clipboard.writeText(data?.referralCode || ''); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+            className="flex items-center gap-2 px-4 py-3 rounded-xl bg-accent-blue/10 text-accent-blue text-sm font-medium hover:bg-accent-blue/20 transition-all whitespace-nowrap"
+          >
+            {copied ? <Check className="w-4 h-4 text-accent-green" /> : <Copy className="w-4 h-4" />}
+            {copied ? 'Copied' : 'Copy'}
+          </button>
+        </div>
+
         <h2 className="text-sm font-semibold mb-3">Your Referral Link</h2>
         <div className="flex items-center gap-2">
           <input
@@ -92,11 +110,11 @@ export default function ReferralPage() {
             className="flex-1 bg-bg-primary border border-border-subtle rounded-xl px-4 py-3 text-sm text-text-primary font-mono focus:outline-none"
           />
           <button
-            onClick={handleCopy}
+            onClick={handleCopyLink}
             className="flex items-center gap-2 px-4 py-3 rounded-xl bg-accent-blue/10 text-accent-blue text-sm font-medium hover:bg-accent-blue/20 transition-all whitespace-nowrap"
           >
-            {copied ? <Check className="w-4 h-4 text-accent-green" /> : <Copy className="w-4 h-4" />}
-            {copied ? 'Copied' : 'Copy'}
+            {copiedLink ? <Check className="w-4 h-4 text-accent-green" /> : <Copy className="w-4 h-4" />}
+            {copiedLink ? 'Copied' : 'Copy'}
           </button>
         </div>
       </motion.div>

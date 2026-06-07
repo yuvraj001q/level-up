@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Zap, Mail, Lock, User, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Zap, Mail, Lock, User, Gift, Loader2, Eye, EyeOff } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -12,10 +12,11 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [referralInput, setReferralInput] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const referralCode = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('ref') : null;
+  const urlRef = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('ref') : null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,6 +24,8 @@ export default function RegisterPage() {
     setError('');
 
     try {
+      const referralCode = referralInput.trim() || urlRef;
+
       const res = await fetch('/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -126,6 +129,29 @@ export default function RegisterPage() {
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
+              </div>
+            </div>
+
+            {(urlRef || referralInput) && (
+              <div className="rounded-xl bg-accent-green/5 border border-accent-green/20 px-4 py-3 text-sm text-accent-green">
+                {urlRef && !referralInput && <>Referral code <span className="font-mono font-medium">{urlRef}</span> applied from link!</>}
+                {referralInput && <>Referral code <span className="font-mono font-medium">{referralInput}</span> will be applied</>}
+              </div>
+            )}
+
+            <div>
+              <label className="block text-sm font-medium text-text-secondary mb-1.5">
+                Referral Code <span className="text-text-muted font-normal">(optional)</span>
+              </label>
+              <div className="relative">
+                <Gift className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+                <input
+                  type="text"
+                  value={referralInput}
+                  onChange={(e) => setReferralInput(e.target.value)}
+                  className="w-full bg-bg-primary border border-border-subtle rounded-xl py-3 pl-10 pr-4 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/20 transition-colors"
+                  placeholder={urlRef || 'Enter referral code'}
+                />
               </div>
             </div>
 
