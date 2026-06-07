@@ -1,6 +1,19 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
+
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const email = searchParams.get('email');
+  if (!email) return NextResponse.json({ error: 'email required' }, { status: 400 });
+
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: { id: true, name: true, email: true, image: true, level: true, league: true },
+  });
+  if (!user) return NextResponse.json(null);
+  return NextResponse.json(user);
+}
 
 export async function POST(req: Request) {
   try {

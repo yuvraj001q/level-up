@@ -1,12 +1,16 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { UserProfile, Task, Quest, Achievement } from '@/types';
+import type { UserProfile, Task, Quest, Achievement, Friend, Conversation, MessageData } from '@/types';
 
 interface AppState {
   user: UserProfile | null;
   tasks: Task[];
   quests: Quest[];
   achievements: Achievement[];
+  friends: Friend[];
+  conversations: Conversation[];
+  activeConversation: Conversation | null;
+  messages: MessageData[];
   isLoading: boolean;
   xpAnimation: { amount: number; show: boolean } | null;
   levelUpAnimation: { level: number; show: boolean } | null;
@@ -16,6 +20,13 @@ interface AppState {
   setTasks: (tasks: Task[]) => void;
   setQuests: (quests: Quest[]) => void;
   setAchievements: (achievements: Achievement[]) => void;
+  setFriends: (friends: Friend[]) => void;
+  addFriend: (friend: Friend) => void;
+  removeFriend: (id: string) => void;
+  setConversations: (conversations: Conversation[]) => void;
+  setActiveConversation: (conversation: Conversation | null) => void;
+  setMessages: (messages: MessageData[]) => void;
+  addMessage: (message: MessageData) => void;
   setLoading: (loading: boolean) => void;
   showXpAnimation: (amount: number) => void;
   showLevelUpAnimation: (level: number) => void;
@@ -33,6 +44,10 @@ export const useStore = create<AppState>()(
       tasks: [],
       quests: [],
       achievements: [],
+      friends: [],
+      conversations: [],
+      activeConversation: null,
+      messages: [],
       isLoading: true,
       xpAnimation: null,
       levelUpAnimation: null,
@@ -42,6 +57,13 @@ export const useStore = create<AppState>()(
       setTasks: (tasks) => set({ tasks }),
       setQuests: (quests) => set({ quests }),
       setAchievements: (achievements) => set({ achievements }),
+      setFriends: (friends) => set({ friends }),
+      addFriend: (friend) => set((s) => ({ friends: [...s.friends, friend] })),
+      removeFriend: (id) => set((s) => ({ friends: s.friends.filter((f) => f.id !== id) })),
+      setConversations: (conversations) => set({ conversations }),
+      setActiveConversation: (conversation) => set({ activeConversation: conversation }),
+      setMessages: (messages) => set({ messages }),
+      addMessage: (message) => set((s) => ({ messages: [...s.messages, message] })),
       setLoading: (isLoading) => set({ isLoading }),
 
       showXpAnimation: (amount) => {

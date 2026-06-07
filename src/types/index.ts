@@ -18,6 +18,52 @@ export function getPrevLeague(league: League): League | null {
   return LEAGUE_ORDER[idx - 1];
 }
 
+export type FriendStatus = 'PENDING' | 'ACCEPTED' | 'BLOCKED';
+
+export interface Friend {
+  id: string;
+  requesterId: string;
+  addresseeId: string;
+  status: FriendStatus;
+  createdAt: string;
+  otherUser: {
+    id: string;
+    name: string | null;
+    image: string | null;
+    level: number;
+    league: League;
+  };
+}
+
+export interface Conversation {
+  id: string;
+  createdAt: string;
+  participants: {
+    id: string;
+    name: string | null;
+    image: string | null;
+  }[];
+  lastMessage?: {
+    content: string;
+    createdAt: string;
+    senderId: string;
+  };
+}
+
+export interface MessageData {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  content: string;
+  readAt: string | null;
+  createdAt: string;
+  sender: {
+    id: string;
+    name: string | null;
+    image: string | null;
+  };
+}
+
 export interface UserProfile {
   id: string;
   name: string | null;
@@ -41,6 +87,8 @@ export interface UserProfile {
   streakFreeze: number;
   phone: string | null;
   phoneVerified: boolean;
+  friendStreak: number;
+  friendInteractionAt: string | null;
 }
 
 export interface Task {
