@@ -72,7 +72,7 @@ export function Navbar() {
         </button>
       </div>
 
-      <div className="flex-1 px-3 space-y-1">
+      <div className="flex-1 px-3 space-y-1 overflow-y-auto">
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
