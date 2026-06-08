@@ -328,3 +328,4 @@ export function getLeagueLabel(league: League): string {
 }
 
 export const LEAGUE_ORDER: League[] = ['IRON', 'BRONZE', 'SILVER', 'GOLD', 'PLATINUM', 'EMERALD', 'DIAMOND', 'MASTER', 'GRANDMASTER', 'CHALLENGER'];
+export const LEAGUE_ORDER_DESC: League[] = ['CHALLENGER', 'GRANDMASTER', 'MASTER', 'DIAMOND', 'EMERALD', 'PLATINUM', 'GOLD', 'SILVER', 'BRONZE', 'IRON'];

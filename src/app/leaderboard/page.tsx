@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion } from 'framer-motion';
 import { Users, Trophy, Zap, Flame, Medal, Crown, Loader2, ArrowUp, Shield, ArrowDown, UserPlus, Check, ExternalLink } from 'lucide-react';
-import { LeagueShield, getLeagueLabel, LEAGUE_ORDER } from '@/components/ui/LeagueShield';
+import { LeagueShield, getLeagueLabel, LEAGUE_ORDER_DESC } from '@/components/ui/LeagueShield';
 import type { League } from '@/types';
 
 interface LeaderboardUser {
@@ -226,7 +226,7 @@ export default function LeaderboardPage() {
 
   const grouped = useMemo(() => {
     const map: Record<string, LeaderboardUser[]> = {};
-    for (const league of LEAGUE_ORDER) map[league] = [];
+    for (const league of LEAGUE_ORDER_DESC) map[league] = [];
     for (const u of users) {
       if (map[u.league]) map[u.league].push(u);
     }
@@ -278,7 +278,7 @@ export default function LeaderboardPage() {
         })}
       </div>
 
-      {LEAGUE_ORDER.map((league) => (
+      {LEAGUE_ORDER_DESC.map((league) => (
         <LeagueSection
           key={league}
           league={league}
