@@ -337,6 +337,11 @@ body {
   color: #ffffff !important;
 }
 
+.theme-challenger select option {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
 .theme-challenger input:focus,
 .theme-challenger textarea:focus,
 .theme-challenger select:focus {
