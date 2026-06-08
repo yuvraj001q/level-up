@@ -253,7 +253,6 @@ body {
 }
 
 .theme-challenger * {
-  border-radius: 0 !important;
   scrollbar-width: thin;
   scrollbar-color: #333333 transparent;
 }
@@ -288,7 +287,6 @@ body {
 
 .theme-challenger .gradient-border::before {
   background: #333333;
-  border-radius: 0;
 }
 
 .theme-challenger .animate-glow {
