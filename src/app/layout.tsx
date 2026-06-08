@@ -8,7 +8,6 @@ import { XPAnimation } from '@/components/ui/XPAnimation';
 import { LevelUpAnimation } from '@/components/ui/LevelUpAnimation';
 import { AchievementUnlock } from '@/components/ui/AchievementUnlock';
 import { FloatingElements } from '@/components/ui/FloatingElements';
-import { PageTransition } from '@/components/ui/PageTransition';
 import { PwaRegister } from '@/components/PwaRegister';
 import { UpdatePrompt } from '@/components/UpdatePrompt';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -44,9 +43,7 @@ export default function RootLayout({
           <XPAnimation />
           <LevelUpAnimation />
           <AchievementUnlock />
-          <main className="md:pl-64 pb-20 md:pb-0 min-h-screen relative z-10">
-            <PageTransition>{children}</PageTransition>
-          </main>
+          {children}
           <PwaRegister />
           <UpdatePrompt />
           <SpeedInsights />

@@ -1,32 +1,35 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Zap, Mail, Lock, Loader2, Eye, EyeOff, Sparkles } from 'lucide-react';
+import { Zap, Mail, Lock, User, Gift, Loader2, Eye, EyeOff, Sparkles } from 'lucide-react';
 
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+    transition: { staggerChildren: 0.06, delayChildren: 0.1 },
   },
 };
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
 };
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [referralInput, setReferralInput] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const urlRef = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('ref') : null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,36 +37,37 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
+      const referralCode = referralInput.trim() || urlRef;
+
+      const res = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password, referralCode }),
       });
 
-      if (!result) {
-        setError('Authentication service unavailable');
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || 'Something went wrong');
         setLoading(false);
-      } else if (result.error) {
-        setError('Invalid email or password');
-        setLoading(false);
-      } else {
-        router.push('/dashboard');
+        return;
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Connection failed. Check your network and try again.');
+
+      router.push('/login');
+    } catch {
+      setError('Connection failed. Make sure your database is running (npm run db:push).');
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative md:-ml-64 md:w-[calc(100%+16rem)]">
+    <div className="min-h-screen flex items-center justify-center p-4 relative">
       {/* Decorative corner elements */}
-      <div className="absolute top-10 left-10 w-16 h-16 border border-accent-blue/10 rounded-2xl rotate-12 hidden lg:block" />
-      <div className="absolute top-20 left-20 w-8 h-8 border border-accent-cyan/10 rounded-lg -rotate-12 hidden lg:block" />
-      <div className="absolute bottom-10 right-10 w-20 h-20 border border-accent-purple/10 rounded-full hidden lg:block" />
-      <div className="absolute bottom-20 right-20 w-10 h-10 border border-accent-green/10 rounded-xl rotate-45 hidden lg:block" />
-      <div className="absolute top-1/3 right-10 w-4 h-4 bg-accent-blue/10 rounded-full animate-pulse hidden lg:block" />
-      <div className="absolute bottom-1/3 left-10 w-3 h-3 bg-accent-cyan/10 rounded-full animate-pulse hidden lg:block" style={{ animationDelay: '1s' }} />
+      <div className="absolute top-10 right-10 w-16 h-16 border border-accent-blue/10 rounded-2xl -rotate-12 hidden lg:block" />
+      <div className="absolute top-20 right-20 w-8 h-8 border border-accent-cyan/10 rounded-lg rotate-12 hidden lg:block" />
+      <div className="absolute bottom-10 left-10 w-20 h-20 border border-accent-purple/10 rounded-full hidden lg:block" />
+      <div className="absolute bottom-20 left-20 w-10 h-10 border border-accent-green/10 rounded-xl -rotate-45 hidden lg:block" />
+      <div className="absolute top-1/3 left-10 w-4 h-4 bg-accent-purple/10 rounded-full animate-pulse hidden lg:block" />
+      <div className="absolute bottom-1/3 right-10 w-3 h-3 bg-accent-orange/10 rounded-full animate-pulse hidden lg:block" style={{ animationDelay: '1s' }} />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -79,7 +83,7 @@ export default function LoginPage() {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="space-y-6"
+              className="space-y-5"
             >
               <motion.div variants={itemVariants} className="text-center">
                 <div className="relative inline-block mb-4">
@@ -87,7 +91,7 @@ export default function LoginPage() {
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: 'spring', stiffness: 200, delay: 0.1 }}
-                    className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-blue to-accent-cyan flex items-center justify-center relative"
+                    className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-blue to-accent-cyan flex items-center justify-center"
                   >
                     <Zap className="w-8 h-8 text-white" />
                     <motion.div
@@ -97,15 +101,30 @@ export default function LoginPage() {
                     />
                   </motion.div>
                 </div>
-                <h1 className="text-2xl font-bold gradient-text">Welcome Back</h1>
-                <p className="text-text-muted text-sm mt-1">Continue your journey</p>
+                <h1 className="text-2xl font-bold gradient-text">Create Account</h1>
+                <p className="text-text-muted text-sm mt-1">Start your level-up journey</p>
               </motion.div>
 
               <motion.form
                 variants={containerVariants}
                 onSubmit={handleSubmit}
-                className="space-y-4"
+                className="space-y-3"
               >
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-medium text-text-secondary mb-1.5">Name</label>
+                  <div className="relative group">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted group-focus-within:text-accent-blue transition-colors" />
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full bg-bg-primary border border-border-subtle rounded-xl py-3 pl-10 pr-4 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/20 transition-all"
+                      placeholder="Your name"
+                      required
+                    />
+                  </div>
+                </motion.div>
+
                 <motion.div variants={itemVariants}>
                   <label className="block text-sm font-medium text-text-secondary mb-1.5">Email</label>
                   <div className="relative group">
@@ -130,8 +149,9 @@ export default function LoginPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="w-full bg-bg-primary border border-border-subtle rounded-xl py-3 pl-10 pr-10 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/20 transition-all"
-                      placeholder="••••••••"
+                      placeholder="Min. 8 characters"
                       required
+                      minLength={8}
                     />
                     <button
                       type="button"
@@ -140,6 +160,36 @@ export default function LoginPage() {
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
+                  </div>
+                </motion.div>
+
+                {(urlRef || referralInput) && (
+                  <motion.div variants={itemVariants}>
+                    <div className="rounded-xl bg-accent-green/5 border border-accent-green/20 px-4 py-3 text-sm text-accent-green flex items-center gap-2">
+                      <Gift className="w-4 h-4 shrink-0" />
+                      {urlRef && !referralInput && (
+                        <>Referral code <span className="font-mono font-medium">{urlRef}</span> applied from link!</>
+                      )}
+                      {referralInput && (
+                        <>Referral code <span className="font-mono font-medium">{referralInput}</span> will be applied</>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-medium text-text-secondary mb-1.5">
+                    Referral Code <span className="text-text-muted font-normal">(optional)</span>
+                  </label>
+                  <div className="relative group">
+                    <Gift className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted group-focus-within:text-accent-blue transition-colors" />
+                    <input
+                      type="text"
+                      value={referralInput}
+                      onChange={(e) => setReferralInput(e.target.value)}
+                      className="w-full bg-bg-primary border border-border-subtle rounded-xl py-3 pl-10 pr-4 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/20 transition-all"
+                      placeholder={urlRef || 'Enter referral code'}
+                    />
                   </div>
                 </motion.div>
 
@@ -167,7 +217,7 @@ export default function LoginPage() {
                   ) : (
                     <Sparkles className="w-4 h-4" />
                   )}
-                  {loading ? 'Signing in...' : 'Sign In'}
+                  {loading ? 'Creating account...' : 'Create Account'}
                 </motion.button>
               </motion.form>
 
@@ -176,7 +226,7 @@ export default function LoginPage() {
                   <div className="w-full border-t border-border-subtle" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-bg-secondary px-3 text-text-muted">New here?</span>
+                  <span className="bg-bg-secondary px-3 text-text-muted">Already a player?</span>
                 </div>
               </motion.div>
 
@@ -185,10 +235,10 @@ export default function LoginPage() {
                 className="text-center text-sm text-text-muted"
               >
                 <Link
-                  href="/register"
+                  href="/login"
                   className="text-accent-blue hover:text-accent-cyan transition-colors font-medium"
                 >
-                  Create an account &rarr;
+                  Sign in &rarr;
                 </Link>
               </motion.p>
             </motion.div>
