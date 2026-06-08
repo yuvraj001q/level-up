@@ -15,7 +15,7 @@ export async function GET() {
         dailyStreak: true,
         achievementPoints: true,
       },
-      orderBy: { xp: 'desc' },
+      orderBy: [{ league: 'desc' }, { xp: 'desc' }],
       take: 100,
     });
 
@@ -35,7 +35,13 @@ export async function GET() {
       }[]>`
         SELECT id, name, username, level, xp, rank, league, "dailyStreak", "achievementPoints"
         FROM "User"
-        ORDER BY xp DESC
+        ORDER BY CASE league
+          WHEN 'CHALLENGER' THEN 0 WHEN 'GRANDMASTER' THEN 1
+          WHEN 'MASTER' THEN 2 WHEN 'DIAMOND' THEN 3
+          WHEN 'EMERALD' THEN 4 WHEN 'PLATINUM' THEN 5
+          WHEN 'GOLD' THEN 6 WHEN 'SILVER' THEN 7
+          WHEN 'BRONZE' THEN 8 WHEN 'IRON' THEN 9
+        END ASC, xp DESC
         LIMIT 100
       `;
       return NextResponse.json(
