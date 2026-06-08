@@ -88,7 +88,7 @@ model User {
   level         Int      @default(1)
   xp            Int      @default(0)
   rank          String   @default("Newcomer")
-  league        League   @default(BRONZE)
+  league        League   @default(IRON)
   lastPromotion DateTime?
   achievementPoints Int  @default(0)
 
