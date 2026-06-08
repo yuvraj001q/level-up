@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Save, Loader2, Zap, Award, Flame, BarChart3, Trophy, Mail, Lock, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import { Save, Loader2, Zap, Award, Flame, BarChart3, Trophy, Mail, Lock, Eye, EyeOff, CheckCircle2, LogOut } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { getLevelInfo } from '@/lib/game';
 import { getLeagueLabel } from '@/components/ui/LeagueShield';
 import type { Goal } from '@/types';
+import { signOut } from 'next-auth/react';
 
 const GOALS: { value: Goal; label: string; emoji: string }[] = [
   { value: 'FITNESS', label: 'Fitness', emoji: '💪' },
@@ -480,6 +481,16 @@ export default function ProfilePage() {
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             {saving ? 'Saving...' : 'Save Changes'}
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => { useStore.getState().reset(); signOut(); }}
+            className="w-full py-3 rounded-xl glass text-text-muted hover:text-accent-red hover:border-accent-red/20 text-sm font-medium transition-all flex items-center justify-center gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            Sign Out
           </motion.button>
         </div>
       </div>
