@@ -239,8 +239,8 @@ body {
   --color-bg-card: #111111;
   --color-bg-glass: rgba(255, 255, 255, 0.03);
   --color-bg-glass-hover: rgba(255, 255, 255, 0.06);
-  --color-border-subtle: rgba(255, 255, 255, 0.06);
-  --color-border-accent: rgba(255, 255, 255, 0.12);
+  --color-border-subtle: transparent;
+  --color-border-accent: transparent;
   --color-accent-blue: #555555;
   --color-accent-cyan: #555555;
   --color-accent-purple: #666666;
@@ -266,12 +266,12 @@ body {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: none;
   border: none;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: none;
 }
 
 .theme-challenger .glass-hover:hover {
   background: rgba(255, 255, 255, 0.06);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  box-shadow: none;
 }
 
 .theme-challenger .gradient-text {
@@ -286,7 +286,7 @@ body {
 }
 
 .theme-challenger .gradient-border::before {
-  background: rgba(255, 255, 255, 0.06);
+  background: transparent;
 }
 
 .theme-challenger .animate-glow {
@@ -304,19 +304,17 @@ body {
 
 .theme-challenger button:not(.challenger-amber) {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: none;
   color: #ffffff;
   transition: all 0.15s ease;
 }
 
 .theme-challenger button:not(.challenger-amber):hover {
   background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .theme-challenger button:not(.challenger-amber):active {
   background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .theme-challenger .challenger-amber {
@@ -335,19 +333,15 @@ body {
 .theme-challenger textarea,
 .theme-challenger select {
   background: rgba(255, 255, 255, 0.03) !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: transparent !important;
   color: #ffffff !important;
 }
 
 .theme-challenger input:focus,
 .theme-challenger textarea:focus,
 .theme-challenger select:focus {
-  border-color: rgba(255, 191, 0, 0.3) !important;
-  box-shadow: 0 0 0 1px rgba(255, 191, 0, 0.15) !important;
-}
-
-.theme-challenger .glass-hover:hover .challenger-amber {
-  box-shadow: 0 0 25px rgba(255, 191, 0, 0.2) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
 
 .theme-challenger input:focus,
