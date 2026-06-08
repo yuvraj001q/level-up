@@ -60,7 +60,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative">
+    <div className="min-h-screen flex items-center justify-center p-4 relative md:-ml-64 md:w-[calc(100%+16rem)]">
       {/* Decorative corner elements */}
       <div className="absolute top-10 right-10 w-16 h-16 border border-accent-blue/10 rounded-2xl -rotate-12 hidden lg:block" />
       <div className="absolute top-20 right-20 w-8 h-8 border border-accent-cyan/10 rounded-lg rotate-12 hidden lg:block" />

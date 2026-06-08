@@ -40,6 +40,7 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
+
   useEffect(() => {
     if (!session) return;
     const fetchUnread = () => {
