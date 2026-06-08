@@ -54,12 +54,19 @@ export function UpdatePrompt() {
   return (
     <AnimatePresence>
       {updateAvailable && !dismissed && (
-        <motion.div
-          initial={{ y: 80, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 80, opacity: 0 }}
-          className="fixed bottom-4 left-4 right-4 z-50 max-w-md mx-auto"
-        >
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
+          />
+          <motion.div
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 80, opacity: 0 }}
+            className="fixed bottom-4 left-4 right-4 z-50 max-w-md mx-auto"
+          >
           <div className="glass p-4 flex items-center gap-3 border-accent-blue/30 shadow-xl">
             <div className="w-8 h-8 rounded-lg bg-accent-blue/10 flex items-center justify-center flex-shrink-0">
               <RefreshCw className="w-4 h-4 text-accent-blue" />
@@ -84,6 +91,7 @@ export function UpdatePrompt() {
             </div>
           </div>
         </motion.div>
+        </>
       )}
     </AnimatePresence>
   );
