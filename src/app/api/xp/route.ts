@@ -1,11 +1,17 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+function toLocalDateStr(date: Date, tzOffsetMinutes: number): string {
+  const local = new Date(date.getTime() + tzOffsetMinutes * 60 * 1000);
+  return local.toISOString().slice(0, 10);
+}
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get('userId');
     const since = searchParams.get('since');
+    const tzOffset = parseInt(searchParams.get('tzOffset') || '0', 10);
 
     if (!userId) return NextResponse.json({ error: 'User ID required' }, { status: 400 });
 
@@ -30,7 +36,7 @@ export async function GET(req: Request) {
 
     const dailyMap: Record<string, number> = {};
     daily.forEach((l: { amount: number; createdAt: Date }) => {
-      const day = l.createdAt.toISOString().slice(0, 10);
+      const day = toLocalDateStr(l.createdAt, tzOffset);
       dailyMap[day] = (dailyMap[day] || 0) + l.amount;
     });
 

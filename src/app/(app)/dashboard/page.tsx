@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/lib/useRequireAuth';
 import { motion } from 'framer-motion';
@@ -22,6 +22,7 @@ export default function DashboardPage() {
   const [tasksCompletedToday, setTasksCompletedToday] = useState(0);
   const [leaderboard, setLeaderboard] = useState<{ id: string; name: string; level: number; xp: number; league: League; rank: number | null }[]>([]);
   const [unreadMessages, setUnreadMessages] = useState(0);
+  const todayRef = useRef(new Date().toDateString());
 
   useEffect(() => {
     if (status !== 'authenticated' || !session?.user?.id) return;
@@ -64,7 +65,8 @@ export default function DashboardPage() {
         // XP today
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        fetch(`/api/xp?userId=${userId}&since=${today.toISOString()}`)
+        const tzOffset = -new Date().getTimezoneOffset();
+        fetch(`/api/xp?userId=${userId}&since=${today.toISOString()}&tzOffset=${tzOffset}`)
           .then(r => r.json())
           .then(data => { if (data?.total) setXpToday(data.total); })
           .catch(() => {});
@@ -89,6 +91,25 @@ export default function DashboardPage() {
       .then(d => setUnreadMessages(d.count || 0))
       .catch(() => {});
   }, [status, session, setUser, setTasks, setQuests, setAchievements, setLoading]);
+
+  // Refresh XP Today on day change
+  useEffect(() => {
+    if (status !== 'authenticated' || !session?.user?.id) return;
+    const interval = setInterval(() => {
+      const dayStr = new Date().toDateString();
+      if (dayStr !== todayRef.current) {
+        todayRef.current = dayStr;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tzOffset = -new Date().getTimezoneOffset();
+        fetch(`/api/xp?userId=${session.user.id}&since=${today.toISOString()}&tzOffset=${tzOffset}`)
+          .then(r => r.json())
+          .then(data => { if (data?.total) setXpToday(data.total); else setXpToday(0); })
+          .catch(() => setXpToday(0));
+      }
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [status, session?.user?.id]);
 
   const handleCompleteTask = async (id: string) => {
     if (!session?.user?.id) return;

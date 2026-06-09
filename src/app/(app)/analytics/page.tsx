@@ -19,8 +19,9 @@ export default function AnalyticsPage() {
       return;
     }
 
+    const tzOffset = -new Date().getTimezoneOffset();
     const [xpData, userData] = await Promise.all([
-      fetch(`/api/xp?userId=${session.user.id}`).then((r) => r.json()),
+      fetch(`/api/xp?userId=${session.user.id}&tzOffset=${tzOffset}`).then((r) => r.json()),
       fetch(`/api/users/${session.user.id}`).then((r) => r.json()),
     ]);
     setXpData(xpData?.chartData || []);
