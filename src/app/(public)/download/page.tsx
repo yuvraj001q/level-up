@@ -28,8 +28,8 @@ export default function DownloadPage() {
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent-cyan/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-6 py-12">
-        <Link href="/" className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors mb-8">
+      <div className="relative z-10 max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12">
+        <Link href="/" className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors mb-6 md:mb-8">
           <ArrowLeft className="w-4 h-4" />
           Back to Home
         </Link>
@@ -48,15 +48,15 @@ export default function DownloadPage() {
 
         <div className="grid md:grid-cols-2 gap-6 mb-12">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
-            <div className="glass p-8 h-full">
-              <div className="w-12 h-12 rounded-xl bg-accent-blue/10 flex items-center justify-center mb-4">
-                <Smartphone className="w-6 h-6 text-accent-blue" />
+            <div className="glass p-5 md:p-8 h-full">
+              <div className="w-10 md:w-12 h-10 md:h-12 rounded-xl bg-accent-blue/10 flex items-center justify-center mb-3 md:mb-4">
+                <Smartphone className="w-5 md:w-6 h-5 md:h-6 text-accent-blue" />
               </div>
-              <h2 className="text-xl font-semibold mb-2">Install via Browser</h2>
+              <h2 className="text-lg md:text-xl font-semibold mb-2">Install via Browser</h2>
               <p className="text-sm text-text-secondary mb-4">
                 No download needed. Works on Android and iOS directly from your browser.
               </p>
-              <ul className="text-sm text-text-muted space-y-2 mb-6">
+              <ul className="text-sm text-text-muted space-y-2 mb-6 break-words">
                 <li>1. Open level-up-theta-tawny.vercel.app in Chrome</li>
                 <li>2. Tap the menu (three dots)</li>
                 <li>3. Select &quot;Add to Home Screen&quot;</li>
@@ -74,15 +74,15 @@ export default function DownloadPage() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
-            <div className="glass p-8 h-full">
-              <div className="w-12 h-12 rounded-xl bg-accent-purple/10 flex items-center justify-center mb-4">
-                <Package className="w-6 h-6 text-accent-purple" />
+            <div className="glass p-5 md:p-8 h-full">
+              <div className="w-10 md:w-12 h-10 md:h-12 rounded-xl bg-accent-purple/10 flex items-center justify-center mb-3 md:mb-4">
+                <Package className="w-5 md:w-6 h-5 md:h-6 text-accent-purple" />
               </div>
-              <h2 className="text-xl font-semibold mb-2">Download APK</h2>
+              <h2 className="text-lg md:text-xl font-semibold mb-2">Download APK</h2>
               <p className="text-sm text-text-secondary mb-4">
                 Native Android app. Sideload on any device for a full-screen experience.
               </p>
-              <ul className="text-sm text-text-muted space-y-2 mb-6">
+              <ul className="text-sm text-text-muted space-y-2 mb-6 break-words">
                 <li>1. Download the APK file below</li>
                 <li>2. Open the file on your Android device</li>
                 <li>3. Allow installation from unknown sources</li>
@@ -104,9 +104,10 @@ export default function DownloadPage() {
         </div>
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="glass p-6 text-center">
-          <p className="text-sm text-text-secondary">
-            The APK is served directly from the website for fast downloads. To build the latest version, run <code className="text-accent-cyan">npm run build &amp;&amp; npx cap copy &amp;&amp; cd android &amp;&amp; gradle assembleDebug</code> locally.
+          <p className="text-sm text-text-secondary break-words">
+            The APK is served directly from the website for fast downloads. To build the latest version, run
           </p>
+          <pre className="mt-3 text-xs text-left bg-bg-primary/50 rounded-xl p-3 md:p-4 overflow-x-auto whitespace-pre-wrap break-all text-accent-cyan font-mono">npm run build && npx cap copy && cd android && gradle assembleDebug</pre>
         </motion.div>
       </div>
     </div>
