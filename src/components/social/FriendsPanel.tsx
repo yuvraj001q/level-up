@@ -81,14 +81,14 @@ export function FriendsPanel({ onStartChat }: { onStartChat: (friendId: string, 
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-md text-xs font-medium transition-all flex-1 justify-center ${
+            className={`flex items-center gap-1 px-2 md:gap-1.5 md:px-4 py-2 rounded-md text-[10px] md:text-xs font-medium transition-all flex-1 justify-center min-w-0 ${
               activeTab === tab.key ? 'bg-accent-blue/20 text-accent-blue' : 'text-text-muted hover:text-text-primary'
             }`}
           >
-            <tab.icon className="w-3.5 h-3.5" />
-            {tab.label}
+            <tab.icon className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">{tab.label}</span>
             {tab.count !== undefined && tab.count > 0 && (
-              <span className="bg-accent-blue/20 text-accent-blue text-[10px] px-1.5 rounded-full">{tab.count}</span>
+              <span className="bg-accent-blue/20 text-accent-blue text-[10px] px-1.5 rounded-full shrink-0">{tab.count}</span>
             )}
           </button>
         ))}
