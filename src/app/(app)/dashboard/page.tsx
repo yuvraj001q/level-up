@@ -202,6 +202,7 @@ export default function DashboardPage() {
 
   const levelInfo = getLevelInfo(user.xp);
   const todayTasks = tasks.filter((t) => {
+    if (t.status === 'COMPLETED') return false;
     if (!t.createdAt) return false;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
