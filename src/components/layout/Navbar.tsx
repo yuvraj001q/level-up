@@ -54,7 +54,7 @@ export function Navbar() {
     return () => clearInterval(interval);
   }, [session, pathname]);
 
-  if (!session || pathname === '/login' || pathname === '/register') return null;
+  if (!session || pathname === '/' || pathname === '/login' || pathname === '/register' || pathname === '/download') return null;
 
   const sidebar = (
     <div className="h-full w-64 bg-bg-secondary/95 backdrop-blur-xl border-r border-border-subtle flex flex-col">

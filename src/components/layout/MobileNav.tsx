@@ -17,7 +17,7 @@ export function MobileNav() {
   const pathname = usePathname();
   const { data: session } = useSession();
 
-  if (!session || pathname === '/login' || pathname === '/register') return null;
+  if (!session || pathname === '/' || pathname === '/login' || pathname === '/register' || pathname === '/download') return null;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-bg-secondary/90 backdrop-blur-xl border-t border-border-subtle z-50 md:hidden">
