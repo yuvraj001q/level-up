@@ -72,19 +72,24 @@ export default function HomePage() {
 
             <motion.h1
               variants={fadeUp}
-              className="text-5xl md:text-7xl font-bold leading-tight mb-6"
+              className="text-3xl md:text-5xl font-bold leading-snug md:leading-tight mb-6"
             >
-              Turn your life
+              AI-generated quests that help students
               <br />
-              <span className="gradient-text animate-gradient inline-block">into a game</span>
+              <span className="gradient-text animate-gradient inline-block">
+                build discipline, consistency,
+              </span>
+              <br />
+              <span className="gradient-text animate-gradient inline-block">
+                and real-world progress
+              </span>
             </motion.h1>
 
             <motion.p
               variants={fadeUp}
-              className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto mb-10 leading-relaxed"
+              className="text-base md:text-lg text-text-secondary max-w-2xl mx-auto mb-10 leading-relaxed"
             >
-              Level up your life with AI-generated quests, XP rewards, achievements, and streaks. 
-              The most engaging productivity platform ever built.
+              Level up your life with XP rewards, achievements, and streaks.
             </motion.p>
 
             <motion.div
